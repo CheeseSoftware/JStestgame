@@ -14,3 +14,8 @@ GP.Player = function Player (name){
 	
     return this;
 };
+
+GP.Player.prototype.destroy = function destroy() {
+	this.sprite.kill();
+	this.text.kill();
+}

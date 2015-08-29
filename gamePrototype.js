@@ -20,7 +20,7 @@ GP.preload = function preload() {
 GP.create = function create() {
 	GP.phaserGame.stage.disableVisibilityChange = true; 
 	GP.phaserGame.physics.startSystem(Phaser.Physics.ARCADE);
-	GP.player = new GP.Player("player" + Math.random() * 255);
+	GP.player = new GP.Player("player" + Math.round(Math.random() * 65536));
 	
 	GP.connection.send('playerinit', { 
 		name: GP.player.name,
@@ -44,7 +44,7 @@ GP.update = function update() {
 	oldy = GP.player.sprite.y;
 	oldvx = GP.player.sprite.body.velocity.x;
 	oldvy = GP.player.sprite.body.velocity.y;
-	oldRot = GP.player.sprite.rotation;
+	oldRot = Math.round(GP.player.sprite.rotation * 100) / 100;
 	
 	
 	cursors = GP.phaserGame.input.keyboard.createCursorKeys();
@@ -82,7 +82,7 @@ GP.update = function update() {
 	|| oldy != GP.player.sprite.y
 	|| oldvx != GP.player.sprite.body.velocity.x
 	|| oldvy != GP.player.sprite.body.velocity.y
-	|| oldRot != GP.player.sprite.rotation) {
+	|| oldRot != Math.round(GP.player.sprite.rotation * 100) / 100) {
 		GP.sendUpdatePacket();
 	}
 }

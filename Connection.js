@@ -20,6 +20,7 @@ GP.connection = function Connection (ip, port){
 	});
 	
 	socket.on('playerjoin', function(data) {
+		console.log(data.name + " has connected.");
 		var player = new GP.Player(data.name)
 		player.sprite.x = data.x;
 		player.sprite.y = data.y;
@@ -39,6 +40,12 @@ GP.connection = function Connection (ip, port){
 		}
 		else
 			console.log("undefined");
+	});
+	
+	socket.on('playerleave', function(data) {
+		console.log(data.name + ' has disconnected.');
+		GP.players[data.name].destroy();
+		delete GP.players[data.name];
 	});
 	
     return this;
