@@ -32,15 +32,17 @@
         	Components: {},
 			Systems: {}
 	    };
+		
 	</script>
 
+	<script src="pixi.js"></script>
+	<script src="Keyboard.js"></script>
 	<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
-	<script src="phaser.js"></script>
-    <script src="Player.js"></script>
     <script src="Connection.js"></script>
     <script src="components/PhysicsComponent.js"></script>
     <script src="Entity.js"></script>
     <script src="GamePrototype.js"></script>
+    
 
 </body>
 </html>

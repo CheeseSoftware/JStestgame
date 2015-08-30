@@ -21,22 +21,23 @@ GP.connection = function Connection (ip, port){
 	
 	socket.on('playerjoin', function(data) {
 		console.log(data.name + " has connected.");
-		var player = new GP.Player(data.name)
-		player.sprite.x = data.x;
-		player.sprite.y = data.y;
-		player.sprite.rotation = data.rotation;
+		var player = GP.spawnPlayer(data.name);
+		var physics = player.getComponent("physics");
+		physics.x = data.x;
+		physics.y = data.y;
+		physics.rotation = data.rotation;
 		GP.players[data.name] = player;
 	});
 	
 	socket.on('playerupdate', function(data) {
 		var player = GP.players[data.name];
 		if(player != undefined) {
-			player.sprite.x = data.x;
-			player.sprite.y = data.y;
-			player.sprite.body.velocity.x = data.vx;
-			player.sprite.body.velocity.y = data.vy;
-			console.log("vx " + data.vx + " vy " + data.vy);
-			player.sprite.rotation = data.rotation;
+			var physics = player.getComponent("physics");
+			physics.x = data.x;
+			physics.y = data.y;
+			physics.vx = data.vx;
+			physics.vy = data.vy;
+			physics.rotation = data.rotation;
 		}
 		else
 			console.log("undefined");
@@ -44,8 +45,7 @@ GP.connection = function Connection (ip, port){
 	
 	socket.on('playerleave', function(data) {
 		console.log(data.name + ' has disconnected.');
-		GP.players[data.name].destroy();
-		delete GP.players[data.name];
+		GP.despawnPlayer(data.name);
 	});
 	
     return this;
