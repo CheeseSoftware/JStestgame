@@ -11,8 +11,10 @@ function onMouseUpdate(e) {
 
 window.addEventListener('resize', resize, false);
 function resize() {
-	GP.renderer.view.style.width = window.innerWidth + 'px';
-	GP.renderer.view.style.height = window.innerHeight + 'px';
+	GP.renderer.resize(window.innerWidth, window.innerHeight);
+	GP.camera.viewport.width = window.innerWidth;
+	GP.camera.viewport.height = window.innerHeight;
+
 }
 
 GP.players = {};
@@ -24,6 +26,19 @@ GP.preload = function preload() {
 }
 
 GP.create = function create() {
+	/*GP.camera = {
+		x: 0,
+		y: 0,
+		width: window.innerWidth,
+		height: window.innerHeight,
+		screenToWorld: function(x, y) {
+			return { x: x + this.x, y: y + this.y };
+		},
+		worldToScreen: function(x, y) {
+			return { x: x - this.x, y: y - this.y };
+		}
+	};*/
+
 
 	GP.entityWorld = new CES.World();
 	// Add more systems here!
@@ -59,7 +74,8 @@ GP.run = (function() {
 	lastUpdate = Date.now();
 
     GP.entityWorld.update(dt);
-	GP.renderer.render(GP.stage);
+	GP.camera.update(dt);
+	GP.renderer.render(GP.camera);
 });
 
 GP.sendUpdatePacket = function sendUpdatePacket() {
@@ -81,7 +97,7 @@ GP.spawnPlayer = function spawnPlayer(name) {
 	sprite.anchor.y = 0.5;
 	sprite.position.x = 132;
 	sprite.position.y = 132;	
-	var text = new PIXI.Text(name);	
+	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
 	var player = new CES.Entity();
 	player.addComponent(new ECS.Components.Player(name, sprite, text));
@@ -101,10 +117,12 @@ GP.despawnPlayer = function despawnPlayer(name) {
 	delete(GP.players[name]);
 }
 
-GP.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xffffff}, true, false);
+GP.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0x000000}, true, false);
 document.body.appendChild(GP.renderer.view);
 GP.stage = new PIXI.Container();
+GP.camera = new Camera(GP.stage);
 GP.connection = new GP.connection(GP.ip, 3000);
+GP.camera.zoom = 1.0;
 
 GP.preload();
 GP.create();

@@ -18,6 +18,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				player.sprite.position.x = physics.x;
 				player.sprite.position.y = physics.y;
 				player.sprite.rotation = physics.rotation;
+				
 			}
 			
         });
