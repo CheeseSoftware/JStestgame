@@ -10,6 +10,13 @@ function onMouseUpdate(e) {
     mousey = e.pageY;
 }
 
+window.addEventListener('resize', resize, false);
+function resize() {
+	GP.phaserGame.width = window.innerWidth;
+	GP.phaserGame.height = window.innerHeight;
+	GP.phaserGame.renderer.resize(window.innerWidth, window.innerHeight);
+}
+
 GP.players = {};
 
 GP.preload = function preload() {
@@ -17,10 +24,15 @@ GP.preload = function preload() {
     GP.phaserGame.load.image('worker', 'textures/worker.png');
 }
 
-GP.create = function create() {
+GP.create = function create() {	
 	GP.phaserGame.stage.disableVisibilityChange = true; 
 	GP.phaserGame.physics.startSystem(Phaser.Physics.ARCADE);
 	GP.player = new GP.Player("player" + Math.round(Math.random() * 65536));
+	GP.players[GP.player.name] = GP.player;
+	GP.phaserGame.stage.backgroundColor = '#787878';
+	
+	//GP.phaserGame.world.setBounds(0, 0, 8000, 8000);
+	//GP.phaserGame.camera.follow(GP.player.sprite);
 	
 	GP.connection.send('playerinit', { 
 		name: GP.player.name,
@@ -70,11 +82,11 @@ GP.update = function update() {
 
     var angle = Math.atan2(GP.player.sprite.body.y - (mousey - GP.player.sprite.height/2), GP.player.sprite.body.x - (mousex - GP.player.sprite.width/2));
     GP.player.sprite.rotation = angle + Math.PI;
-	GP.player.text.position = new Phaser.Point(GP.player.sprite.x - GP.player.text.width/2, GP.player.sprite.y - 50);
+	//GP.player.text.position = new Phaser.Point(GP.player.sprite.x - GP.player.text.width/2, GP.player.sprite.y - 50);
 	
 	Object.keys(GP.players).forEach(function (key) { 
     	var player = GP.players[key]
-        player.text.position = new Phaser.Point(player.sprite.x - player.text.width/2, player.sprite.y - 50);
+        player.text.position = new Phaser.Point(player.sprite.x - player.text.width/2, player.sprite.y - player.sprite.height - 50);
 	})
 	
 	// Check if anything changed, if so, send player update packet
@@ -102,6 +114,6 @@ GP.sendUpdatePacket = function sendUpdatePacket() {
 	});
 }
 
-GP.phaserGame = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '', { preload: GP.preload, create: GP.create, update: GP.update, render: GP.render });
+GP.phaserGame = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.WEBGL, '', { preload: GP.preload, create: GP.create, update: GP.update, render: GP.render });
 
 GP.connection = new GP.connection(GP.ip, 3000);
