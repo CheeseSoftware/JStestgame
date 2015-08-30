@@ -26,20 +26,19 @@ GP.preload = function preload() {
 }
 
 GP.create = function create() {
-	/*GP.camera = {
-		x: 0,
-		y: 0,
-		width: window.innerWidth,
-		height: window.innerHeight,
-		screenToWorld: function(x, y) {
-			return { x: x + this.x, y: y + this.y };
-		},
-		worldToScreen: function(x, y) {
-			return { x: x - this.x, y: y - this.y };
+	// Initialize tilemap
+	for(var x = 0; x < GP.tileMap.width; ++x) {	
+		GP.tileMap[x] = [];		
+		for(var y = 0; y < GP.tileMap.height; ++y) {
+			var sprite = new PIXI.Sprite(GP.textures.cheese);
+			sprite.position.x = x * GP.tileSize;
+			sprite.position.y = y * GP.tileSize;
+			GP.stage.addChild(sprite);
+			GP.tileMap[x][y] = { sprite: sprite, health: 100};
 		}
-	};*/
-
-
+	}
+	
+	
 	GP.entityWorld = new CES.World();
 	// Add more systems here!
 	
@@ -123,6 +122,14 @@ GP.stage = new PIXI.Container();
 GP.camera = new Camera(GP.stage);
 GP.connection = new GP.connection(GP.ip, 3000);
 GP.camera.zoom = 1.0;
+
+GP.tileMap = { 
+	width: 32,
+	height: 32,
+	tiles: []
+};
+
+GP.tileSize = 64;
 
 GP.preload();
 GP.create();
