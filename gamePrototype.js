@@ -23,11 +23,23 @@ GP.preload = function preload() {
 	GP.textures = {};
 	GP.textures.cheese = PIXI.Texture.fromImage('textures/cheese.png');
 	GP.textures.worker = PIXI.Texture.fromImage('textures/worker.png');
+	GP.textures.ground = PIXI.Texture.fromImage('textures/ground.png');
 }
 
 GP.create = function create() {
 	// Initialize tilemap
 	for(var x = 0; x < GP.tileMap.width; ++x) {	
+		for(var y = 0; y < GP.tileMap.height; ++y) {
+			if(x * GP.tileSize % 1024 == 0 && y * GP.tileSize % 1024 == 0) {
+				var sprite = new PIXI.Sprite(GP.textures.ground);
+				sprite.position.x = x * GP.tileSize;
+				sprite.position.y = y * GP.tileSize;
+				GP.stage.addChild(sprite);
+			}
+		}
+	}
+	
+	/*for(var x = 0; x < GP.tileMap.width; ++x) {	
 		GP.tileMap[x] = [];		
 		for(var y = 0; y < GP.tileMap.height; ++y) {
 			var sprite = new PIXI.Sprite(GP.textures.cheese);
@@ -36,7 +48,7 @@ GP.create = function create() {
 			GP.stage.addChild(sprite);
 			GP.tileMap[x][y] = { sprite: sprite, health: 100};
 		}
-	}
+	}*/
 	
 	
 	GP.entityWorld = new CES.World();
@@ -94,8 +106,8 @@ GP.spawnPlayer = function spawnPlayer(name) {
 	var sprite = new PIXI.Sprite(GP.textures.worker);
 	sprite.anchor.x = 0.5;
 	sprite.anchor.y = 0.5;
-	sprite.position.x = 132;
-	sprite.position.y = 132;	
+	sprite.position.x = Math.random() * GP.tileMap.width * GP.tileSize;
+	sprite.position.y = Math.random() * GP.tileMap.height * GP.tileSize;	
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
 	var player = new CES.Entity();
