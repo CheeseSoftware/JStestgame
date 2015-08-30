@@ -9,6 +9,7 @@
 	border: solid 2px #EEE;
 	border-radius: 32px;
 	position: relative;
+	display: block;
 	
 	
 	/* Make text unselectable. */
@@ -22,6 +23,7 @@
 }
 
 .playMenu > .button {
+	display: block;
 	
 	width: 298px;
 	height: 48px;
@@ -31,7 +33,10 @@
 	text-align: center;
 	color: #FFF;
 	line-height: 0px;
+	font-family: "Comic Sans MS", cursive, sans-serif;
 	font-size: 24px;
+
+	text-decoration: none;
 	
 	background-color: #505050;
 	border: solid 2px #CCC;
@@ -40,7 +45,7 @@
 }
 
 .playMenu > .button:hover {
-	
+
 	background-color: #808080;
 }
 

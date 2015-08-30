@@ -15,6 +15,7 @@
 		
 </script>
 
+<!--<script src="jquery-2.1.x.js"/>-->
 <script src="ces-browser.js"></script>
 <script src="pixi.js"></script>
 <script src="Keyboard.js"></script>
@@ -27,15 +28,15 @@
 <script src="Connection.js"></script>
 <script src="GamePrototype.js"></script>
 
-<div class = "playMenu">
+<div class = "playMenu" id = "playMenu">
 	<h2> Welcome! </h2>
-	<button class = "button">
-		Play!
-	</button>
-	<button class = "button">
-		Something!
+	<div class = "button" onclick = "$('#playMenu').remove();">
+		<p>Play!</p>
+	</div>
+	<a class = "button" href = "phptest.php?action=hello">
+		<p>Something!</p>
 	</a>
-	<button class = "button">
-		Something else!
-	</button>
+	<a class = "button" href = "phptest.php?action=error404">
+		<p>Something else!</p>
+	</a>
 </div>
