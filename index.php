@@ -35,12 +35,16 @@
 		
 	</script>
 
+	<script src="ces-browser.js"></script>
 	<script src="pixi.js"></script>
 	<script src="Keyboard.js"></script>
 	<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+    <script src="components/Physics.js"></script>
+    <script src="components/Player.js"></script>
+    <script src="components/ControlledPlayer.js"></script>
+    <script src="systems/PhysicsSystem.js"></script>
+    <script src="systems/ControlSystem.js"></script>
     <script src="Connection.js"></script>
-    <script src="components/PhysicsComponent.js"></script>
-    <script src="Entity.js"></script>
     <script src="GamePrototype.js"></script>
     
 
