@@ -24,14 +24,33 @@ GP.preload = function preload() {
 	GP.textures.cheese = PIXI.Texture.fromImage('textures/cheese.png');
 	GP.textures.worker = PIXI.Texture.fromImage('textures/worker.png');
 	GP.textures.ground = PIXI.Texture.fromImage('textures/ground.png');
+	GP.textures.block = PIXI.Texture.fromImage('textures/block.png');
 }
 
 GP.create = function create() {
+	
+	// Initialize window
+	GP.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0x000000}, true, false);
+	document.body.appendChild(GP.renderer.view);
+	GP.stage = new PIXI.Container();
+	GP.camera = new Camera(GP.stage);
+	GP.connection = new GP.connection(GP.ip, 3000);
+	GP.camera.zoom = 1.0;
+	
+	GP.tileMap = { 
+		width: 32,
+		height: 32,
+		tiles: []
+	};
+	
+	GP.tileSize = 64;
+	GP._intervalId = setInterval(GP.run, 0);
+	
 	// Initialize tilemap
 	for(var x = 0; x < GP.tileMap.width; ++x) {	
 		for(var y = 0; y < GP.tileMap.height; ++y) {
 			if(x * GP.tileSize % 1024 == 0 && y * GP.tileSize % 1024 == 0) {
-				var sprite = new PIXI.Sprite(GP.textures.ground);
+				var sprite = new PIXI.Sprite(GP.textures.block);
 				sprite.position.x = x * GP.tileSize;
 				sprite.position.y = y * GP.tileSize;
 				GP.stage.addChild(sprite);
@@ -128,21 +147,5 @@ GP.despawnPlayer = function despawnPlayer(name) {
 	delete(GP.players[name]);
 }
 
-GP.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0x000000}, true, false);
-document.body.appendChild(GP.renderer.view);
-GP.stage = new PIXI.Container();
-GP.camera = new Camera(GP.stage);
-GP.connection = new GP.connection(GP.ip, 3000);
-GP.camera.zoom = 1.0;
-
-GP.tileMap = { 
-	width: 32,
-	height: 32,
-	tiles: []
-};
-
-GP.tileSize = 64;
-
 GP.preload();
 GP.create();
-GP._intervalId = setInterval(GP.run, 0);
