@@ -10,6 +10,7 @@
 	border-radius: 32px;
 	position: relative;
 	display: block;
+	text-align: center;
 	
 	
 	/* Make text unselectable. */
@@ -20,6 +21,10 @@
 	/* Rules below not implemented in browsers yet */
 	-o-user-select: none;
 	user-select: none;
+}
+
+.playMenu >  h2 {
+	font-size: 18px;
 }
 
 .playMenu > .button {
