@@ -34,7 +34,9 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				physics.vy = 150;
 			}
 		
-			var angle = Math.atan2(physics.y - mousey, physics.x - mousex);
+			var angle = Math.atan2(physics.y - (GP.camera.pos.y + mousey), physics.x - (GP.camera.pos.x + mousex));
+			//console.log("xpos " + physics.x + " ypos " + physics.y + " camx " + GP.camera.frustrum.x + " camy " + GP.camera.frustrum.y);
+			//console.log(GP.camera);
 			physics.rotation = angle + Math.PI;
 			player.sprite.rotation = physics.rotation;
 			
@@ -45,7 +47,10 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			|| controlledplayer.oldvy != physics.vy
 			|| controlledplayer.oldRot != Math.round(physics.rotation * 100) / 100) {
 				GP.sendUpdatePacket();
-			}		
+			}	
+			
+			GP.camera.target.x = physics.x;
+			GP.camera.target.y = physics.y;	
 			
         });
     }

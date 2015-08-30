@@ -54,7 +54,7 @@ io.on('connection', function(socket) {
 					y: player.y,
 					vx: player.vx,
 					vy: player.vy,
-					rotation: data.rotation
+					rotation: player.rotation
 				});
 			}
 		});
