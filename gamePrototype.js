@@ -29,51 +29,14 @@ GP.preload = function preload() {
 }
 
 GP.create = function create() {
+	GP.connection = new GP.connection(GP.ip, 3000);
 	
 	// Initialize window
 	GP.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0x000000}, true, false);
 	document.body.appendChild(GP.renderer.view);
 	GP.stage = new PIXI.Container();
-	GP.camera = new Camera(GP.stage);
-	GP.connection = new GP.connection(GP.ip, 3000);
+	GP.camera = new Camera(GP.stage);	
 	GP.camera.zoom = 1.0;
-	
-	GP.tileMap = { 
-		width: 32,
-		height: 32,
-		tiles: []
-	};
-	
-	GP.tileSize = 64;
-	
-	GP.camera.target.x = GP.tileMap.width * GP.tileSize - GP.camera.viewport.width / 2;
-	GP.camera.target.y = GP.tileMap.height * GP.tileSize - GP.camera.viewport.height / 2;
-	
-	// Initialize tilemap
-	for(var x = 0; x < GP.tileMap.width; ++x) {	
-		for(var y = 0; y < GP.tileMap.height; ++y) {
-			if(x * GP.tileSize % 1024 == 0 && y * GP.tileSize % 1024 == 0) {
-				var sprite = new PIXI.Sprite(GP.textures.ground);
-				sprite.position.x = x * GP.tileSize;
-				sprite.position.y = y * GP.tileSize;
-				GP.stage.addChild(sprite);
-			}
-		}
-	}
-	
-	// Draw map border
-	for(var x = -1024; x <= GP.tileMap.width * GP.tileSize; ++x) {	
-		for(var y = -1024; y <= GP.tileMap.height * GP.tileSize; ++y) {
-			if(x == -1024 || x == GP.tileMap.width * GP.tileSize || y == -1024 || y ==  GP.tileMap.height * GP.tileSize) {
-				if(x % 1024 == 0 && y % 1024 == 0) {
-					var sprite = new PIXI.Sprite(GP.textures.block);
-					sprite.position.x = x;
-					sprite.position.y = y;
-					GP.stage.addChild(sprite);
-				}
-			}
-		}
-	}
 	
 	/*for(var x = 0; x < GP.tileMap.width; ++x) {	
 		GP.tileMap[x] = [];		

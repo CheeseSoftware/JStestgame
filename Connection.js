@@ -7,9 +7,43 @@ GP.connection = function Connection (ip, port){
 		console.log('[Socket.IO]', "Connected: " + socket.connected);
 	});
 
-	socket.on('welcome', function(data) {
-		console.log(data.message);
-		socket.emit('i am client', {data: 'foo!', id: data.id});
+	socket.on('init', function(data) {	
+		GP.tileMap = { 
+			width: data.mapWidth,
+			height: data.mapHeight,
+			tiles: []
+		};
+		
+		GP.tileSize = data.tileSize;
+		
+		GP.camera.target.x = GP.tileMap.width * GP.tileSize - GP.camera.viewport.width / 2;
+		GP.camera.target.y = GP.tileMap.height * GP.tileSize - GP.camera.viewport.height / 2;
+		
+		// Draw map ground
+		for(var x = 0; x < GP.tileMap.width; ++x) {	
+			for(var y = 0; y < GP.tileMap.height; ++y) {
+				if(x * GP.tileSize % 1024 == 0 && y * GP.tileSize % 1024 == 0) {
+					var sprite = new PIXI.Sprite(GP.textures.ground);
+					sprite.position.x = x * GP.tileSize;
+					sprite.position.y = y * GP.tileSize;
+					GP.stage.addChild(sprite);
+				}
+			}
+		}
+		
+		// Draw map border
+		for(var x = -1024; x <= GP.tileMap.width * GP.tileSize; ++x) {	
+			for(var y = -1024; y <= GP.tileMap.height * GP.tileSize; ++y) {
+				if(x == -1024 || x == GP.tileMap.width * GP.tileSize || y == -1024 || y ==  GP.tileMap.height * GP.tileSize) {
+					if(x % 1024 == 0 && y % 1024 == 0) {
+						var sprite = new PIXI.Sprite(GP.textures.block);
+						sprite.position.x = x;
+						sprite.position.y = y;
+						GP.stage.addChild(sprite);
+					}
+				}
+			}
+		}
 	});
 	
 	socket.on('error', console.error.bind(console));
@@ -30,7 +64,7 @@ GP.connection = function Connection (ip, port){
 	});
 	
 	socket.on('playerinit', function(data) {
-		GP.player = GP.spawnPlayer("player" + Math.round(Math.random() * 65536));
+		GP.player = GP.spawnPlayer(data.name);
 		GP.player.addComponent(new ECS.Components.ControlledPlayer());
 	
 		var player = GP.player.getComponent('player');

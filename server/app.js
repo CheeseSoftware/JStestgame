@@ -8,8 +8,14 @@ var io = require('socket.io').listen(app);
 
 var players = {};
 
+var mapData = {
+	width: 32,
+	height: 32,
+	tileSize: 64
+};
+
 io.on('connection', function(socket) {
-    socket.emit('welcome', { message: 'Welcome!', id: socket.id });
+    socket.emit('init', { mapWidth: mapData.width, mapHeight: mapData.height, tileSize: mapData.tileSize });
 	io.sockets.emit('message', "A client has joined with IP " + socket.request.connection.remoteAddress);
 	
 	socket.on('disconnect', function(){
@@ -35,10 +41,11 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('playerinit', function(data) {
-		data.name = socket.id;
+		data.name = "player" + Math.round(Math.random() * 65536);
 		console.log(data.name + " has connected.");
-		players[socket.id] = { name: data.name, x: 0, y: 0, rotation: 0 };
+		players[socket.id] = { name: data.name, x: 128, y: 128, rotation: 0 };
 		socket.emit('playerinit', {
+			name: data.name,
 			x: players[socket.id].x,
 			y: players[socket.id].y,
 			rotation: players[socket.id].rotation
