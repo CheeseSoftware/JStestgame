@@ -11,6 +11,8 @@ GP.PagedArray2D = function(sizeX, sizeY, defaultValue, defaultPageData) {
 GP.Page2D = function(sizeX, sizeY, defaultValue, pageData) {
 	this.data = pageData;
 	this.array = array(sizeX * sizeY);
+	this.sizeX = sizeX;
+	this.sizeY = sizeY;
 	for(var y = 0; y < sizeY; ++y) {
 		for (var x = 0; x < sizeX; ++x) {
 			this.array[y*sizeX + x] = defaultValue;
@@ -60,9 +62,22 @@ GP.PagedArray2D.prototype.set(x, y, value) {
 	if (!this.pages.hashOwnProperty(pagePosString)) {
 		Page2D page = Page2D(this.sizeX, this.sizeY, this.defaultValue);
 		page.set(localX, localY, value);
-		pages[pagePosString] = page;
+		this.pages[pagePosString] = page;
 	}
 	else {
-		pages[pagePosString].set(localX, localY, value);
+		this.pages[pagePosString].set(localX, localY, value);
 	}
+}
+
+GP.PagedArray2D.prototype.getPage(pageX, pageY) {
+	var pagePosString = pageX + "," + pageY;
+	return this.pages[pagePosString];
+}
+
+GP.Page2D.prototype.get(x, y) {
+	return this.array[x+y*this.sizeX];
+}
+
+GP.Page2D.prototype.set(x, y, value) {
+	this.array[x+y*this.sizeX] = value;
 }
