@@ -129,7 +129,7 @@
 	
 
 	$first = rand(0, count($messageArray)-1);
-	for($i = 0; $i < rand(4, 6); ++$i) {
-		echo "<h2>" . $messageArray[($first+$i)%count($messageArray)] . "</h2>";
+	for($i = 0; $i < 4; ++$i) {
+		echo "<i><h3>" . $messageArray[($first+$i)%count($messageArray)] . "</h3></i>";
 	}
 ?>
