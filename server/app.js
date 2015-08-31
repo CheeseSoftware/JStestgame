@@ -18,6 +18,19 @@ io.on('connection', function(socket) {
     socket.emit('init', { mapWidth: mapData.width, mapHeight: mapData.height, tileSize: mapData.tileSize });
 	io.sockets.emit('message', "A client has joined with IP " + socket.request.connection.remoteAddress);
 	
+	// Send existing players to the new player
+	Object.keys(players).forEach(function (key) { 
+		var player = players[key]
+		socket.emit('playerjoin', {
+			name: player.name,
+			x: player.x,
+			y: player.y,
+			vx: player.vx,
+			vy: player.vy,
+			rotation: player.rotation
+		});
+	});
+	
 	socket.on('disconnect', function(){
 		if(players[socket.id] != undefined) {
 			console.log(players[socket.id].name + ' has disconnected.');
@@ -56,21 +69,11 @@ io.on('connection', function(socket) {
 			y: players[socket.id].y,
 			rotation: players[socket.id].rotation
 		});
-		
-		// Send existing players to the new player
-		Object.keys(players).forEach(function (key) { 
-    		var player = players[key]
-			if(player.name != data.name) { //Don't send his own info
-				socket.emit('playerjoin', {
-					name: player.name,
-					x: player.x,
-					y: player.y,
-					vx: player.vx,
-					vy: player.vy,
-					rotation: player.rotation
-				});
-			}
-		});
+	});
+	
+	socket.on('chatmessage', function(data) {
+		io.sockets.emit('chatmessage', { message: data.message });
+		console.log(data.message);
 	});
 });
 

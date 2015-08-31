@@ -93,6 +93,10 @@ GP.connection = function Connection (ip, port){
 		GP.despawnPlayer(data.name);
 	});
 	
+	socket.on('chatmessage', function(data) {
+		addChat(data.message);
+	});
+	
     return this;
 };
 

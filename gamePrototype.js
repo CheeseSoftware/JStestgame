@@ -17,8 +17,6 @@ function resize() {
 
 }
 
-GP.players = {};
-
 GP.preload = function preload() {
 	GP.textures = {};
 	GP.textures.cheese = PIXI.Texture.fromImage('textures/cheese.png');
@@ -27,6 +25,8 @@ GP.preload = function preload() {
 	GP.textures.block = PIXI.Texture.fromImage('textures/block.png');
 	GP.textures.rock = PIXI.Texture.fromImage('textures/rock.png');
 }
+
+GP.players = {};
 
 GP.create = function create() {
 	GP.connection = new GP.connection(GP.ip, 3000);
@@ -48,7 +48,6 @@ GP.create = function create() {
 			GP.tileMap[x][y] = { sprite: sprite, health: 100};
 		}
 	}*/
-	
 	
 	GP.entityWorld = new CES.World();
 	// Add more systems here!
