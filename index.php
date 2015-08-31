@@ -11,7 +11,7 @@
 	$tempAction = basename($tempAction);
 	
 	if (!in_array($tempAction, $disallowedPaths) &&
-		file_exists("php/$tempAction.htm"))
+		file_exists("php/$tempAction.php"))
 	{
 		$action = $tempAction;
 	}
@@ -20,7 +20,7 @@
 	}
 	
 	
-	include("php/header.htm");
-	include("php/$action.htm");
-	include("php/footer.htm");
+	include("php/header.php");
+	include("php/$action.php");
+	include("php/footer.php");
 ?>

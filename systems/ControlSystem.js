@@ -14,24 +14,24 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			controlledplayer.oldvy = physics.vy;
 			controlledplayer.oldRot = Math.round(physics.rotation * 100) / 100;
 			
-			physics.vx = 0;
-			physics.vy = 0;
+			//physics.vx = 0;
+			//physics.vy = 0;
 		
 			if (GP.keys.left.isDown)
 			{
-				physics.vx = -150;
+				physics.vx += -20;
 			}
 			else if (GP.keys.right.isDown)
 			{
-				physics.vx = 150;
+				physics.vx += 20;
 			}
 			if (GP.keys.up.isDown)
 			{
-				physics.vy = -150;
+				physics.vy += -20;
 			}
 			else if (GP.keys.down.isDown)
 			{
-				physics.vy = 150;
+				physics.vy += 20;
 			}
 		
 			var angle = Math.atan2(physics.y - (GP.camera.pos.y + mousey), physics.x - (GP.camera.pos.x + mousex));
