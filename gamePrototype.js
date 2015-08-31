@@ -12,8 +12,8 @@ function onMouseUpdate(e) {
 window.addEventListener('resize', resize, false);
 function resize() {
 	GP.renderer.resize(window.innerWidth, window.innerHeight);
-	GP.camera.viewport.width = window.innerWidth;
-	GP.camera.viewport.height = window.innerHeight;
+	GP.camera.width = window.innerWidth;
+	GP.camera.height = window.innerHeight;
 
 }
 
