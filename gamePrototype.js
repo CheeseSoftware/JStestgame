@@ -44,7 +44,9 @@ GP.create = function create() {
 	};
 	
 	GP.tileSize = 64;
-	GP._intervalId = setInterval(GP.run, 0);
+	
+	GP.camera.target.x = GP.tileMap.width * GP.tileSize - GP.camera.viewport.width / 2;
+	GP.camera.target.y = GP.tileMap.height * GP.tileSize - GP.camera.viewport.height / 2;
 	
 	// Initialize tilemap
 	for(var x = 0; x < GP.tileMap.width; ++x) {	
@@ -81,20 +83,8 @@ GP.create = function create() {
 	GP.keys.up = GP.keyboard(38);
 	GP.keys.right = GP.keyboard(39);
 	GP.keys.down = GP.keyboard(40);
-
-	GP.player = GP.spawnPlayer("player" + Math.round(Math.random() * 65536));
-	GP.player.addComponent(new ECS.Components.ControlledPlayer());
-
-	var player = GP.player.getComponent('player');
-	var physics = GP.player.getComponent('physics');
-	console.log(player.username);
 	
-	GP.connection.send('playerinit', { 
-		name: player.username,
-		x: physics.x,
-		y: physics.y,
-		rotation: physics.rotation
-	});
+	GP._intervalId = setInterval(GP.run, 0);
 }
 
 var lastUpdate = Date.now();
@@ -137,6 +127,12 @@ GP.spawnPlayer = function spawnPlayer(name) {
 	GP.stage.addChild(text);
 	GP.players[name] = player;
 	return player;
+}
+
+GP.spawnMainPlayer = function spawnMainPlayer() {
+	GP.connection.send('playerinit', { 
+		name: "player username that will be selected when accounts exist"
+	});
 }
 
 GP.despawnPlayer = function despawnPlayer(name) {

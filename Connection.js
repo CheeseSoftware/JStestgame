@@ -29,6 +29,17 @@ GP.connection = function Connection (ip, port){
 		GP.players[data.name] = player;
 	});
 	
+	socket.on('playerinit', function(data) {
+		GP.player = GP.spawnPlayer("player" + Math.round(Math.random() * 65536));
+		GP.player.addComponent(new ECS.Components.ControlledPlayer());
+	
+		var player = GP.player.getComponent('player');
+		var physics = GP.player.getComponent('physics');
+		physics.x = data.x;
+		physics.y = data.y;
+		physics.rotation = data.rotation;
+	});
+	
 	socket.on('playerupdate', function(data) {
 		var player = GP.players[data.name];
 		if(player != undefined) {

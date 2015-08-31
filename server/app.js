@@ -35,13 +35,19 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('playerinit', function(data) {
+		data.name = socket.id;
 		console.log(data.name + " has connected.");
-		players[socket.id] = { name: data.name, x: data.x, y: data.y, rotation: data.rotation };
+		players[socket.id] = { name: data.name, x: 0, y: 0, rotation: 0 };
+		socket.emit('playerinit', {
+			x: players[socket.id].x,
+			y: players[socket.id].y,
+			rotation: players[socket.id].rotation
+		});
 		socket.broadcast.emit('playerjoin', {
 			name: data.name,
-			x: data.x,
-			y: data.y,
-			rotation: data.rotation
+			x: players[socket.id].x,
+			y: players[socket.id].y,
+			rotation: players[socket.id].rotation
 		});
 		
 		// Send existing players to the new player
