@@ -25,6 +25,7 @@ GP.preload = function preload() {
 	GP.textures.worker = PIXI.Texture.fromImage('textures/worker.png');
 	GP.textures.ground = PIXI.Texture.fromImage('textures/ground.png');
 	GP.textures.block = PIXI.Texture.fromImage('textures/block.png');
+	GP.textures.rock = PIXI.Texture.fromImage('textures/rock.png');
 }
 
 GP.create = function create() {
@@ -52,10 +53,24 @@ GP.create = function create() {
 	for(var x = 0; x < GP.tileMap.width; ++x) {	
 		for(var y = 0; y < GP.tileMap.height; ++y) {
 			if(x * GP.tileSize % 1024 == 0 && y * GP.tileSize % 1024 == 0) {
-				var sprite = new PIXI.Sprite(GP.textures.block);
+				var sprite = new PIXI.Sprite(GP.textures.ground);
 				sprite.position.x = x * GP.tileSize;
 				sprite.position.y = y * GP.tileSize;
 				GP.stage.addChild(sprite);
+			}
+		}
+	}
+	
+	// Draw map border
+	for(var x = -1024; x <= GP.tileMap.width * GP.tileSize; ++x) {	
+		for(var y = -1024; y <= GP.tileMap.height * GP.tileSize; ++y) {
+			if(x == -1024 || x == GP.tileMap.width * GP.tileSize || y == -1024 || y ==  GP.tileMap.height * GP.tileSize) {
+				if(x % 1024 == 0 && y % 1024 == 0) {
+					var sprite = new PIXI.Sprite(GP.textures.block);
+					sprite.position.x = x;
+					sprite.position.y = y;
+					GP.stage.addChild(sprite);
+				}
 			}
 		}
 	}

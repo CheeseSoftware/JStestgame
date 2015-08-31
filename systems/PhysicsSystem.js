@@ -6,10 +6,18 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
         entities.forEach(function (entity) {
 			physics = entity.getComponent('physics');
             player = entity.getComponent('player');
+			
+			var oldX = physics.x;
+			var oldY = physics.y;
 			//console.log(dt);
 			var speed = 0.001;
 			physics.x += physics.vx * dt * speed;
 			physics.y += physics.vy * dt * speed;
+			
+			if(physics.x < player.sprite.width / 4 || physics.x > GP.tileMap.width * GP.tileSize - player.sprite.width / 4)
+				physics.x = oldX;
+			if(physics.y < player.sprite.width / 4 || physics.y > GP.tileMap.height * GP.tileSize - player.sprite.width / 4)
+				physics.y = oldY;	
 			
 			if(player != undefined) {
 				player.text.x = physics.x - player.text.width/2;
