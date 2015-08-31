@@ -1,66 +1,56 @@
-GP.PagedArray2D = function(sizeX, sizeY, defaultValue, defaultPageData) {
+PagedArray2D = function(sizeX, sizeY, defaultValue) {
 
 	this.sizeX = sizeX;
 	this.sizeY = sizeY;
 	this.defaultValue = defaultValue;
-	this.defaultPageData = defaultPageData;
 	this.pages = {};
-	this.pages['0,8'] = Page2D(this.sizex, this.sizeY, defaultValue, defaultPageData);
 }
 
-GP.Page2D = function(sizeX, sizeY, defaultValue, pageData) {
-	this.data = pageData;
-	this.array = array(sizeX * sizeY);
-	this.sizeX = sizeX;
-	this.sizeY = sizeY;
-	for(var y = 0; y < sizeY; ++y) {
-		for (var x = 0; x < sizeX; ++x) {
-			this.array[y*sizeX + x] = defaultValue;
-		}
-	}
-	
-}
-
-GP.PagedArray2D.prototype.get(x, y, value) {
-	
-	var pageX = x/this.sizeX;
-	var pageY = y/this.sizeY;
+PagedArray2D.prototype.get = function(x, y, value) {
 	var localX = x%this.sizeX;
 	var localY = y%this.sizeY;
+	var pageX = (x-localX)/this.sizeX;
+	var pageY = (y-localY)/this.sizeY;
 	
 	// Fix indexing of negative values:
-	if (x < 0)
+	if (x < 0) {
 		pageX--;
-	if (x < 0)
+		localX = (localX+pageX*this.sizeX)%this.sizeX;
+	}
+	if (x < 0) {
 		pageY--;
-	
+		localY = (localY+pageY*this.sizeY)%this.sizeY;
+	}
 	
 	var pagePosString = pageX + "," + pageY;
 	
-	if (!this.pages.hashOwnProperty(pagePosString)) {
+	if (this.pages[pagePosString] == undefined) {
 		return this.defaultValue;
 	}
 	
-	return pages[pagePosString].get(localX, localY);
+	return this.pages[pagePosString].get(localX, localY);
 }
 
-GP.PagedArray2D.prototype.set(x, y, value) {
-	
-	var pageX = x/this.sizeX;
-	var pageY = y/this.sizeY;
+PagedArray2D.prototype.set = function(x, y, value) {
 	var localX = x%this.sizeX;
 	var localY = y%this.sizeY;
+	var pageX = (x-localX)/this.sizeX;
+	var pageY = (y-localY)/this.sizeY;
 	
 	// Fix indexing of negative values:
-	if (x < 0)
+	if (x < 0) {
 		pageX--;
-	if (x < 0)
+		localX = (localX+pageX*this.sizeX)%this.sizeX;
+	}
+	if (x < 0) {
 		pageY--;
+		localY = (localY+pageY*this.sizeY)%this.sizeY;
+	}
 		
 	var pagePosString = pageX + "," + pageY;
 	
-	if (!this.pages.hashOwnProperty(pagePosString)) {
-		Page2D page = Page2D(this.sizeX, this.sizeY, this.defaultValue);
+	if (this.pages[pagePosString] == undefined) {
+		var page = new Page2D(this.sizeX, this.sizeY, this.defaultValue);
 		page.set(localX, localY, value);
 		this.pages[pagePosString] = page;
 	}
@@ -69,15 +59,29 @@ GP.PagedArray2D.prototype.set(x, y, value) {
 	}
 }
 
-GP.PagedArray2D.prototype.getPage(pageX, pageY) {
+PagedArray2D.prototype.getPage = function(pageX, pageY) {
 	var pagePosString = pageX + "," + pageY;
 	return this.pages[pagePosString];
 }
 
-GP.Page2D.prototype.get(x, y) {
-	return this.array[x+y*this.sizeX];
+Page2D = function(sizeX, sizeY, defaultValue) {
+	this.data = Array(sizeX * sizeY);
+	this.sizeX = sizeX;
+	this.sizeY = sizeY;
+	for(var y = 0; y < sizeY; ++y) {
+		for (var x = 0; x < sizeX; ++x) {
+			this.data[y*sizeX + x] = defaultValue;
+		}
+	}
+	
 }
 
-GP.Page2D.prototype.set(x, y, value) {
-	this.array[x+y*this.sizeX] = value;
+
+
+Page2D.prototype.get = function(x, y) {
+	return this.data[x+y*this.sizeX];
+}
+
+Page2D.prototype.set = function(x, y, value) {
+	this.data[x+y*this.sizeX] = value;
 }
