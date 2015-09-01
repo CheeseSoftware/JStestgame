@@ -17,20 +17,21 @@
 
 <!-- libraries -->
 <!--<script src="jquery-2.1.x.js"></script>-->
-<script src="ces-browser.js"></script>
-<script src="pixi.js"></script>
-<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+<script src="game/ces-browser.js"></script>
+<script src="game/pixi.js"></script>
+<script src="game/https://cdn.socket.io/socket.io-1.3.5.js"></script>
 
 <!-- classes -->
-<script src="PagedArray2D.js"></script>
-<script src="components/Physics.js"></script>
-<script src="components/Player.js"></script>
-<script src="components/ControlledPlayer.js"></script>
-<script src="systems/PhysicsSystem.js"></script>
-<script src="systems/ControlSystem.js"></script>
+<script src="game/Camera.js"></script>
+<script src="game/PagedArray2D.js"></script>
+<script src="game/components/Physics.js"></script>
+<script src="game/components/Player.js"></script>
+<script src="game/components/ControlledPlayer.js"></script>
+<script src="game/systems/PhysicsSystem.js"></script>
+<script src="game/systems/ControlSystem.js"></script>
 
 <!-- game -->
-<script src="GamePrototype.js"></script>
+<script src="game/GamePrototype.js"></script>
 <script>
 	var game = new GamePrototype();
 </script>

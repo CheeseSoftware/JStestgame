@@ -15,23 +15,19 @@ GamePrototype = function() {
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
 	
-	this.keys = {};
-	this.keys.left = GP.keyboard(37);
-	this.keys.up = GP.keyboard(38);
-	this.keys.right = GP.keyboard(39);
-	this.keys.down = GP.keyboard(40);
-	
 	this.mousex = null;
 	this.mousey = null;
 	document.addEventListener('mousemove', this.onMouseUpdate, false);
 	document.addEventListener('mouseenter', this.onMouseUpdate, false);
 	
-	window.addEventListener('resize', this.resize, false);
+	window.addEventListener('resize', this.resize.bind(this), false);
 	
 	this.players = {};
 	this.lastUpdate = Date.now();
 	
 	this._intervalId = setInterval(function(){game.run()}, 0);
+	
+	this.spawnPlayer("Karl");
 }
 
 GamePrototype.prototype.onMouseUpdate = function (e) {
@@ -92,8 +88,8 @@ GamePrototype.prototype.spawnPlayer = function(name) {
 	var sprite = new PIXI.Sprite(this.textures.worker);
 	sprite.anchor.x = 0.5;
 	sprite.anchor.y = 0.5;
-	sprite.position.x = Math.random() * this.tileMap.width * this.tileSize;
-	sprite.position.y = Math.random() * this.tileMap.height * this.tileSize;	
+	sprite.position.x = 0.5;//Math.random() * this.tileMap.width * this.tileSize;
+	sprite.position.y = 0.5;//Math.random() * this.tileMap.height * this.tileSize;	
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
 	var player = new CES.Entity();

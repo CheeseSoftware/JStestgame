@@ -21,10 +21,10 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			physics.vx = physics.vx + speedSpeed * -physics.vx;
 			physics.vy = physics.vy + speedSpeed * -physics.vy;
 			
-			if(physics.x < player.sprite.width / 4 || physics.x > GP.tileMap.width * GP.tileSize - player.sprite.width / 4)
+			/*if(physics.x < player.sprite.width / 4 || physics.x > GP.tileMap.width * GP.tileSize - player.sprite.width / 4)
 				physics.x = oldX;
 			if(physics.y < player.sprite.width / 4 || physics.y > GP.tileMap.height * GP.tileSize - player.sprite.width / 4)
-				physics.y = oldY;	
+				physics.y = oldY;	*/
 			
 			if(player != undefined) {
 				player.text.x = physics.x - player.text.width/2;
