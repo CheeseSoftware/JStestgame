@@ -1,95 +1,107 @@
-var mousex = null;
-var mousey = null;
+GamePrototype = function() {
+	this.preload();
+	this.connection = new Connection(GP.ip, 3000);
+	
+	// Initialize window
+	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000}, true, false);
+	this.renderer.clearBeforeRender = false;
+	document.body.appendChild(this.renderer.view);
+	this.stage = new PIXI.Container();
+	this.camera = new Camera(this.stage);	
+	this.camera.zoom = 1.0;
+	
+	/*for(var x = 0; x < this.tileMap.width; ++x) {	
+		this.tileMap[x] = [];		
+		for(var y = 0; y < this.tileMap.height; ++y) {
+			var sprite = new PIXI.Sprite(this.textures.cheese);
+			sprite.position.x = x * this.tileSize;
+			sprite.position.y = y * this.tileSize;
+			this.stage.addChild(sprite);
+			this.tileMap[x][y] = { sprite: sprite, health: 100};
+		}
+	}*/
+	
+	this.entityWorld = new CES.World();
+	// Add more systems here!
+	
+	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
+	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
+	
+	this.keys = {};
+	this.keys.left = GP.keyboard(37);
+	this.keys.up = GP.keyboard(38);
+	this.keys.right = GP.keyboard(39);
+	this.keys.down = GP.keyboard(40);
+	
+	this._intervalId = setInterval(function(){game.run()}, 0);
+	
+	this.mousex = null;
+	this.mousey = null;
+	document.addEventListener('mousemove', this.onMouseUpdate, false);
+	document.addEventListener('mouseenter', this.onMouseUpdate, false);
+	
+	window.addEventListener('resize', this.resize, false);
+	
+	this.players = {};
+	
+	this.lastUpdate = Date.now();
+	
+	
+}
 
-document.addEventListener('mousemove', onMouseUpdate, false);
-document.addEventListener('mouseenter', onMouseUpdate, false);
 
-function onMouseUpdate(e) {
+
+
+
+GamePrototype.prototype.onMouseUpdate = function (e) {
 	mousex = e.pageX;
 	mousey = e.pageY;
 }
 
-window.addEventListener('resize', resize, false);
-function resize() {
-	GP.renderer.resize(window.innerWidth, window.innerHeight);
-	GP.camera.width = window.innerWidth;
-	GP.camera.height = window.innerHeight;
+
+GamePrototype.prototype.resize = function() {
+	this.renderer.resize(window.innerWidth, window.innerHeight);
+	this.camera.width = window.innerWidth;
+	this.camera.height = window.innerHeight;
 
 }
 
-GP.preload = function preload() {
-	GP.textures = {};
-	GP.textures.cheese = PIXI.Texture.fromImage('textures/cheese.png');
-	GP.textures.worker = PIXI.Texture.fromImage('textures/worker.png');
-	GP.textures.ground = PIXI.Texture.fromImage('textures/ground.png');
-	GP.textures.block = PIXI.Texture.fromImage('textures/block.png');
-	GP.textures.rock = PIXI.Texture.fromImage('textures/rock.png');
+GamePrototype.prototype.preload = function() {
+	this.textures = {};
+	this.textures.cheese = PIXI.Texture.fromImage('textures/cheese.png');
+	this.textures.worker = PIXI.Texture.fromImage('textures/worker.png');
+	this.textures.ground = PIXI.Texture.fromImage('textures/ground.png');
+	this.textures.block = PIXI.Texture.fromImage('textures/block.png');
+	this.textures.rock = PIXI.Texture.fromImage('textures/rock.png');
 }
 
-GP.players = {};
 
-GP.create = function create() {
-	GP.connection = new GP.connection(GP.ip, 3000);
-	
-	// Initialize window
-	GP.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000}, true, false);
-	GP.renderer.clearBeforeRender = false;
-	document.body.appendChild(GP.renderer.view);
-	GP.stage = new PIXI.Container();
-	GP.camera = new Camera(GP.stage);	
-	GP.camera.zoom = 1.0;
-	
-	/*for(var x = 0; x < GP.tileMap.width; ++x) {	
-		GP.tileMap[x] = [];		
-		for(var y = 0; y < GP.tileMap.height; ++y) {
-			var sprite = new PIXI.Sprite(GP.textures.cheese);
-			sprite.position.x = x * GP.tileSize;
-			sprite.position.y = y * GP.tileSize;
-			GP.stage.addChild(sprite);
-			GP.tileMap[x][y] = { sprite: sprite, health: 100};
-		}
-	}*/
-	
-	GP.entityWorld = new CES.World();
-	// Add more systems here!
-	
-	GP.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
-	GP.entityWorld.addSystem(new ECS.Systems.ControlSystem());
-	
-	GP.keys = {};
-	GP.keys.left = GP.keyboard(37);
-	GP.keys.up = GP.keyboard(38);
-	GP.keys.right = GP.keyboard(39);
-	GP.keys.down = GP.keyboard(40);
-	
-	GP._intervalId = setInterval(GP.run, 0);
-}
 
-var lastUpdate = Date.now();
-GP.run = (function() {
+
+GamePrototype.prototype.run = function() {
     var now = Date.now();
-    var dt = now - lastUpdate;
-	lastUpdate = Date.now();
+    var dt = now - this.lastUpdate;
+	this.lastUpdate = Date.now();
 
 	
-    GP.entityWorld.update(dt);
-	GP.camera.update(dt);
+    this.entityWorld.update(dt);
+	this.camera.update(dt);
 	
 	
-	var gl = GP.renderer.gl;
-	GP.renderer.setRenderTarget(GP.renderer.renderTarget);
+	var gl = this.renderer.gl;
+	this.renderer.setRenderTarget(this.renderer.renderTarget);
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	
 	// TODO: Render terrain.
 	
-	GP.renderer.render(GP.camera);
+	this.renderer.render(this.camera);
 	
-});
+};
 
-GP.sendUpdatePacket = function sendUpdatePacket() {
-	var physics = GP.player.getComponent('physics');
-	var player = GP.player.getComponent('player');
-	GP.connection.send('playerupdate', { 
+GamePrototype.prototype.sendUpdatePacket = function() {
+	var physics = this.player.getComponent('physics');
+	var player = this.player.getComponent('player');
+	this.connection.send('playerupdate', { 
 		name: player.username,
 		x: physics.x,
 		y: physics.y,
@@ -99,37 +111,36 @@ GP.sendUpdatePacket = function sendUpdatePacket() {
 	});
 }
 
-GP.spawnPlayer = function spawnPlayer(name) {
-	var sprite = new PIXI.Sprite(GP.textures.worker);
+GamePrototype.prototype.spawnPlayer = function(name) {
+	var sprite = new PIXI.Sprite(this.textures.worker);
 	sprite.anchor.x = 0.5;
 	sprite.anchor.y = 0.5;
-	sprite.position.x = Math.random() * GP.tileMap.width * GP.tileSize;
-	sprite.position.y = Math.random() * GP.tileMap.height * GP.tileSize;	
+	sprite.position.x = Math.random() * this.tileMap.width * this.tileSize;
+	sprite.position.y = Math.random() * this.tileMap.height * this.tileSize;	
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
 	var player = new CES.Entity();
 	player.addComponent(new ECS.Components.Player(name, sprite, text));
 	player.addComponent(new ECS.Components.Physics(sprite.position.x, sprite.position.y, 0, 0, 0));
-	GP.entityWorld.addEntity(player);
-	GP.stage.addChild(sprite);
-	GP.stage.addChild(text);
-	GP.players[name] = player;
+	this.entityWorld.addEntity(player);
+	this.stage.addChild(sprite);
+	this.stage.addChild(text);
+	this.players[name] = player;
 	return player;
 }
 
-GP.spawnMainPlayer = function spawnMainPlayer() {
-	GP.connection.send('playerinit', { 
+GamePrototype.prototype.spawnMainPlayer = function() {
+	this.connection.send('playerinit', { 
 		name: "player username that will be selected when accounts exist"
 	});
 }
 
-GP.despawnPlayer = function despawnPlayer(name) {
-	var player = GP.players[name];
+GamePrototype.prototype.despawnPlayer = function(name) {
+	var player = this.players[name];
     var player = player.getComponent('player');
-	GP.stage.removeChild(player.sprite);
-	GP.stage.removeChild(player.text);
-	delete(GP.players[name]);
+	this.stage.removeChild(player.sprite);
+	this.stage.removeChild(player.text);
+	delete(this.players[name]);
 }
 
-GP.preload();
-GP.create();
+

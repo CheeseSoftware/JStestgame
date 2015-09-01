@@ -1,5 +1,4 @@
-
-GP.connection = function Connection (ip, port){
+Connection = function(ip, port){
 	var socket = io('http://' + ip + ':' + port);
 	this.socket = socket;
 	console.log('[Socket.IO]', "Connecting to " + ip + ":" + port);
@@ -7,7 +6,7 @@ GP.connection = function Connection (ip, port){
 		console.log('[Socket.IO]', "Connected: " + socket.connected);
 	});
 
-	socket.on('init', function(data) {	
+	/*socket.on('init', function(data) {	
 		GP.tileMap = { 
 			width: data.mapWidth,
 			height: data.mapHeight,
@@ -29,7 +28,7 @@ GP.connection = function Connection (ip, port){
 					GP.stage.addChild(sprite);
 				}
 			}
-		}*/
+		}* /
 		
 		// Draw map border
 		for(var x = -1024; x <= GP.tileMap.width * GP.tileSize; ++x) {	
@@ -44,7 +43,7 @@ GP.connection = function Connection (ip, port){
 				}
 			}
 		}
-	});
+	});*/
 	
 	socket.on('error', console.error.bind(console));
 	//socket.on('message', console.log.bind(console));
@@ -54,28 +53,28 @@ GP.connection = function Connection (ip, port){
 	});
 	
 	socket.on('playerjoin', function(data) {
-		console.log(data.name + " has connected.");
+		/*console.log(data.name + " has connected.");
 		var player = GP.spawnPlayer(data.name);
 		var physics = player.getComponent("physics");
 		physics.x = data.x;
 		physics.y = data.y;
 		physics.rotation = data.rotation;
-		GP.players[data.name] = player;
+		GP.players[data.name] = player;*/
 	});
 	
 	socket.on('playerinit', function(data) {
-		GP.player = GP.spawnPlayer(data.name);
+		/*GP.player = GP.spawnPlayer(data.name);
 		GP.player.addComponent(new ECS.Components.ControlledPlayer());
 	
 		var player = GP.player.getComponent('player');
 		var physics = GP.player.getComponent('physics');
 		physics.x = data.x;
 		physics.y = data.y;
-		physics.rotation = data.rotation;
+		physics.rotation = data.rotation;*/
 	});
 	
 	socket.on('playerupdate', function(data) {
-		var player = GP.players[data.name];
+		/*var player = GP.players[data.name];
 		if(player != undefined) {
 			var physics = player.getComponent("physics");
 			physics.x = data.x;
@@ -85,12 +84,12 @@ GP.connection = function Connection (ip, port){
 			physics.rotation = data.rotation;
 		}
 		else
-			console.log("undefined");
+			console.log("undefined");*/
 	});
 	
 	socket.on('playerleave', function(data) {
 		console.log(data.name + ' has disconnected.');
-		GP.despawnPlayer(data.name);
+		//GP.despawnPlayer(data.name);
 	});
 	
 	socket.on('chatmessage', function(data) {
@@ -100,6 +99,6 @@ GP.connection = function Connection (ip, port){
     return this;
 };
 
-GP.connection.prototype.send = function send(type, msg) {
+Connection.prototype.send = function send(type, msg) {
 	this.socket.emit(type, msg);
 };

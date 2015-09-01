@@ -34,6 +34,9 @@
 
 <!-- game -->
 <script src="GamePrototype.js"></script>
+<script>
+	var game = new GamePrototype();
+</script>
 
 <div class = "playMenu" id = "playMenu">
 	<img src="../textures/logo.png" /></img><br/><br/>
@@ -67,7 +70,7 @@
 			sent = GP.player.getComponent("player").username + " says " + sent;
 		else
 			sent = "guest says " + sent;
-		GP.connection.send("chatmessage", { message: sent });
+		game.connection.send("chatmessage", { message: sent });
 	}
 	
 	addChat = function(text){
