@@ -32,7 +32,8 @@ GP.create = function create() {
 	GP.connection = new GP.connection(GP.ip, 3000);
 	
 	// Initialize window
-	GP.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0x000000}, true, false);
+	GP.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000}, true, false);
+	GP.renderer.clearBeforeRender = false;
 	document.body.appendChild(GP.renderer.view);
 	GP.stage = new PIXI.Container();
 	GP.camera = new Camera(GP.stage);	
@@ -70,9 +71,19 @@ GP.run = (function() {
     var dt = now - lastUpdate;
 	lastUpdate = Date.now();
 
+	
     GP.entityWorld.update(dt);
 	GP.camera.update(dt);
+	
+	
+	var gl = GP.renderer.gl;
+	GP.renderer.setRenderTarget(GP.renderer.renderTarget);
+	gl.clear(gl.COLOR_BUFFER_BIT);
+	
+	// TODO: Render terrain.
+	
 	GP.renderer.render(GP.camera);
+	
 });
 
 GP.sendUpdatePacket = function sendUpdatePacket() {

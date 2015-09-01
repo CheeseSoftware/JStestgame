@@ -20,7 +20,7 @@ GP.connection = function Connection (ip, port){
 		GP.camera.target.y = GP.tileMap.height * GP.tileSize - GP.camera.viewport.height / 2;
 		
 		// Draw map ground
-		for(var x = 0; x < GP.tileMap.width; ++x) {	
+		/*for(var x = 0; x < GP.tileMap.width; ++x) {	
 			for(var y = 0; y < GP.tileMap.height; ++y) {
 				if(x * GP.tileSize % 1024 == 0 && y * GP.tileSize % 1024 == 0) {
 					var sprite = new PIXI.Sprite(GP.textures.ground);
@@ -29,7 +29,7 @@ GP.connection = function Connection (ip, port){
 					GP.stage.addChild(sprite);
 				}
 			}
-		}
+		}*/
 		
 		// Draw map border
 		for(var x = -1024; x <= GP.tileMap.width * GP.tileSize; ++x) {	
