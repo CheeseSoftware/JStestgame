@@ -1,6 +1,5 @@
 GamePrototype = function() {
 	this.preload();
-	this.connection = new Connection(GP.ip, 3000);
 	
 	// Initialize window
 	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000}, true, false);
@@ -10,20 +9,9 @@ GamePrototype = function() {
 	this.camera = new Camera(this.stage);	
 	this.camera.zoom = 1.0;
 	
-	/*for(var x = 0; x < this.tileMap.width; ++x) {	
-		this.tileMap[x] = [];		
-		for(var y = 0; y < this.tileMap.height; ++y) {
-			var sprite = new PIXI.Sprite(this.textures.cheese);
-			sprite.position.x = x * this.tileSize;
-			sprite.position.y = y * this.tileSize;
-			this.stage.addChild(sprite);
-			this.tileMap[x][y] = { sprite: sprite, health: 100};
-		}
-	}*/
-	
 	this.entityWorld = new CES.World();
-	// Add more systems here!
 	
+	// Add more systems here!
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
 	
@@ -33,8 +21,6 @@ GamePrototype = function() {
 	this.keys.right = GP.keyboard(39);
 	this.keys.down = GP.keyboard(40);
 	
-	this._intervalId = setInterval(function(){game.run()}, 0);
-	
 	this.mousex = null;
 	this.mousey = null;
 	document.addEventListener('mousemove', this.onMouseUpdate, false);
@@ -43,21 +29,15 @@ GamePrototype = function() {
 	window.addEventListener('resize', this.resize, false);
 	
 	this.players = {};
-	
 	this.lastUpdate = Date.now();
 	
-	
+	this._intervalId = setInterval(function(){game.run()}, 0);
 }
-
-
-
-
 
 GamePrototype.prototype.onMouseUpdate = function (e) {
 	mousex = e.pageX;
 	mousey = e.pageY;
 }
-
 
 GamePrototype.prototype.resize = function() {
 	this.renderer.resize(window.innerWidth, window.innerHeight);
@@ -74,9 +54,6 @@ GamePrototype.prototype.preload = function() {
 	this.textures.block = PIXI.Texture.fromImage('textures/block.png');
 	this.textures.rock = PIXI.Texture.fromImage('textures/rock.png');
 }
-
-
-
 
 GamePrototype.prototype.run = function() {
     var now = Date.now();
@@ -142,5 +119,3 @@ GamePrototype.prototype.despawnPlayer = function(name) {
 	this.stage.removeChild(player.text);
 	delete(this.players[name]);
 }
-
-

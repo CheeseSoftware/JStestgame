@@ -23,14 +23,11 @@
 
 <!-- classes -->
 <script src="PagedArray2D.js"></script>
-<script src="Camera.js"></script>
-<script src="Keyboard.js"></script>
 <script src="components/Physics.js"></script>
 <script src="components/Player.js"></script>
 <script src="components/ControlledPlayer.js"></script>
 <script src="systems/PhysicsSystem.js"></script>
 <script src="systems/ControlSystem.js"></script>
-<script src="Connection.js"></script>
 
 <!-- game -->
 <script src="GamePrototype.js"></script>
@@ -52,7 +49,7 @@
 	<?php include("php/quotes.php"); ?>
 </div>
 
-<div class="chatBox">
+<!--<div class="chatBox">
 	<div id="chatTextContainer" name="chatTextContainer" class="chatTextContainer"></div>
     <input type="text" name="chatInput" class="chatInput" name="bertil"></input>
     <button class ="chatButton" type="button" name="chatButton" onclick="sendChat()">Send</button>
@@ -88,4 +85,4 @@
 		}
 	});
 	$(".chatBox input").focus();
-</script>
+</script>-->
