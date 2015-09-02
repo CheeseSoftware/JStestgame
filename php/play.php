@@ -1,5 +1,5 @@
 <script type="application/javascript">
-		window.GP = { 
+		window.vars = { 
 			<?php
 				$ip = (isset($_GET["ip"]) ? '"' . $_GET["ip"] . '"' : '"127.0.0.1"');
 				if(empty($ip))
@@ -19,9 +19,11 @@
 <!--<script src="jquery-2.1.x.js"></script>-->
 <script src="game/ces-browser.js"></script>
 <script src="game/pixi.js"></script>
-<script src="game/https://cdn.socket.io/socket.io-1.3.5.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
 
 <!-- classes -->
+<script src="game/Connection.js"></script>
+<script src="game/Keyboard.js"></script>
 <script src="game/Camera.js"></script>
 <script src="game/PagedArray2D.js"></script>
 <script src="game/components/Physics.js"></script>
@@ -31,14 +33,14 @@
 <script src="game/systems/ControlSystem.js"></script>
 
 <!-- game -->
-<script src="game/GamePrototype.js"></script>
+<script src="game/Game.js"></script>
 <script>
-	var game = new GamePrototype();
+	var game = new Game();
 </script>
 
 <div class = "playMenu" id = "playMenu">
 	<img src="../textures/logo.png" /></img><br/><br/>
-	<div class = "button" onclick = "$('#playMenu').remove(); GP.spawnMainPlayer();">
+	<div class = "button" onclick = "$('#playMenu').remove(); game.spawnMainPlayer();">
 		<p>Play!</p>
 	</div>
 	<a class = "button" href = "phptest.php?action=hello">

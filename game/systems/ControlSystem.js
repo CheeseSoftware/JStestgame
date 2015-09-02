@@ -17,24 +17,24 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			//physics.vx = 0;
 			//physics.vy = 0;
 		
-			if (GP.keys.left.isDown)
+			if (keyboard.isKeyDown("left"))
 			{
 				physics.vx += -20;
 			}
-			else if (GP.keys.right.isDown)
+			else if (keyboard.isKeyDown("right"))
 			{
 				physics.vx += 20;
 			}
-			if (GP.keys.up.isDown)
+			if (keyboard.isKeyDown("up"))
 			{
 				physics.vy += -20;
 			}
-			else if (GP.keys.down.isDown)
+			else if (keyboard.isKeyDown("down"))
 			{
 				physics.vy += 20;
 			}
 		
-			var angle = Math.atan2(physics.y - (GP.camera.pos.y + mousey), physics.x - (GP.camera.pos.x + mousex));
+			var angle = Math.atan2(physics.y - (game.camera.pos.y + mousey), physics.x - (game.camera.pos.x + mousex));
 			//console.log("xpos " + physics.x + " ypos " + physics.y + " camx " + GP.camera.frustrum.x + " camy " + GP.camera.frustrum.y);
 			//console.log(GP.camera);
 			physics.rotation = angle + Math.PI;
@@ -46,11 +46,11 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			|| controlledplayer.oldvx != physics.vx
 			|| controlledplayer.oldvy != physics.vy
 			|| controlledplayer.oldRot != Math.round(physics.rotation * 100) / 100) {
-				GP.sendUpdatePacket();
+				game.sendUpdatePacket();
 			}	
 			
-			GP.camera.target.x = physics.x;
-			GP.camera.target.y = physics.y;	
+			game.camera.target.x = physics.x;
+			game.camera.target.y = physics.y;	
 			
         });
     }

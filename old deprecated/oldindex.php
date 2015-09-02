@@ -45,7 +45,7 @@
     <script src="components/ControlledPlayer.js"></script>
     <script src="systems/PhysicsSystem.js"></script>
     <script src="systems/ControlSystem.js"></script>
-    <script src="Connection.js"></script>
+    <script src="../game/Connection.js"></script>
     <script src="GamePrototype.js"></script>
     
 
