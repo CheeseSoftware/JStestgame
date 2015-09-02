@@ -17,7 +17,7 @@
 
 <!-- libraries -->
 <!--<script src="jquery-2.1.x.js"></script>-->
-<script src="lib/physicsjs-full.js"></script>
+<script src="lib/Box2D_v2.3.1_min.js"></script>
 <script src="lib/ces-browser.js"></script>
 <script src="lib/pixi.js"></script>
 <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>

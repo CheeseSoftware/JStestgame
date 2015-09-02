@@ -11,8 +11,15 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			var oldY = physics.y;
 			//console.log(dt);
 			var speed = 0.001;
-			//physics.x += physics.vx * dt * speed;
-			//physics.y += physics.vy * dt * speed;
+			physics.x += physics.vx * dt * speed;
+			physics.y += physics.vy * dt * speed;
+			physics.vx -= speed * dt;
+			physics.vy -= speed * dt;
+			
+		  	var speedSpeed = 0.05;
+
+			physics.vx = physics.vx + speedSpeed * -physics.vx;
+			physics.vy = physics.vy + speedSpeed * -physics.vy;
 			
 			if(physics.x < player.sprite.width / 4 || physics.x > game.tileMap.width * game.tileSize - player.sprite.width / 4)
 				physics.x = oldX;
