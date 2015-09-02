@@ -37,7 +37,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			var angle = Math.atan2(physics.y - (game.camera.pos.y + mousey), physics.x - (game.camera.pos.x + mousex));
 			//console.log("xpos " + physics.x + " ypos " + physics.y + " camx " + GP.camera.frustrum.x + " camy " + GP.camera.frustrum.y);
 			//console.log(GP.camera);
-			physics.rotation = angle + Math.PI;
+			physics.rotation = angle + 1.5 * Math.PI;
 			player.sprite.rotation = physics.rotation;
 			
 			// Check if anything changed, if so, send player update packet

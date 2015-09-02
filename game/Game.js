@@ -45,6 +45,7 @@ Game.prototype.resize = function() {
 
 Game.prototype.preload = function() {
 	this.textures = {};
+	this.textures.gubbe = PIXI.Texture.fromImage('textures/gubbe.png');
 	this.textures.cheese = PIXI.Texture.fromImage('textures/cheese.png');
 	this.textures.worker = PIXI.Texture.fromImage('textures/worker.png');
 	this.textures.ground = PIXI.Texture.fromImage('textures/ground.png');
@@ -86,7 +87,7 @@ Game.prototype.sendUpdatePacket = function() {
 }
 
 Game.prototype.spawnPlayer = function(name) {
-	var sprite = new PIXI.Sprite(this.textures.worker);
+	var sprite = new PIXI.Sprite(this.textures.gubbe);
 	sprite.anchor.x = 0.5;
 	sprite.anchor.y = 0.5;
 	sprite.position.x = 0.5;//Math.random() * this.tileMap.width * this.tileSize;
