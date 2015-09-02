@@ -17,7 +17,7 @@ var mapData = {
 io.on('connection', function(socket) {
     socket.emit('init', { mapWidth: mapData.width, mapHeight: mapData.height, tileSize: mapData.tileSize });
 	io.sockets.emit('message', "A client has joined with IP " + socket.request.connection.remoteAddress);
-	
+
 	// Send existing players to the new player
 	Object.keys(players).forEach(function (key) { 
 		var player = players[key]
@@ -30,6 +30,8 @@ io.on('connection', function(socket) {
 			rotation: player.rotation
 		});
 	});
+	
+	socket.on('error', console.error.bind(console));
 	
 	socket.on('disconnect', function(){
 		if(players[socket.id] != undefined) {

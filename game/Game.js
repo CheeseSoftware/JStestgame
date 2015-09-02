@@ -22,6 +22,13 @@ Game = function() {
 	
 	window.addEventListener('resize', this.resize.bind(this), false);
 	
+	var worldAABB = new b2AABB();
+	//worldAABB.minVertex.Set(-1000, -1000);
+	//worldAABB.maxVertex.Set(1000, 1000);
+	var gravity = new b2Vec2(0, 0);
+	var doSleep = false;
+	this.physicsWorld = new b2World(worldAABB, gravity, doSleep); 
+	
 	this.players = {};
 	this.lastUpdate = Date.now();
 	
@@ -60,6 +67,11 @@ Game.prototype.run = function() {
 
 	
     this.entityWorld.update(dt);
+	
+	var timeStep = 1.0/60;
+	var iteration = 1;
+	this.physicsWorld.Step(timeStep, iteration);
+	
 	this.camera.update(dt);
 	
 	
@@ -94,9 +106,19 @@ Game.prototype.spawnPlayer = function(name) {
 	sprite.position.y = 0.5;//Math.random() * this.tileMap.height * this.tileSize;	
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
+	var circleSd = new b2CircleDef();
+	circleSd.density = 1.0;
+	circleSd.radius = 50;
+	circleSd.restitution = 1.0;
+	circleSd.friction = 0;
+	var circleBd = new b2BodyDef();
+	circleBd.AddShape(circleSd);
+	circleBd.position.Set(100,100);
+	var circleBody = this.physicsWorld.CreateBody(circleBd);
+	
 	var player = new CES.Entity();
 	player.addComponent(new ECS.Components.Player(name, sprite, text));
-	player.addComponent(new ECS.Components.Physics(sprite.position.x, sprite.position.y, 0, 0, 0));
+	player.addComponent(new ECS.Components.Physics(circleBody));
 	this.entityWorld.addEntity(player);
 	this.stage.addChild(sprite);
 	this.stage.addChild(text);
@@ -176,6 +198,7 @@ Game.prototype.initializeListeners = function() {
 	
 	this.connection.on('playerinit', function(data, context) {
 		context.player = context.spawnPlayer(data.name);
+		//context.player.username = data.name;
 		context.player.addComponent(new ECS.Components.ControlledPlayer());
 	
 		var player = context.player.getComponent('player');
