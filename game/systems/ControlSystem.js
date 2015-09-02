@@ -16,22 +16,25 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			
 			//physics.vx = 0;
 			//physics.vy = 0;
-		
+			
+			var moveSpeed = 1;
+			physics.vx = 0;
+			physics.vy = 0;
 			if (keyboard.isKeyDown("left"))
 			{
-				physics.vx += -20;
+				physics.vx += -moveSpeed;
 			}
 			else if (keyboard.isKeyDown("right"))
 			{
-				physics.vx += 20;
+				physics.vx += moveSpeed;
 			}
 			if (keyboard.isKeyDown("up"))
 			{
-				physics.vy += -20;
+				physics.vy += -moveSpeed;
 			}
 			else if (keyboard.isKeyDown("down"))
 			{
-				physics.vy += 20;
+				physics.vy += moveSpeed;
 			}
 		
 			var angle = Math.atan2(physics.y - (game.camera.pos.y + mousey), physics.x - (game.camera.pos.x + mousex));

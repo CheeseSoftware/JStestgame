@@ -22,6 +22,12 @@ Game = function() {
 	
 	window.addEventListener('resize', this.resize.bind(this), false);
 	
+	this.physicsWorld = Physics();	
+	/*var gravity = Physics.behavior('constant-acceleration', {
+		acc: { x : 0, y: 0 } // this is the default
+	});
+	this.physicsWorld.add( gravity );*/
+	
 	this.players = {};
 	this.lastUpdate = Date.now();
 	
@@ -58,9 +64,10 @@ Game.prototype.run = function() {
     var dt = now - this.lastUpdate;
 	this.lastUpdate = Date.now();
 
-	
+
     this.entityWorld.update(dt);
 	this.camera.update(dt);
+			this.physicsWorld.step(now);
 	
 	
 	var gl = this.renderer.gl;
@@ -94,12 +101,22 @@ Game.prototype.spawnPlayer = function(name) {
 	sprite.position.y = 0.5;//Math.random() * this.tileMap.height * this.tileSize;	
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
+	var ball = Physics.body('circle', {
+		x: 50, // x-coordinate
+		y: 30, // y-coordinate
+		vx: 0, // velocity in x-direction
+		vy: 0, // velocity in y-direction
+		radius: 20
+	});
+	this.physicsWorld.add(ball);
+	
 	var player = new CES.Entity();
 	player.addComponent(new ECS.Components.Player(name, sprite, text));
-	player.addComponent(new ECS.Components.Physics(sprite.position.x, sprite.position.y, 0, 0, 0));
+	player.addComponent(new ECS.Components.Physics(ball));
 	this.entityWorld.addEntity(player);
 	this.stage.addChild(sprite);
 	this.stage.addChild(text);
+	
 	this.players[name] = player;
 	return player;
 }
