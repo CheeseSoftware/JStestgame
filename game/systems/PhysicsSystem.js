@@ -6,6 +6,8 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
         entities.forEach(function (entity) {
 			physics = entity.getComponent('physics');
             player = entity.getComponent('player');
+			// Prevent random rotation
+			physics.angularVelocity = 0;
 			
 			var oldX = physics.x;
 			var oldY = physics.y;
@@ -17,18 +19,18 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			
 			// Functions for soft retardation
 			if(physics.vx > 0) {
-				physics.vx -= speed * dt;
+				//physics.vx -= speed * dt;
 				physics.vx = physics.vx - speedSpeed * physics.vx;
 			} else if(physics.vx < 0) {
-				physics.vx += speed * dt;
+				//physics.vx += speed * dt;
 				physics.vx = physics.vx + speedSpeed * -physics.vx;
 			}
 				
 			if(physics.vy > 0) {
-				physics.vy -= speed * dt;
+				//physics.vy -= speed * dt;
 				physics.vy = physics.vy - speedSpeed * physics.vy;
 			} else if(physics.vy < 0) {
-				physics.vy += speed * dt;
+				//physics.vy += speed * dt;
 				physics.vy = physics.vy + speedSpeed * -physics.vy;
 			}
 			
@@ -38,12 +40,21 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			if(physics.vy > -0.01 && physics.vy < 0.01)
 				physics.vy = 0;
 							
-			console.log("x " + physics.x + " y " + physics.y + " vx " + physics.vx + " vy " + physics.vy);
+			//console.log("x " + physics.x + " y " + physics.y + " vx " + physics.vx + " vy " + physics.vy);
 			
-			/*if(physics.x < player.sprite.width / 4 || physics.x > game.tileMap.width * game.tileSize - player.sprite.width / 4)
+			if(physics.x < player.sprite.width / 4 || physics.x > game.tileMap.width * game.tileSize - player.sprite.width / 4)
 				physics.x = oldX;
 			if(physics.y < player.sprite.width / 4 || physics.y > game.tileMap.height * game.tileSize - player.sprite.width / 4)
-				physics.y = oldY;*/
+				physics.y = oldY;
+				
+				
+			/*if (game.physicsWorld.GetContactList()) {
+				var contactList = game.physicsWorld.GetContactList();			
+				if ( contactList.GetShape1().GetBody().GetUserData().type == "player" ) {
+					var body1 = contactList.GetShape1().GetBody();
+					contactList.SetEnabled(false);
+				}
+			}*/
 				
 			/*entities.forEach(function (entity2) {
 				physics2 = entity2.getComponent('physics');

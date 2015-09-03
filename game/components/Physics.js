@@ -34,7 +34,11 @@ Object.defineProperties(ECS.Components.Physics.prototype, {
 	rotation: {
         get: function () { return this.body.m_rotation; },
 		set: function (value) { this.body.m_rotation = value; }
-    }
+    },
+	angularVelocity: {
+        get: function () { return this.body.m_angularVelocity; },
+		set: function (value) { this.body.m_angularVelocity = value; }
+	}
 });
 
 

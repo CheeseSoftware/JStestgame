@@ -106,15 +106,18 @@ Game.prototype.spawnPlayer = function(name) {
 	sprite.position.y = 0.5;//Math.random() * this.tileMap.height * this.tileSize;	
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
-	var circleSd = new b2CircleDef();
-	circleSd.density = 0.5;
-	circleSd.radius = 50;
-	circleSd.restitution = 0.1;
-	circleSd.friction = 0;
-	var circleBd = new b2BodyDef();
-	circleBd.AddShape(circleSd);
-	circleBd.position.Set(100,100);
-	var circleBody = this.physicsWorld.CreateBody(circleBd);
+	var circleDef = new b2CircleDef();
+	circleDef.density = 0.9;
+	circleDef.radius = 50;
+	circleDef.restitution = 0;
+	circleDef.friction = 0;
+	var bodyDef = new b2BodyDef();
+	bodyDef.AddShape(circleDef);
+	bodyDef.type=b2Body.b2_staticBody;
+	bodyDef.isSensor = true;
+	bodyDef.position.Set(100,100);
+	bodyDef.userData = { type: "player" };
+	var circleBody = this.physicsWorld.CreateBody(bodyDef);
 	
 	var player = new CES.Entity();
 	player.addComponent(new ECS.Components.Player(name, sprite, text));
@@ -193,6 +196,7 @@ Game.prototype.initializeListeners = function() {
 		physics.x = data.x;
 		physics.y = data.y;
 		physics.rotation = data.rotation;
+		physics.body.userData = { type: "mainPlayer" };
 		context.players[data.name] = player;
 	}, this);
 	
