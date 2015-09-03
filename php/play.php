@@ -1,9 +1,9 @@
 <script type="application/javascript">
 		window.vars = { 
 			<?php
-				$ip = (isset($_GET["ip"]) ? '"' . $_GET["ip"] . '"' : '"127.0.0.1"');
+				$ip = (isset($_GET["ip"]) ? '"' . $_GET["ip"] . '"' : '"107.6.140.41"');
 				if(empty($ip))
-					$ip = '"127.0.0.1"';
+					$ip = '"107.6.140.41"';
 				echo ("ip: " . $ip);
 			?>
 		};
