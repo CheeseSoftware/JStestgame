@@ -13,13 +13,32 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			var speed = 0.001;
 			//physics.x += physics.vx * dt * speed;
 			//physics.y += physics.vy * dt * speed;
-			physics.vx -= speed * dt;
-			physics.vy -= speed * dt;
+			var speedSpeed = 0.05;
 			
-		  	var speedSpeed = 0.05;
-
-			physics.vx = physics.vx + speedSpeed * -physics.vx;
-			physics.vy = physics.vy + speedSpeed * -physics.vy;
+			// Functions for soft retardation
+			if(physics.vx > 0) {
+				physics.vx -= speed * dt;
+				physics.vx = physics.vx - speedSpeed * physics.vx;
+			} else if(physics.vx < 0) {
+				physics.vx += speed * dt;
+				physics.vx = physics.vx + speedSpeed * -physics.vx;
+			}
+				
+			if(physics.vy > 0) {
+				physics.vy -= speed * dt;
+				physics.vy = physics.vy - speedSpeed * physics.vy;
+			} else if(physics.vy < 0) {
+				physics.vy += speed * dt;
+				physics.vy = physics.vy + speedSpeed * -physics.vy;
+			}
+			
+			// If physics is close to 0, set it to 0
+			if(physics.vx > -0.01 && physics.vx < 0.01)
+				physics.vx = 0;
+			if(physics.vy > -0.01 && physics.vy < 0.01)
+				physics.vy = 0;
+							
+			console.log("x " + physics.x + " y " + physics.y + " vx " + physics.vx + " vy " + physics.vy);
 			
 			/*if(physics.x < player.sprite.width / 4 || physics.x > game.tileMap.width * game.tileSize - player.sprite.width / 4)
 				physics.x = oldX;

@@ -23,8 +23,8 @@ Game = function() {
 	window.addEventListener('resize', this.resize.bind(this), false);
 	
 	var worldAABB = new b2AABB();
-	//worldAABB.minVertex.Set(-1000, -1000);
-	//worldAABB.maxVertex.Set(1000, 1000);
+	worldAABB.minVertex.Set(-4000, -4000);
+	worldAABB.maxVertex.Set(4000, 4000);
 	var gravity = new b2Vec2(0, 0);
 	var doSleep = false;
 	this.physicsWorld = new b2World(worldAABB, gravity, doSleep); 
@@ -68,7 +68,7 @@ Game.prototype.run = function() {
 	
     this.entityWorld.update(dt);
 	
-	var timeStep = 1.0/60;
+	var timeStep = 1.0/60.0;
 	var iteration = 1;
 	this.physicsWorld.Step(timeStep, iteration);
 	
@@ -107,9 +107,9 @@ Game.prototype.spawnPlayer = function(name) {
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
 	var circleSd = new b2CircleDef();
-	circleSd.density = 1.0;
+	circleSd.density = 0.5;
 	circleSd.radius = 50;
-	circleSd.restitution = 1.0;
+	circleSd.restitution = 0.1;
 	circleSd.friction = 0;
 	var circleBd = new b2BodyDef();
 	circleBd.AddShape(circleSd);
