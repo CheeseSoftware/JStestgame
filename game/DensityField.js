@@ -2,7 +2,7 @@
  * A signed distance field.
  * Uses paging to minimize memory usage.
  */
-GP.DisField = function(sizeX, sizeY) {
+GP.DensityField = function(sizeX, sizeY) {
 	this.sizeX = sizeX;
 	this.sizeY = sizeY;
 	this.array = PagedArray2D(sizeX, sizeY, 5.0);
@@ -11,14 +11,14 @@ GP.DisField = function(sizeX, sizeY) {
 /**
  * Returns distance by nearest neighbor.
  */
-GP.DisField.prototype.getDisNearest(x, y) {
+GP.DensityField.prototype.getDensityNearest(x, y) {
 	return this.array.get(x, y);
 }
 
 /**
  * Returns distance using bilinear interpolation.
  */
-GP.DisField.prototype.getDis(x, y) {
+GP.DensityField.prototype.getDensity(x, y) {
 	var x1 = Math.floor(x);
 	var y1 = Math.floor(y);
 	var x2 = x1 + 1;
