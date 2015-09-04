@@ -22,14 +22,27 @@ Game = function() {
 	
 	window.addEventListener('resize', this.resize.bind(this), false);
 	
-
-	
-	//var worldAABB = new b2AABB();
-	//worldAABB.minVertex.Set(-4000, -4000);
-	//worldAABB.maxVertex.Set(4000, 4000);
 	var gravity = new b2Vec2(0, 0);
 	var doSleep = false;
 	this.physicsWorld = new b2World(gravity, doSleep); 
+	
+	// Contact listener begin: Temporarily disable player-to-player collisions
+	var playerContactListener = new Box2D.Dynamics.b2ContactListener;
+	playerContactListener.BeginContact = function (contact) {
+	  //console.log("begincontact");
+	}
+	playerContactListener.EndContact = function (contact) {
+	  //console.log("endcontact");
+	}
+	playerContactListener.PostSolve = function (contact, impulse) {
+		//console.log("PostSolve");
+	}
+	playerContactListener.PreSolve = function (contact, oldManifold) {
+		//console.log("PreSolve");
+		contact.SetEnabled(false);
+	}
+	this.physicsWorld.SetContactListener(playerContactListener);
+	// Contact listener end
 	
 	this.players = {};
 	this.lastUpdate = Date.now();
