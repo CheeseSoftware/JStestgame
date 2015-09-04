@@ -22,6 +22,13 @@ Game = function() {
 	
 	window.addEventListener('resize', this.resize.bind(this), false);
 	
+	var worldAABB = new b2AABB();
+	worldAABB.minVertex.Set(-4000, -4000);
+	worldAABB.maxVertex.Set(4000, 4000);
+	var gravity = new b2Vec2(0, 0);
+	var doSleep = false;
+	this.physicsWorld = new b2World(worldAABB, gravity, doSleep); 
+	
 	this.players = {};
 	this.lastUpdate = Date.now();
 	
@@ -45,6 +52,7 @@ Game.prototype.resize = function() {
 
 Game.prototype.preload = function() {
 	this.textures = {};
+	this.textures.gubbe = PIXI.Texture.fromImage('textures/gubbe.png');
 	this.textures.cheese = PIXI.Texture.fromImage('textures/cheese.png');
 	this.textures.worker = PIXI.Texture.fromImage('textures/worker.png');
 	this.textures.ground = PIXI.Texture.fromImage('textures/ground.png');
@@ -59,6 +67,11 @@ Game.prototype.run = function() {
 
 	
     this.entityWorld.update(dt);
+	
+	var timeStep = 1.0/60.0;
+	var iteration = 1;
+	this.physicsWorld.Step(timeStep, iteration);
+	
 	this.camera.update(dt);
 	
 	
@@ -86,16 +99,29 @@ Game.prototype.sendUpdatePacket = function() {
 }
 
 Game.prototype.spawnPlayer = function(name) {
-	var sprite = new PIXI.Sprite(this.textures.worker);
+	var sprite = new PIXI.Sprite(this.textures.gubbe);
 	sprite.anchor.x = 0.5;
 	sprite.anchor.y = 0.5;
 	sprite.position.x = 0.5;//Math.random() * this.tileMap.width * this.tileSize;
 	sprite.position.y = 0.5;//Math.random() * this.tileMap.height * this.tileSize;	
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
+	var circleDef = new b2CircleDef();
+	circleDef.density = 0.9;
+	circleDef.radius = sprite.width / 6;
+	circleDef.restitution = 0;
+	circleDef.friction = 0;
+	var bodyDef = new b2BodyDef();
+	bodyDef.AddShape(circleDef);
+	bodyDef.type=b2Body.b2_staticBody;
+	bodyDef.isSensor = true;
+	bodyDef.position.Set(100,100);
+	bodyDef.userData = { type: "player" };
+	var circleBody = this.physicsWorld.CreateBody(bodyDef);
+	
 	var player = new CES.Entity();
 	player.addComponent(new ECS.Components.Player(name, sprite, text));
-	player.addComponent(new ECS.Components.Physics(sprite.position.x, sprite.position.y, 0, 0, 0));
+	player.addComponent(new ECS.Components.Physics(circleBody));
 	this.entityWorld.addEntity(player);
 	this.stage.addChild(sprite);
 	this.stage.addChild(text);
@@ -170,11 +196,13 @@ Game.prototype.initializeListeners = function() {
 		physics.x = data.x;
 		physics.y = data.y;
 		physics.rotation = data.rotation;
+		physics.body.userData = { type: "mainPlayer" };
 		context.players[data.name] = player;
 	}, this);
 	
 	this.connection.on('playerinit', function(data, context) {
 		context.player = context.spawnPlayer(data.name);
+		//context.player.username = data.name;
 		context.player.addComponent(new ECS.Components.ControlledPlayer());
 	
 		var player = context.player.getComponent('player');
