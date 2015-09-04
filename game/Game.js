@@ -22,12 +22,14 @@ Game = function() {
 	
 	window.addEventListener('resize', this.resize.bind(this), false);
 	
-	var worldAABB = new b2AABB();
-	worldAABB.minVertex.Set(-4000, -4000);
-	worldAABB.maxVertex.Set(4000, 4000);
+
+	
+	//var worldAABB = new b2AABB();
+	//worldAABB.minVertex.Set(-4000, -4000);
+	//worldAABB.maxVertex.Set(4000, 4000);
 	var gravity = new b2Vec2(0, 0);
 	var doSleep = false;
-	this.physicsWorld = new b2World(worldAABB, gravity, doSleep); 
+	this.physicsWorld = new b2World(gravity, doSleep); 
 	
 	this.players = {};
 	this.lastUpdate = Date.now();
@@ -68,9 +70,9 @@ Game.prototype.run = function() {
 	
     this.entityWorld.update(dt);
 	
-	var timeStep = 1.0/60.0;
-	var iteration = 1;
-	this.physicsWorld.Step(timeStep, iteration);
+	this.physicsWorld.Step(1 / 60.0, 10, 10);
+	            this.physicsWorld.DrawDebugData();
+            this.physicsWorld.ClearForces();
 	
 	this.camera.update(dt);
 	
@@ -106,7 +108,7 @@ Game.prototype.spawnPlayer = function(name) {
 	sprite.position.y = 0.5;//Math.random() * this.tileMap.height * this.tileSize;	
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
-	var circleDef = new b2CircleDef();
+	/*var circleDef = new b2CircleDef();
 	circleDef.density = 0.9;
 	circleDef.radius = sprite.width / 6;
 	circleDef.restitution = 0;
@@ -117,11 +119,25 @@ Game.prototype.spawnPlayer = function(name) {
 	bodyDef.isSensor = true;
 	bodyDef.position.Set(100,100);
 	bodyDef.userData = { type: "player" };
-	var circleBody = this.physicsWorld.CreateBody(bodyDef);
+	var circleBody = this.physicsWorld.CreateBody(bodyDef);*/
+	
+	var fixDef = new b2FixtureDef;
+	fixDef.density = 1.0;
+	fixDef.friction = 0.5;
+	fixDef.restitution = 0.2;
+	
+	var bodyDef = new b2BodyDef;
+	bodyDef.type = b2Body.b2_dynamicBody;
+	
+	fixDef.shape = new b2CircleShape(sprite.width/6);
+	
+	bodyDef.position.Set(10, 400 / 30 + 1.8);
+	var physicsBody = this.physicsWorld.CreateBody(bodyDef);
+	physicsBody.CreateFixture(fixDef);
 	
 	var player = new CES.Entity();
 	player.addComponent(new ECS.Components.Player(name, sprite, text));
-	player.addComponent(new ECS.Components.Physics(circleBody));
+	player.addComponent(new ECS.Components.Physics(physicsBody));
 	this.entityWorld.addEntity(player);
 	this.stage.addChild(sprite);
 	this.stage.addChild(text);
