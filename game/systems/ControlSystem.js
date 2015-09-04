@@ -87,15 +87,22 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				//var normalizedY = Math.sin(moveAngle) / vector.Length();
 				
 				if(vec.Length() != 0 && vec != NaN && vec != undefined) {
-					console.log(vec);
+					//console.log(vec);
 					if(true) {
-						var normalizedVector = new b2Vec2(vec.x / vec.Length(), vec.y / vec.Length());    
+						var normalizedVector = new b2Vec2(vec.x / vec.Length(), vec.y / vec.Length()); 
+						
+						var length = vec.Length();
+		
+						var invLength = 1.0 / length;
+						vec.x *= invLength;
+						vec.y *= invLength;
+						   
 						//new b2Vec2(normalizedX, normalizedY);
-						console.log(normalizedVector);
+						//console.log(normalizedVector);
 							
 						if(normalizedVector != NaN && normalizedVector != undefined) {
-							physics.vx += moveSpeed * normalizedVector.x;
-							physics.vy += moveSpeed * normalizedVector.y;
+							physics.vx += moveSpeed * vec.x;
+							physics.vy += moveSpeed * vec.y;
 						}
 					}
 				}
