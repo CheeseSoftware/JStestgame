@@ -17,7 +17,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			//physics.vx = 0;
 			//physics.vy = 0;
 			
-			var moveSpeed = 10;
+			var moveSpeed = 2;
 		
 			if (keyboard.isKeyDown("left"))
 			{

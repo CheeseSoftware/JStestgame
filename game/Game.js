@@ -108,7 +108,7 @@ Game.prototype.spawnPlayer = function(name) {
 	
 	var circleDef = new b2CircleDef();
 	circleDef.density = 0.9;
-	circleDef.radius = 50;
+	circleDef.radius = sprite.width / 6;
 	circleDef.restitution = 0;
 	circleDef.friction = 0;
 	var bodyDef = new b2BodyDef();

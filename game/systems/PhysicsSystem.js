@@ -11,27 +11,30 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			
 			var oldX = physics.x;
 			var oldY = physics.y;
-			//console.log(dt);
-			var speed = 0.001;
-			//physics.x += physics.vx * dt * speed;
-			//physics.y += physics.vy * dt * speed;
-			var speedSpeed = 0.05;
+
+			var speedDecreaseSpeed = 0.05;
+			var speedLimit = 40;
+			
+			if(physics.vx > speedLimit)
+				physics.vx = speedLimit;
+			else if(physics.vx < -speedLimit)
+				physics.vx = -speedLimit;
+			if(physics.vy > speedLimit)
+				physics.vy = speedLimit;
+			else if(physics.vy < -speedLimit)
+				physics.vy = -speedLimit;
 			
 			// Functions for soft retardation
 			if(physics.vx > 0) {
-				//physics.vx -= speed * dt;
-				physics.vx = physics.vx - speedSpeed * physics.vx;
+				physics.vx = physics.vx - speedDecreaseSpeed * physics.vx;
 			} else if(physics.vx < 0) {
-				//physics.vx += speed * dt;
-				physics.vx = physics.vx + speedSpeed * -physics.vx;
+				physics.vx = physics.vx + speedDecreaseSpeed * -physics.vx;
 			}
 				
 			if(physics.vy > 0) {
-				//physics.vy -= speed * dt;
-				physics.vy = physics.vy - speedSpeed * physics.vy;
+				physics.vy = physics.vy - speedDecreaseSpeed * physics.vy;
 			} else if(physics.vy < 0) {
-				//physics.vy += speed * dt;
-				physics.vy = physics.vy + speedSpeed * -physics.vy;
+				physics.vy = physics.vy + speedDecreaseSpeed * -physics.vy;
 			}
 			
 			// If physics is close to 0, set it to 0
