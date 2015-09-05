@@ -73,6 +73,7 @@ Game.prototype.preload = function() {
 	this.textures.ground = PIXI.Texture.fromImage('textures/ground.png');
 	this.textures.block = PIXI.Texture.fromImage('textures/block.png');
 	this.textures.rock = PIXI.Texture.fromImage('textures/rock.png');
+	this.textures.largerock = PIXI.Texture.fromImage('textures/rock_large.png');
 }
 
 Game.prototype.run = function() {

@@ -5,8 +5,22 @@ ECS.Components.Physics = CES.Component.extend({
 		this.body = body;
 		this.oldX = 0;
 		this.oldY = 0;
+		this.rotation = 0;
     }
 });
+
+ECS.Components.Physics.prototype.rotateTo = function(physics, newRotation, speed) {
+	if(physics.rotation == newRotation)
+		return;
+
+	var newDirx = Math.cos(newRotation); 
+	var newDiry = Math.sin(newRotation);
+	var oldDirx = Math.cos(physics.rotation);
+	var oldDiry = Math.sin(physics.rotation);
+	oldDirx += (newDirx - oldDirx) * speed;
+	oldDiry += (newDiry - oldDiry) * speed;
+	physics.rotation = Math.atan2(oldDiry, oldDirx);
+}
  
 Object.defineProperties(ECS.Components.Physics.prototype, {
 	x: {

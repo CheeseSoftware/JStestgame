@@ -39,10 +39,23 @@ Keyboard = function() {
 	this.keys.up = new Key(38);
 	this.keys.right = new Key(39);
 	this.keys.down = new Key(40);
+	this.keys.a = new Key(65);
+	this.keys.w = new Key(87);
+	this.keys.d = new Key(68);
+	this.keys.s = new Key(83);
 }
 
 Keyboard.prototype.isKeyDown = function(key) {
-	return this.keys[key].isDown;
+	var down = this.keys[key].isDown;
+	if(key == "down")
+		return down || this.keys["s"].isDown;
+	else if(key == "up")
+		return down || this.keys["w"].isDown;
+	else if(key == "left")
+		return down || this.keys["a"].isDown;
+	else if(key == "right")
+		return down || this.keys["d"].isDown;
+	return down;
 }
 
 Keyboard.prototype.isKeyUp = function(key) {
