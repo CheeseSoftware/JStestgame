@@ -37,7 +37,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				
 			 	//var magnitude = Math.sqrt(vx*vx + vy*vy);
 				// Eftersom komposanterna tillsammans utgör hastigheten i detta fallet kan raden ovan inte användas.
-				// Därför divideras vx och vy med hastigheten för att normalisera och skapar konstant hastighet i alla riktningar.
+				// Därför divideras vx och vy med magnitude för att får en proportionell variabel som gör att hastigheten blir konstant i alla riktningar.
 				var magnitude = Math.abs(vx) + Math.abs(vy);
 			  
 				vx = moveSpeed * vx/magnitude;
