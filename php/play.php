@@ -133,7 +133,7 @@
 	<div class = "button" onclick = "document.getElementById('playMenu').remove(); game.spawnMainPlayer();">
 		<p>Play!</p>
 	</div>
-	<a class = "button" onclick="document.getElementById('registerFrame').style.display = 'block'">
+	<a class = "button" onclick="document.getElementById('registerFrame').style.display = 'block'; var frame = document.getElementById('innerRegisterFrame'); frame.src = frame.src;">
 		<p>Register</p>
 	</a>
 	<a class = "button">
