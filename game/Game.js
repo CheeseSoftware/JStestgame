@@ -303,6 +303,7 @@ Game.prototype.initializeListeners = function() {
 		var x = data.x;
 		var y = data.y;
 		var digRadius = data.digRadius;
+		this.terrain.fillCircle(x/32.0, y/32.0, digRadius);
 		//TODO: Change terrain
 	});
 }

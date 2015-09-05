@@ -8,7 +8,7 @@ Terrain = function(gl, sizeX, sizeY, texturePath) {
 	this._texture = null;
 	this._densityTexture = null;
 	// DIg a hole
-	for (var y = -16; y < 16; ++y) {
+	/*for (var y = -16; y < 16; ++y) {
 		for (var x = -16; x < 16; ++x) {
 			var dis = Math.sqrt(x*x + y*y);
 			var density = Math.min(12.0-dis, 1.0);
@@ -16,7 +16,8 @@ Terrain = function(gl, sizeX, sizeY, texturePath) {
 			if (dis <= 12.0)
 				this._densityField.array.set(x+16, y+16, intDensity);
 		}
-	}
+	}*/
+	this.fillCircle(8, 8, 2.3, 0.0);
 	this._buffer = null;
 	this._indexBuffer = null;
 	
@@ -32,6 +33,28 @@ Terrain = function(gl, sizeX, sizeY, texturePath) {
 	this._densityTextureUniform = 0;
 	this._textureUniform = 0;
 	this._matrixUniform = 0;
+}
+
+Terrain.prototype.fillCircle = function(xPos, yPos, radius, density) {
+
+	var intR = parseInt(radius+0.5);
+
+	for (var yy = -intR; yy < intR; ++yy) {
+		for (var xx = -intR; xx < intR; ++xx) {
+			var x = xPos + xx;
+			var y = yPos + yy;
+		
+			var dis = Math.sqrt(xx*xx + yy*yy);
+			if (dis > radius)
+				continue;
+			
+			var oldDensity = this._densityField.array.get(x+intR, y+intR);
+				
+			var fillStrength = Math.min(radius-dis, 1.0);
+			var intDensity = density;//parseInt((fillStrength*255 - oldDensity)*density/255);
+			this._densityField.array.set(x+intR, y+intR, density);
+		}
+	}
 }
 
 Terrain.prototype.render = function(gl, camera, vpMatrix) {
