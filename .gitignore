@@ -16,3 +16,9 @@ tramp
 *.rel
 /auto/
 .cask/
+/_notes/
+_notes/
+/_notes
+/_notes/**
+_notes/**
+_notes/*
