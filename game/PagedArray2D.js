@@ -15,13 +15,13 @@ PagedArray2D.prototype.get = function(x, y, value) {
 	// Fix indexing of negative values:
 	if (x < 0) {
 		pageX--;
-		localX = (localX+pageX*this.sizeX)%this.sizeX;
+		localX = (localX-pageX*this.sizeX)%this.sizeX;
 	}
 	if (y < 0) {
 		pageY--;
-		localY = (localY+pageY*this.sizeY)%this.sizeY;
+		localY = (localY-pageY*this.sizeY)%this.sizeY;
 	}
-	
+		
 	var pagePosString = pageX + "," + pageY;
 	
 	if (this.pages[pagePosString] == undefined) {

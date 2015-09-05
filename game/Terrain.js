@@ -42,8 +42,8 @@ Terrain.prototype.fillCircle = function(xPos, yPos, radius, density) {
 
 	for (var yy = -intR; yy < intR; ++yy) {
 		for (var xx = -intR; xx < intR; ++xx) {
-			var x = parseInt(xPos) + xx;
-			var y = parseInt(yPos) + yy;
+			var x = parseInt(xPos+0.5) + xx;
+			var y = parseInt(yPos+0.5) + yy;
 		
 			var xxx = xx + xPos - Math.floor(xPos);
 			var yyy = yy + yPos - Math.floor(yPos);
@@ -52,11 +52,11 @@ Terrain.prototype.fillCircle = function(xPos, yPos, radius, density) {
 			if (dis > radius)
 				continue;
 			
-			var oldDensity = this._densityField.array.get(x+intR, y+intR);
+			var oldDensity = this._densityField.array.get(x, y);
 				
-			var fillStrength = Math.min(radius-dis, 1.0);
-			var intDensity = density;//parseInt((fillStrength*255 - oldDensity)*density/255);
-			this._densityField.array.set(x+intR, y+intR, density);
+			var fillStrength = Math.max(Math.min(radius-dis, 1.0), 0.0);
+			var intDensity = Math.max(oldDensity-parseInt(255.0*fillStrength), 0);
+			this._densityField.array.set(x, y, intDensity);
 		}
 	}
 	this._isDensityChanged = true;
