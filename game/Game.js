@@ -11,6 +11,9 @@ Game = function() {
 	
 	this.entityWorld = new CES.World();
 	
+	var gl = this.renderer.gl;
+	this._terrain = new Terrain(gl, 128, 128);
+	
 	// Add more systems here!
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
@@ -78,6 +81,7 @@ Game.prototype.run = function() {
 	var gl = this.renderer.gl;
 	this.renderer.setRenderTarget(this.renderer.renderTarget);
 	gl.clear(gl.COLOR_BUFFER_BIT);
+	this._terrain.render(gl);
 	
 	// TODO: Render terrain.
 	

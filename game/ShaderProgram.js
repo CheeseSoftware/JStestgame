@@ -15,12 +15,13 @@ ShaderProgram.prototype.isReady = function() {
 
 /* Links the shaders to create a useable shader program, but only if all shaders are loaded! The shaderprogram will attempt to compile any uncompiled shader.
  */
-ShaderProgram.prototype.tryLink(gl) {
+ShaderProgram.prototype.tryLink = function(gl) {
 	// Check all the shaders. Compile them if needed.
 	var ready = true;
-	for (shader in this._shaders) {
-		if (!shader.isReady()) {
-			ready &= shader.tryCompile(gl);
+	//for (shader in this._shaders) {
+	for (var i = 0; i < this._shaders.length; ++i) {
+		if (!this._shaders[i].isReady()) {
+			ready &= this._shaders[i].tryCompile(gl);
 		}
 	}
 	if (!ready)
@@ -28,8 +29,8 @@ ShaderProgram.prototype.tryLink(gl) {
 	
 	var shaderProgram = gl.createProgram();
 	// Attach shaders:
-	for (shader in this._shaders) {
-		gl.attachShader(shaderProgram, shader);
+	for (var i = 0; i < this._shaders.length; ++i) {
+		gl.attachShader(shaderProgram, this._shaders[i].getGL());
 	}
 	
 	gl.linkProgram(shaderProgram);

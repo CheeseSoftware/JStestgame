@@ -100,6 +100,10 @@
 <script src="game/components/ControlledPlayer.js"></script>
 <script src="game/systems/PhysicsSystem.js"></script>
 <script src="game/systems/ControlSystem.js"></script>
+<script src="game/Shader.js"/></script>
+<script src="game/ShaderProgram.js"/></script>
+<script src="game/DensityField.js"/></script>
+<script src="game/Terrain.js"/></script>
 
 <!-- game -->
 <script src="game/Game.js"></script>
