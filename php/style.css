@@ -106,3 +106,29 @@
 	margin-left:5px;
 	float:left;
 }
+
+.registerFrame {
+	z-index: 2;
+	width: 400px;
+	height: 250px;
+	padding: 32px;
+
+	background-color: rgba(255,255,255,0.95);
+	border: solid 1px #EEE;
+	border-radius: 32px;
+	position: fixed;
+	top: 50%;
+  	left: 50%;
+ 	transform: translate(-50%, -50%);
+	text-align: center;
+}
+
+.innerRegisterFrame {
+	width:90%;
+	height:90%;
+	margin-top:30px;
+}
+
+.registerFrameHideButton {
+	float:right;
+}

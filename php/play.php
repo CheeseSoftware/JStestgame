@@ -133,13 +133,20 @@
 	<div class = "button" onclick = "document.getElementById('playMenu').remove(); game.spawnMainPlayer();">
 		<p>Play!</p>
 	</div>
-	<a class = "button" href = "phptest.php?action=hello">
-		<p>Something!</p>
+	<a class = "button" onclick="document.getElementById('registerFrame').style.display = 'block'">
+		<p>Register</p>
 	</a>
-	<a class = "button" href = "phptest.php?action=error404">
-		<p>Something else!</p>
+	<a class = "button">
+		<p>About</p>
 	</a>
 	<?php include("php/quotes.php"); ?>
+</div>
+
+<div id="registerFrame" class="registerFrame">
+	<button class="registerFrameHideButton" type="button" onclick="document.getElementById('registerFrame').style.display = 'none'"> Hide </button>
+    <iframe id="innerRegisterFrame" class="innerRegisterFrame" src="http://107.6.140.41/register.html">
+      <p>Your browser does not support iframes.</p>
+    </iframe>
 </div>
 
 <!--<div class="chatBox">
@@ -156,8 +163,8 @@
 		if(sent == "")
 			return;
 		chatInput.value = "";
-		if(GP.player != undefined)
-			sent = GP.player.getComponent("player").username + " says " + sent;
+		if(game.player != undefined)
+			sent = game.player.getComponent("player").username + " says " + sent;
 		else
 			sent = "guest says " + sent;
 		game.connection.send("chatmessage", { message: sent });
