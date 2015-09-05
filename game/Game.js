@@ -101,7 +101,7 @@ Game.prototype.run = function() {
 	var gl = this.renderer.gl;
 	this.renderer.setRenderTarget(this.renderer.renderTarget);
 	gl.clear(gl.COLOR_BUFFER_BIT);
-	gl.clearColor(0.3, 0.0, 0.0, 1.0);
+	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	this._terrain.render(gl);
 	
 	// TODO: Render terrain.
