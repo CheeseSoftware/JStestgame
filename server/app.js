@@ -77,6 +77,11 @@ io.on('connection', function(socket) {
 		io.sockets.emit('chatmessage', { message: data.message });
 		console.log(data.message);
 	});
+	
+	socket.on('playerdig', function(data) {
+		//TODO: Change terrain
+		socket.broadcast.emit('dig', data);
+	});
 });
 
 app.listen(3000);

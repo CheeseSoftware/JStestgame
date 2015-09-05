@@ -259,6 +259,15 @@ Game.prototype.initializeListeners = function() {
 		physics.x = data.x;
 		physics.y = data.y;
 		physics.rotation = data.rotation;
+		
+		keyboard.keys.space.press = function() {
+			//Dig
+			var physics = context.player.getComponent('physics');
+			var digRadius = 5;
+			var x = physics.x;
+			var y = physics.y;
+			context.connection.send("playerdig", { x: x, y: y, digRadius: digRadius });
+		};
 	}, this);
 	
 	this.connection.on('playerupdate', function(data, context) {
@@ -282,5 +291,12 @@ Game.prototype.initializeListeners = function() {
 	
 	this.connection.on('chatmessage', function(data) {
 		addChat(data.message);
+	});
+	
+	this.connection.on('dig', function(data) {
+		var x = data.x;
+		var y = data.y;
+		var digRadius = data.digRadius;
+		//TODO: Change terrain
 	});
 }
