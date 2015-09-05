@@ -1,6 +1,7 @@
 #version 100
 
 uniform sampler2D densityTexture;
+uniform sampler2D texture;
 
 varying highp vec2 uv;
 
@@ -45,9 +46,10 @@ highp float getDensity(highp vec2 pos) {
 
 void main() {
 	
-	highp float dis = 0.5+0.25*raymarch(vec3(uv*16.0, 0.0));
+	//highp float dis = 0.5+0.25*raymarch(vec3(uv*16.0, 0.0));
 	highp float density = getDensity(uv);
-	highp float alpha = clamp(16.0*(density-0.5), 0.0, 1.0);
+	highp float alpha = clamp(32.0*(density-0.5), 0.0, 1.0);
+	highp vec3 color = texture2D(texture, uv).xyz;
 	
-	gl_FragColor = vec4(vec3(dis)*alpha, alpha);
+	gl_FragColor = vec4(color*alpha, alpha);
 }

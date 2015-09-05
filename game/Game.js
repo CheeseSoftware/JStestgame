@@ -12,7 +12,7 @@ Game = function() {
 	this.entityWorld = new CES.World();
 	
 	var gl = this.renderer.gl;
-	this._terrain = new Terrain(gl, 32, 32);
+	this._terrain = new Terrain(gl, 32, 32, "ground.png");
 	var floatTextures = gl.getExtension('OES_texture_float');
 	if (!floatTextures) {
 		alert('no floating point texture support');
@@ -102,7 +102,13 @@ Game.prototype.run = function() {
 	this.renderer.setRenderTarget(this.renderer.renderTarget);
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
-	this._terrain.render(gl);
+	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
+	var viewMatrix = new PIXI.Matrix();
+	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
+	this._terrain.render(gl, this.camera,projectionMatrix.append(viewMatrix));
+	
+	
+
 	
 	// TODO: Render terrain.
 	
