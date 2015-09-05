@@ -12,7 +12,11 @@ Game = function() {
 	this.entityWorld = new CES.World();
 	
 	var gl = this.renderer.gl;
-	this._terrain = new Terrain(gl, 128, 128);
+	this._terrain = new Terrain(gl, 32, 32);
+	var floatTextures = gl.getExtension('OES_texture_float');
+	if (!floatTextures) {
+		alert('no floating point texture support');
+	}
 	
 	// Add more systems here!
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());

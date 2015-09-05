@@ -2,7 +2,18 @@ Terrain = function(gl, sizeX, sizeY) {
 	
 	this._sizeX = sizeX;
 	this._sizeY = sizeY;
-	this._densityField = DensityField(sizeX, sizeY);
+	this._densityField = new DensityField(sizeX, sizeY);
+	this._densityField.array.set(1, 1, 0);
+	// DIg a hole
+	for (var y = -16; y < 16; ++y) {
+		for (var x = -16; x < 16; ++x) {
+			var dis = Math.sqrt(x*x + y*y);
+			var density = Math.min(12.0-dis, 1.0);
+			var intDensity = 255 - parseInt(density*255);
+			if (dis <= 12.0)
+				this._densityField.array.set(x+16, y+16, intDensity);
+		}
+	}
 	this._buffer = null;
 	this._indexBuffer = null;
 	
@@ -11,7 +22,10 @@ Terrain = function(gl, sizeX, sizeY) {
 	var shaders = [vertexShader, fragmentShader];
 	this._shaderProgram = new ShaderProgram(shaders);
 	
+	// Attribute locations:
 	this._positionAttribute = 0;
+	// Uniform locations:
+	this._densityTextureUniform = 0;
 }
 
 Terrain.prototype.render = function(gl) {
@@ -44,10 +58,36 @@ Terrain.prototype.render = function(gl) {
 				new Uint16Array(triangle_faces),
 			gl.STATIC_DRAW);
 			
+			// Get attribute locations
 			this._positionAttribute = this._shaderProgram.getAttributeLocation(gl, "position");
+			
+			// Get uniform locations
+			this._densityTextureUniform = this._shaderProgram.getUniformLocation(gl, "densityTexture");
+			//gl.uniform1i(this._densityTextureUniform, 0);
+			
+			/***********************************************************
+			 * Load density texture : 
+			 ***********************************************************/
+			 {
+				var texture = gl.createTexture();
+
+				gl.bindTexture(gl.TEXTURE_2D, texture);
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, 32, 32, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, this._densityField.array.getPage(0, 0).data);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+				gl.bindTexture(gl.TEXTURE_2D, null);
+				this._texture = texture;
+			 }
 		}
 		
 		this._shaderProgram.bind(gl);
+		
+		// Uniforms:
+		gl.uniform1i(this._densityTextureUniform, 0);
+		
+		//Textures:
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, this._texture);
 		
 		gl.bindBuffer(gl.ARRAY_BUFFER, this._indexBuffer);
 
@@ -60,7 +100,5 @@ Terrain.prototype.render = function(gl) {
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 		gl.bindBuffer(gl.ARRAY_BUFFER, null);
 		this._shaderProgram.unbind(gl);
-		
-		gl.flush();
 	}
 }

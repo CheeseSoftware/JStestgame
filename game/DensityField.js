@@ -5,7 +5,7 @@
 DensityField = function(sizeX, sizeY) {
 	this.sizeX = sizeX;
 	this.sizeY = sizeY;
-	this.array = PagedArray2D(sizeX, sizeY, 5.0);
+	this.array = new PagedArray2D(sizeX, sizeY, 255);
 }
 
 /**

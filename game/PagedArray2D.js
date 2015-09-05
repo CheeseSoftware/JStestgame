@@ -17,7 +17,7 @@ PagedArray2D.prototype.get = function(x, y, value) {
 		pageX--;
 		localX = (localX+pageX*this.sizeX)%this.sizeX;
 	}
-	if (x < 0) {
+	if (y < 0) {
 		pageY--;
 		localY = (localY+pageY*this.sizeY)%this.sizeY;
 	}
@@ -40,11 +40,11 @@ PagedArray2D.prototype.set = function(x, y, value) {
 	// Fix indexing of negative values:
 	if (x < 0) {
 		pageX--;
-		localX = (localX+pageX*this.sizeX)%this.sizeX;
+		localX = (localX-pageX*this.sizeX)%this.sizeX;
 	}
-	if (x < 0) {
+	if (y < 0) {
 		pageY--;
-		localY = (localY+pageY*this.sizeY)%this.sizeY;
+		localY = (localY-pageY*this.sizeY)%this.sizeY;
 	}
 		
 	var pagePosString = pageX + "," + pageY;
@@ -65,7 +65,7 @@ PagedArray2D.prototype.getPage = function(pageX, pageY) {
 }
 
 Page2D = function(sizeX, sizeY, defaultValue) {
-	this.data = Array(sizeX * sizeY);
+	this.data = new Uint8Array(sizeX * sizeY);
 	this.sizeX = sizeX;
 	this.sizeY = sizeY;
 	for(var y = 0; y < sizeY; ++y) {
