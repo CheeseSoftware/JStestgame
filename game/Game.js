@@ -1,6 +1,16 @@
 Game = function() {
 	this.preload();
 	
+	keyboard.keys.esc.press = function() {
+		var menu = document.getElementById('playMenu');
+		
+		
+		if(menu.style.display == "none")
+			$("#playMenu").fadeIn(400);
+		else
+			$("#playMenu").fadeOut(100);
+	};
+	
 	// Initialize window
 	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000}, true, false);
 	this.renderer.clearBeforeRender = false;
@@ -255,6 +265,15 @@ Game.prototype.initializeListeners = function() {
 		physics.x = data.x;
 		physics.y = data.y;
 		physics.rotation = data.rotation;
+		
+		keyboard.keys.space.press = function() {
+			//Dig
+			var physics = context.player.getComponent('physics');
+			var digRadius = 5;
+			var x = physics.x;
+			var y = physics.y;
+			context.connection.send("playerdig", { x: x, y: y, digRadius: digRadius });
+		};
 	}, this);
 	
 	this.connection.on('playerupdate', function(data, context) {
@@ -278,5 +297,12 @@ Game.prototype.initializeListeners = function() {
 	
 	this.connection.on('chatmessage', function(data) {
 		addChat(data.message);
+	});
+	
+	this.connection.on('dig', function(data) {
+		var x = data.x;
+		var y = data.y;
+		var digRadius = data.digRadius;
+		//TODO: Change terrain
 	});
 }

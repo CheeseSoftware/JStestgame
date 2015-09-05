@@ -43,6 +43,8 @@ Keyboard = function() {
 	this.keys.w = new Key(87);
 	this.keys.d = new Key(68);
 	this.keys.s = new Key(83);
+	this.keys.esc = new Key(27);
+	this.keys.space = new Key(32);
 }
 
 Keyboard.prototype.isKeyDown = function(key) {

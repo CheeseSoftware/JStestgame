@@ -16,3 +16,15 @@ tramp
 *.rel
 /auto/
 .cask/
+/_notes/
+_notes/
+/_notes
+/_notes/**
+_notes/**
+_notes/*
+php/_notes
+php/_notes/
+php/_notes/**
+php/_notes/*
+php/_notes/dwsync.xml
+php/_notes/dwsync.xml

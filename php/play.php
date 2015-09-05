@@ -130,10 +130,10 @@
 
 <div class = "playMenu" id = "playMenu">
 	<img src="../textures/logo.png" /></img><br/><br/>
-	<div class = "button" onclick = "document.getElementById('playMenu').remove(); game.spawnMainPlayer();">
+	<div id="playButton" class = "button" onclick = "document.getElementById('playMenu').style.display = 'none'; game.spawnMainPlayer(); document.getElementById('playButton').onclick = undefined;">
 		<p>Play!</p>
 	</div>
-	<a class = "button" onclick="document.getElementById('registerFrame').style.display = 'block'">
+	<a class = "button" onclick="document.getElementById('registerFrame').style.display = 'block'; var frame = document.getElementById('innerRegisterFrame'); frame.src = frame.src;">
 		<p>Register</p>
 	</a>
 	<a class = "button">
