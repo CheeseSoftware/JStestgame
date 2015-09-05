@@ -7,6 +7,7 @@ Terrain = function(gl, sizeX, sizeY, texturePath) {
 	this._texturePath = texturePath;
 	this._texture = null;
 	this._densityTexture = null;
+	this._isDensityChanged = true;
 	// DIg a hole
 	/*for (var y = -16; y < 16; ++y) {
 		for (var x = -16; x < 16; ++x) {
@@ -41,10 +42,13 @@ Terrain.prototype.fillCircle = function(xPos, yPos, radius, density) {
 
 	for (var yy = -intR; yy < intR; ++yy) {
 		for (var xx = -intR; xx < intR; ++xx) {
-			var x = xPos + xx;
-			var y = yPos + yy;
+			var x = parseInt(xPos) + xx;
+			var y = parseInt(yPos) + yy;
 		
-			var dis = Math.sqrt(xx*xx + yy*yy);
+			var xxx = xx + xPos - Math.floor(xPos);
+			var yyy = yy + yPos - Math.floor(yPos);
+		
+			var dis = Math.sqrt(xxx*xxx + yyy*yyy);
 			if (dis > radius)
 				continue;
 			
@@ -55,6 +59,7 @@ Terrain.prototype.fillCircle = function(xPos, yPos, radius, density) {
 			this._densityField.array.set(x+intR, y+intR, density);
 		}
 	}
+	this._isDensityChanged = true;
 }
 
 Terrain.prototype.render = function(gl, camera, vpMatrix) {
@@ -103,18 +108,8 @@ Terrain.prototype.render = function(gl, camera, vpMatrix) {
 			this._matrixUniform = this._shaderProgram.getUniformLocation(gl, "matrix");
 			
 			/***********************************************************
-			 * Load density texture : 
+			 * Load texture : 
 			 ***********************************************************/
-			 {
-				var texture = gl.createTexture();
-
-				gl.bindTexture(gl.TEXTURE_2D, texture);
-				gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, 32, 32, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, this._densityField.array.getPage(0, 0).data);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-				gl.bindTexture(gl.TEXTURE_2D, null);
-				this._densityTexture = texture;
-			 }
 			 {
 				/*========================= TEXTURES ========================= */
 				var get_texture=function(image_URL){
@@ -141,6 +136,18 @@ Terrain.prototype.render = function(gl, camera, vpMatrix) {
 				this._texture = get_texture("game/textures/ground.png");
 
 			 }
+		}
+		
+		if (this._isDensityChanged) {
+			var texture = gl.createTexture();
+
+			gl.bindTexture(gl.TEXTURE_2D, texture);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, 32, 32, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, this._densityField.array.getPage(0, 0).data);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+			gl.bindTexture(gl.TEXTURE_2D, null);
+			this._densityTexture = texture;
+			this._isDensityChanged = false; 
 		}
 		
 		// MVP Matrix
