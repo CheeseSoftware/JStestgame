@@ -9,8 +9,8 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			// Prevent random rotation
 			physics.angularVelocity = 0;
 			
-			var oldX = physics.x;
-			var oldY = physics.y;
+			var oldX = physics.oldX;
+			var oldY = physics.oldY;
 
 			var speedDecreaseSpeed = 0.05;
 			var speedLimit = 40;
@@ -49,6 +49,9 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				physics.x = oldX;
 			if(physics.y < player.sprite.width / 4 || physics.y > game.tileMap.height * game.tileSize - player.sprite.width / 4)
 				physics.y = oldY;
+				
+			physics.oldX = physics.x;
+			physics.oldY = physics.y;
 				
 				
 			/*if (game.physicsWorld.GetContactList()) {
