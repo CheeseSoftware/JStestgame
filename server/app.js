@@ -80,7 +80,7 @@ io.on('connection', function(socket) {
 	
 	socket.on('playerdig', function(data) {
 		//TODO: Change terrain
-		socket.broadcast.emit('dig', data);
+		io.sockets.emit('dig', data);
 	});
 });
 
