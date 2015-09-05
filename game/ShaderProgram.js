@@ -37,19 +37,26 @@ ShaderProgram.prototype.tryLink = function(gl) {
 	this._glProgram = shaderProgram;
 }
 
+/* get uniform location. This is slow, so do it only once for every uniform.
+ */
 ShaderProgram.prototype.getUniformLocation = function(gl, uniformName) {
-	// TODO: Create a hashtable of uniform locations.
-	gl.getUniformLocation(shaderProgram, uniformName);
+	return gl.getUniformLocation(this._glProgram, uniformName);
+}
+
+/* get attribute location. This is slow, so do it only once for every attribute.
+ */
+ShaderProgram.prototype.getAttributeLocation = function(gl, attributeName) {
+	return gl.getAttribLocation(this._glProgram, attributeName);
 }
 
 /* Bind the shader program before use. Don't forget to unbind the shader program!
  */
-ShaderProgram.prototype.bind = function() {
-	GL.useProgram(this._glProgram);
+ShaderProgram.prototype.bind = function(gl) {
+	gl.useProgram(this._glProgram);
 }
 
 /* Unbind after use!
  */
-ShaderProgram.prototype.unbind = function() {
-	GL.useProgram(0);
+ShaderProgram.prototype.unbind = function(gl) {
+	gl.useProgram(null);
 }

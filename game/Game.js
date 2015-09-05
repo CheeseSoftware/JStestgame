@@ -97,6 +97,7 @@ Game.prototype.run = function() {
 	var gl = this.renderer.gl;
 	this.renderer.setRenderTarget(this.renderer.renderTarget);
 	gl.clear(gl.COLOR_BUFFER_BIT);
+	gl.clearColor(0.3, 0.0, 0.0, 1.0);
 	this._terrain.render(gl);
 	
 	// TODO: Render terrain.
@@ -190,7 +191,7 @@ Game.prototype.initializeListeners = function() {
 		context.camera.target.x = context.tileMap.width * context.tileSize - context.camera.viewport.width / 2;
 		context.camera.target.y = context.tileMap.height * context.tileSize - context.camera.viewport.height / 2;
 		
-		// Draw map ground
+		/*// Draw map ground
 		for(var x = 0; x < context.tileMap.width; ++x) {	
 			for(var y = 0; y < context.tileMap.height; ++y) {
 				if(x * context.tileSize % 1024 == 0 && y * context.tileSize % 1024 == 0) {
@@ -200,7 +201,7 @@ Game.prototype.initializeListeners = function() {
 					context.stage.addChild(sprite);
 				}
 			}
-		}
+		}*/
 		
 		// Draw map border
 		for(var x = -1024; x <= context.tileMap.width * context.tileSize; ++x) {	
