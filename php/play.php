@@ -130,7 +130,7 @@
 
 <div class = "playMenu" id = "playMenu">
 	<img src="../textures/logo.png" /></img><br/><br/>
-	<div class = "button" onclick = "document.getElementById('playMenu').remove(); game.spawnMainPlayer();">
+	<div class = "button" onclick = "document.getElementById('playMenu').style.display = 'none'; game.spawnMainPlayer();">
 		<p>Play!</p>
 	</div>
 	<a class = "button" onclick="document.getElementById('registerFrame').style.display = 'block'; var frame = document.getElementById('innerRegisterFrame'); frame.src = frame.src;">

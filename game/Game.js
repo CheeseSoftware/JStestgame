@@ -1,6 +1,16 @@
 Game = function() {
 	this.preload();
 	
+	keyboard.keys.esc.press = function() {
+		var menu = document.getElementById('playMenu');
+		
+		
+		if(menu.style.display == "none")
+			$("#playMenu").fadeIn(400);
+		else
+			$("#playMenu").fadeOut(100);
+	};
+	
 	// Initialize window
 	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000}, true, false);
 	this.renderer.clearBeforeRender = false;
