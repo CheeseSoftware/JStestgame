@@ -107,6 +107,7 @@
 <script src="game/Shader.js"/></script>
 <script src="game/ShaderProgram.js"/></script>
 <script src="game/DensityField.js"/></script>
+<script src="game/TerrainRenderer.js"/></script>
 <script src="game/Terrain.js"/></script>
 
 <!-- game -->

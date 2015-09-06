@@ -97,8 +97,7 @@ Game.prototype.preload = function() {
 Game.prototype.run = function() {
     var now = Date.now();
     var dt = now - this.lastUpdate;
-	this.lastUpdate = Date.now();
-
+	this.lastUpdate = Date.now()
 	
     this.entityWorld.update(dt);
 	
@@ -116,7 +115,7 @@ Game.prototype.run = function() {
 	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
 	var viewMatrix = new PIXI.Matrix();
 	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
-	this._terrain.render(gl, this.camera,projectionMatrix.append(viewMatrix));
+	this._terrain.render(gl, projectionMatrix.append(viewMatrix));
 	
 	
 

@@ -9,8 +9,8 @@ var io = require('socket.io').listen(app);
 var players = {};
 
 var mapData = {
-	width: 32,
-	height: 32,
+	width: 256,
+	height: 256,
 	tileSize: 64
 };
 

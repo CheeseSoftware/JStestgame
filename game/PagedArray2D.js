@@ -50,7 +50,7 @@ PagedArray2D.prototype.set = function(x, y, value) {
 	var pagePosString = pageX + "," + pageY;
 	
 	if (this.pages[pagePosString] == undefined) {
-		var page = new Page2D(this.sizeX, this.sizeY, this.defaultValue);
+		var page = new Page2D(pageX, pageY, this.sizeX, this.sizeY, this.defaultValue);
 		page.set(localX, localY, value);
 		this.pages[pagePosString] = page;
 	}
@@ -64,10 +64,13 @@ PagedArray2D.prototype.getPage = function(pageX, pageY) {
 	return this.pages[pagePosString];
 }
 
-Page2D = function(sizeX, sizeY, defaultValue) {
+Page2D = function(x, y, sizeX, sizeY, defaultValue) {
 	this.data = new Uint8Array(sizeX * sizeY);
+	this.x = x;
+	this.y = y;
 	this.sizeX = sizeX;
 	this.sizeY = sizeY;
+	this.isChanged = true;
 	for(var y = 0; y < sizeY; ++y) {
 		for (var x = 0; x < sizeX; ++x) {
 			this.data[y*sizeX + x] = defaultValue;
@@ -84,4 +87,5 @@ Page2D.prototype.get = function(x, y) {
 
 Page2D.prototype.set = function(x, y, value) {
 	this.data[x+y*this.sizeX] = value;
+	this.isChanged = true;
 }
