@@ -131,7 +131,7 @@
 </script>
 
 <div class = "playMenu" id = "playMenu">
-	<img src="../textures/logo.png" /></img><br/><br/>
+	<img src="textures/logo.png" /></img><br/><br/>
 	<div id="playButton" class = "button" onclick = "document.getElementById('playMenu').style.display = 'none'; game.spawnMainPlayer(); document.getElementById('playButton').onclick = undefined;">
 		<p>Play!</p>
 	</div>
@@ -146,7 +146,7 @@
 
 <div id="registerFrame" class="registerFrame">
 	<button class="registerFrameHideButton" type="button" onclick="document.getElementById('registerFrame').style.display = 'none'"> Hide </button>
-    <iframe id="innerRegisterFrame" class="innerRegisterFrame" src="http://107.6.140.41/register.html">
+    <iframe id="innerRegisterFrame" class="innerRegisterFrame" src="register.html">
       <p>Your browser does not support iframes.</p>
     </iframe>
 </div>
