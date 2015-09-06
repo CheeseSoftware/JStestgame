@@ -13,7 +13,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			var oldY = physics.oldY;
 
 			var speedDecreaseSpeed = 0.05;
-			var speedLimit = 40;
+			var speedLimit = 160;
 			
 			if(physics.vx > speedLimit)
 				physics.vx = speedLimit;

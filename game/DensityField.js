@@ -2,10 +2,10 @@
  * A signed distance field.
  * Uses paging to minimize memory usage.
  */
-DensityField = function(sizeX, sizeY) {
-	this.sizeX = sizeX;
-	this.sizeY = sizeY;
-	this.array = new PagedArray2D(sizeX, sizeY, 255);
+DensityField = function(pageSizeX, pageSizeY) {
+	this.pageSizeX = pageSizeX;
+	this.pageSizeY = pageSizeY;
+	this.array = new PagedArray2D(pageSizeX, pageSizeY, 255);
 }
 
 /**
@@ -23,9 +23,6 @@ DensityField.prototype.getDensity = function(x, y) {
 	var y1 = Math.floor(y);
 	var x2 = x1 + 1;
 	var y2 = y1 + 1;
-	
-	if (x1 < 0 || y1 < 0 || x2 >= this.sizeX || y2 >= this.sizeY)
-		return 5.0;
 		
 	var fractX = x - x1;
 	var fractY = y - y1;
