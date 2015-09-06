@@ -30,6 +30,7 @@ Game = function() {
 	
 	// Add more systems here!
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
+	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem());
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
 	
 	this.mousex = null;

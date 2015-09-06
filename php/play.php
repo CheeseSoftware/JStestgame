@@ -90,6 +90,7 @@
 <script src="lib/ces-browser.js"></script>
 <script src="lib/pixi.js"></script>
 <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+<script src="lib/gl-matrix.js"></script>
 
 
 <!-- classes -->
@@ -101,6 +102,7 @@
 <script src="game/components/Player.js"></script>
 <script src="game/components/ControlledPlayer.js"></script>
 <script src="game/systems/PhysicsSystem.js"></script>
+<script src="game/systems/TerrainPhysicsSystem.js"></script>
 <script src="game/systems/ControlSystem.js"></script>
 <script src="game/Shader.js"/></script>
 <script src="game/ShaderProgram.js"/></script>
