@@ -223,8 +223,11 @@ Game.prototype.initializeListeners = function() {
 			}
 		}*/
 		
+		
+		//LAGGY CODE DONT USE
+		
 		// Draw map border
-		for(var x = -1024; x <= context.tileMap.width * context.tileSize; ++x) {	
+		/*for(var x = -1024; x <= context.tileMap.width * context.tileSize; ++x) {	
 			for(var y = -1024; y <= context.tileMap.height * context.tileSize; ++y) {
 				if(x == -1024 || x == context.tileMap.width * context.tileSize || y == -1024 || y ==  context.tileMap.height * context.tileSize) {
 					if(x % 1024 == 0 && y % 1024 == 0) {
@@ -235,7 +238,7 @@ Game.prototype.initializeListeners = function() {
 					}
 				}
 			}
-		}
+		}*/
 	}, this);
 	
 	this.connection.on('error', console.error.bind(console));
