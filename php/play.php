@@ -89,7 +89,7 @@
 <script src="lib/Box2D.js"></script>
 <script src="lib/ces-browser.js"></script>
 <script src="lib/pixi.js"></script>
-<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+<script src="lib/socket.io-1.3.5.js"></script>
 <script src="lib/gl-matrix.js"></script>
 
 
