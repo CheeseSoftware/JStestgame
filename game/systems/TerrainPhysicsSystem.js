@@ -16,7 +16,7 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 			var density = game._terrain._densityField.getDensity(physics.x/32.0-0.5, physics.y/32.0-0.5);
 			var normal = game._terrain._densityField.calcNormal(physics.x/32.0-0.5, physics.y/32.0-0.5);
 			
-			if (density >= 1) {
+			if (density >= 1.0) {
 				physics.x += 0.05*normal[0]*(density-1);
 				physics.y += 0.05*normal[1]*(density-1);
 			}

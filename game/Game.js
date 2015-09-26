@@ -22,7 +22,7 @@ Game = function() {
 	this.entityWorld = new CES.World();
 	
 	var gl = this.renderer.gl;
-	this._terrain = new Terrain(gl, 32, 32, "ground.png");
+	this._terrain = new Terrain(gl, 30, 30, 32, 32, "ground.png");
 	var floatTextures = gl.getExtension('OES_texture_float');
 	if (!floatTextures) {
 		alert('no floating point texture support');
@@ -115,7 +115,7 @@ Game.prototype.run = function() {
 	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
 	var viewMatrix = new PIXI.Matrix();
 	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
-	this._terrain.render(gl, projectionMatrix.append(viewMatrix));
+	this._terrain.render(gl, projectionMatrix.clone().append(viewMatrix), this.camera);
 	
 	
 

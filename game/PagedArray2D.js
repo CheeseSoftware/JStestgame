@@ -4,6 +4,7 @@ PagedArray2D = function(sizeX, sizeY, defaultValue) {
 	this.sizeY = sizeY;
 	this.defaultValue = defaultValue;
 	this.pages = {};
+	this.onPageCreate = function(x, y, page) {};
 }
 
 PagedArray2D.prototype.get = function(x, y, value) {
@@ -53,6 +54,7 @@ PagedArray2D.prototype.set = function(x, y, value) {
 		var page = new Page2D(pageX, pageY, this.sizeX, this.sizeY, this.defaultValue);
 		page.set(localX, localY, value);
 		this.pages[pagePosString] = page;
+		this.onPageCreate(pageX, pageY, page);
 	}
 	else {
 		this.pages[pagePosString].set(localX, localY, value);

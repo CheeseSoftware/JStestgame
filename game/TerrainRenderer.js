@@ -1,6 +1,8 @@
-TerrainRenderer = function(gl, pageSizeX, pageSizeY) {
+TerrainRenderer = function(gl, pageSizeX, pageSizeY, tileSizeX, tileSizeY) {
 	this._pageSizeX = pageSizeX;
 	this._pageSizeY = pageSizeY;
+	this._tileSizeX = tileSizeX;
+	this._tileSizeY = tileSizeY;
 	this._densityTexture = null;
 	this._buffer = null;
 	this._indexBuffer = null;
@@ -28,16 +30,17 @@ TerrainRenderer.prototype.lazyInit = function(gl) {
 		if (this._buffer == null) {
 			/*========================= THE TRIANglE ========================= */
 			//POINTS :
-			var size = 32*32;
+			var sizeX = 30*this._tileSizeX;
+			var sizeY = 30*this._tileSizeY;
 			
 			var triangle_vertex=[
-				-size,-size,
-				-1,-1,
-				size,-size,
-				1,-1,
-				-size,size,
-				-1,1,
-				size,size,
+				0,0,
+				0,0,
+				sizeX,0,
+				1,0,
+				0,sizeY,
+				0,1,
+				sizeX,sizeY,
 				1,1,
 			];
 
@@ -96,22 +99,14 @@ TerrainRenderer.prototype.render = function(gl, vpMatrix, pages, texture) {
 		
 		// Lazy init of page texture.
 		if (page.texture == undefined) {
-			page.texture = gl.createTexture();
-			
-			gl.bindTexture(gl.TEXTURE_2D, page.texture);
-			gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, this._pageSizeX, this._pageSizeY, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, page.data);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-			gl.bindTexture(gl.TEXTURE_2D, null);
-			
-			page.isChanged = false;
+			this.loadPageTexture(gl, page);
 		}
 	
 		// Update density texture
 		if (page.isChanged) {
 			gl.bindTexture(gl.TEXTURE_2D, page.texture);
 			//gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, this._pageSizeX, this.pageSizeY, gl.LUMINANCE, gl.UNSIGNED_BYTE, page.data);
-			gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, this._pageSizeX, this._pageSizeY, gl.LUMINANCE, gl.UNSIGNED_BYTE, page.data);
+			gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, 30, 30, gl.LUMINANCE, gl.UNSIGNED_BYTE, page.data);
 			gl.bindTexture(gl.TEXTURE_2D, null);
 			
 			page.isChanged = false; 
@@ -122,7 +117,7 @@ TerrainRenderer.prototype.render = function(gl, vpMatrix, pages, texture) {
 		 ********************************************************/
 		
 		// MVP matrix
-		var modelMatrix = PIXI.Matrix.IDENTITY.clone().translate(page.x*this._pageSizeX*64.0,page.y*this._pageSizeY*64.0);
+		var modelMatrix = PIXI.Matrix.IDENTITY.clone().translate(page.x*this._pageSizeX*this._tileSizeX,page.y*this._pageSizeY*this._tileSizeX);
 		var mvpMatrix = vpMatrix.clone().append(modelMatrix);
 		// Bind matrix
 		gl.uniformMatrix3fv(this._matrixUniform, false, mvpMatrix.toArray());
@@ -168,4 +163,53 @@ TerrainRenderer.prototype.render = function(gl, vpMatrix, pages, texture) {
 	
 	// unbind shader program:
 	this._shaderProgram.unbind(gl);
+}
+
+TerrainRenderer.prototype.loadPageTexture = function(gl, page) {
+	page.texture = gl.createTexture();
+	
+	gl.bindTexture(gl.TEXTURE_2D, page.texture);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, this._pageSizeX + 2, this._pageSizeY + 2, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, null);// page.data);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
+	gl.pixelStorei(gl.PACK_ALIGNMENT, 1)
+	gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, 31, 31, gl.LUMINANCE, gl.UNSIGNED_BYTE, page.data);
+	gl.bindTexture(gl.TEXTURE_2D, null);
+	
+	page.isChanged = false;
+}
+
+TerrainRenderer.prototype.onPageCreate = function(gl, x1, y1, x2, y2, page1, page2) {
+	if (!page1 || !page2)
+		return;
+
+	console.log("onPageCreate event! x:" + x1 + " x2:" + x2 + " y:" + y1 + " y2:" + y2);
+	// TODO: TerrainRenderer.prototype.onPageCreate
+	
+	// Calculate intersecting rectangle.
+	var rx1 = Math.max(x1*30-1, x2*30);
+	var ry1 = Math.max(y1*30-1, y2*30);
+	var rx2 = Math.min(x1*30+31, x2*30+30);
+	var ry2 = Math.min(y1*30+31, y2*30+30);
+	
+	// Calculate texture position:
+	var textureX1 = rx1 - x1*30+1;
+	var textureY1 = ry1 - y1*30+1;
+	var textureX2 = rx2 - x1*30+1;
+	var textureY2 = ry2 - y1*30+1;
+	
+	// Lazy init of page texture.
+	if (page1.texture == undefined) {
+		this.loadPageTexture(gl, page1);
+	}
+	
+	gl.bindTexture(gl.TEXTURE_2D, page1.texture);
+	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
+	gl.pixelStorei(gl.PACK_ALIGNMENT, 1)
+	//gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, this._pageSizeX, this.pageSizeY, gl.LUMINANCE, gl.UNSIGNED_BYTE, page.data);
+	gl.texSubImage2D(gl.TEXTURE_2D, 0, textureX1, textureY1, textureX2, textureY2, gl.LUMINANCE, gl.UNSIGNED_BYTE, page2.data);
+	gl.bindTexture(gl.TEXTURE_2D, null);
+	
+	page1.isChanged = false; 
 }

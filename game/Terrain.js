@@ -1,11 +1,18 @@
-Terrain = function(gl, sizeX, sizeY, texturePath) {
+Terrain = function(gl, sizeX, sizeY, tileSizeX, tileSizeY, texturePath) {
 	
 	this._sizeX = sizeX;
 	this._sizeY = sizeY;
-	this._densityField = new DensityField(sizeX, sizeY);
-	this._densityField.array.set(1, 1, 0);
+	this._tileSizeX = tileSizeX;
+	this._tileSizeY = tileSizeY;
+	this._densityField = new DensityField(30, 30);
+	this._terrainRenderer = new TerrainRenderer(gl, 30, 30, tileSizeX, tileSizeY);
 	this._texturePath = texturePath;
 	this._texture = null;
+	
+	
+	this._densityField.array.onPageCreate = this.onPageCreate.bind(this, gl);//function(x, y, page) { console.log("onPageCreate event! x:" + x + " y:" + y); };//this._terrainRenderer(
+	this._densityField.array.set(1, 1, 0);
+	
 	// DIg a hole
 	/*for (var y = -16; y < 16; ++y) {
 		for (var x = -16; x < 16; ++x) {
@@ -18,7 +25,7 @@ Terrain = function(gl, sizeX, sizeY, texturePath) {
 	}*/
 	this.fillCircle(8, 8, 2.3, 0.0);
 
-	this._terrainRenderer = new TerrainRenderer(gl, sizeX, sizeY);
+	
 
 	
 	this.loadTexture(gl);
@@ -50,9 +57,20 @@ Terrain.prototype.fillCircle = function(xPos, yPos, radius, density) {
 	this._isDensityChanged = true;
 }
 
-Terrain.prototype.render = function(gl, vpMatrix) {
-	var pagesToRender = [this._densityField.array.getPage(0, 0), this._densityField.array.getPage(0, 1), this._densityField.array.getPage(1, 0), this._densityField.array.getPage(1, 1)];
+Terrain.prototype.render = function(gl, vpMatrix, camera) {
+	var pagesToRender = [];
 
+	var x1 = Math.floor(camera.pos.x/32.0/30.0);
+	var y1 = Math.floor(camera.pos.y/32.0/30.0);
+	var x2 = Math.ceil((camera.pos.x+camera.width)/32.0/30.0);
+	var y2 = Math.ceil((camera.pos.y+camera.width)/32.0/30.0);
+	
+	for (var y = y1; y <= y2; ++y) {
+		for (var x = x1; x <= x2; ++x) {
+			pagesToRender.push(this._densityField.array.getPage(x, y));
+		}
+	}
+	
 	this._terrainRenderer.render(gl, vpMatrix, pagesToRender, this._texture.webglTexture);
 }
 
@@ -83,4 +101,22 @@ Terrain.prototype.loadTexture = function(gl) {
 	};
 
 	this._texture = get_texture("game/textures/ground.png");
+}
+
+Terrain.prototype.onPageCreate = function(gl, x, y, page) {
+	console.log("onPageCreate event! x:" + x + " y:" + y);
+	
+	var l = function(that, gl, ex, ey, x2, y2, ePage) {
+		var page2 = that._densityField.array.getPage(x2, y2);
+		if (page2) {
+			that._terrainRenderer.onPageCreate(gl, ex, ey, x2, y2, ePage, page2);
+			that._terrainRenderer.onPageCreate(gl, x2, y2, ex, ey, page2, ePage);
+		}
+	}
+	
+	l(this, gl, x, y, x+1, y, page);
+	l(this, gl, x, y, x-1, y, page);
+	l(this, gl, x, y, x, y+1, page);
+	l(this, gl, x, y, x, y-1, page);
+	
 }
