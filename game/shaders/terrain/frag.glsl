@@ -71,8 +71,8 @@ highp float raymarch(highp vec3 pos) {
 highp float getDensity(highp vec2 pos) {
 	
 	highp float density = texture2D(densityTexture, (pos*30.0+1.0)/32.0).x;
-	highp float scale = 4.0;
-	for (int i = 0; i < 6; ++i) {
+	highp float scale = 32.0;
+	for (int i = 0; i < 3; ++i) {
 		
 		density += 0.2*noise(fragPos*scale);
 		scale *= 2.0;
