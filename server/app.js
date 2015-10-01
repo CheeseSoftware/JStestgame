@@ -14,6 +14,21 @@ var mapData = {
 	tileSize: 64
 };
 
+var mongo = require('mongodb'),
+  Server = mongo.Server,
+  Db = mongo.Db;
+
+var server = new Server('localhost', 27017, {auto_reconnect: true});
+var db = new Db('digminer', server);
+
+db.open(function(err, db) {
+	if(!err) {
+		console.log("We are connected");
+	}
+	else
+		console.log("There was an error connecting to MongoDB");
+});
+
 io.on('connection', function(socket) {
     socket.emit('init', { mapWidth: mapData.width, mapHeight: mapData.height, tileSize: mapData.tileSize });
 	io.sockets.emit('message', "A client has joined with IP " + socket.request.connection.remoteAddress);
@@ -81,6 +96,61 @@ io.on('connection', function(socket) {
 	socket.on('playerdig', function(data) {
 		//TODO: Change terrain
 		io.sockets.emit('dig', data);
+	});
+	
+	
+	//MENU PACKETS
+	
+	
+	socket.on('register', function(data) {
+		//TODO: verify data
+		
+		if(!data.username) {
+			socket.emit('registerresponse', { success: false, response:"Username is empty."});
+			return;
+		}
+		
+		if(!data.email) {
+			socket.emit('registerresponse', { success: false, response:"Email is empty."});
+			return;
+		}
+		
+		if(!data.password) {
+			socket.emit('registerresponse', { success: false, response:"Password is empty."});
+			return;
+		}
+		
+		db.collection('users', function(err, collectionref) { 
+			if(err)
+				console.log(err);
+			
+			collectionref.findOne({"username":data.username}, function(err, doc) {
+				if(err)
+					console.log(err);
+				if(doc) {
+					socket.emit('registerresponse', { success: false, response:"A user already exists with username \"" + data.username + "\""});
+				}
+				else {
+					collectionref.findOne({"email":data.email}, function(err, doc) {
+					if(err)
+						console.log(err);
+					if(doc) {
+						socket.emit('registerresponse', { success: false, response:"A user already exists with email \"" + data.email + "\""});
+						return;
+					}
+					else {
+						var doc = {"username":data.username, "email":data.email, "password":data.password};
+						collectionref.insert(doc, function (err, result) {
+							if(err)
+								console.log(err);
+							else
+								socket.emit('registerresponse', { success: true, response:"User has been created."});
+						});
+					}
+				});
+				}
+			});
+		});
 	});
 });
 

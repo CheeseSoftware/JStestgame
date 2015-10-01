@@ -107,6 +107,17 @@
 	float:left;
 }
 
+.closeWindowButton {
+	width:32px;
+	height:32px;
+	background-image:url(../textures/closewindow.png);
+	float:right;
+	margin-top:5px;
+	margin-right:5px;
+}
+
+/* Register frame */
+
 .registerFrame {
 	z-index: 2;
 	width: 400px;
@@ -128,8 +139,55 @@
 	width:90%;
 	height:90%;
 	margin-top:30px;
+	/*background-color:#03F;*/
 }
 
-.registerFrameHideButton {
+.registerButton {
+	display: block;
+	
+	width: 298px;
+	height: 48px;
+	margin: auto;
+	margin-top: 8;
+	margin-bottom: 8;
+	text-align: center;
+	color: #FFF;
+	line-height: 0px;
+	font-family: "Comic Sans MS", cursive, sans-serif;
+	font-size: 24px;
+
+	text-decoration: none;
+	
+	background-color: #505050;
+	border: solid 2px #CCC;
+	border-radius: 8px;
+	transition: 0.25s;
+}
+
+.registerButton:hover {
+
+	background-color: #808080;
+}
+
+/* Login frame */
+
+.loginFrame {
+	z-index: 2;
+	width: 400px;
+	height: 250px;
+	padding: 32px;
+
+	background-color: rgba(255,255,255,0.95);
+	border: solid 1px #EEE;
+	border-radius: 32px;
+	position: fixed;
+	top: 50%;
+  	left: 50%;
+ 	transform: translate(-50%, -50%);
+	text-align: center;
+	display: none;
+}
+
+.loginFrameHideButton {
 	float:right;
 }

@@ -136,6 +136,26 @@
 	//var audioManager = new AudioManager();
 	
 	var game = new Game();
+	
+	function tryRegister(username, email, password) {		
+		game.connection.send('register', { 
+			username: username,
+			email: email,
+			password: password
+		});
+	};
+	
+	game.connection.on('registerresponse', function(data) {
+		$('#registrationResult').html(data.response);
+		if(data.success == true) {
+			
+			var d = new Date();
+			d.setTime(d.getTime() + (14*24*60*60*1000));
+			var expires = "expires="+d.toUTCString();
+			document.cookie="username=" + $('#registerUsername').val() + "; " + expires;
+			document.cookie="password=" + $('#registerPassword').val() + "; " + expires;
+		}
+	});
 </script>
 
 <div class = "playMenu" id = "playMenu">
@@ -143,19 +163,32 @@
 	<div id="playButton" class = "button" onclick = "document.getElementById('playMenu').style.display = 'none'; game.spawnMainPlayer(); document.getElementById('playButton').onclick = undefined;">
 		<p>Play!</p>
 	</div>
-	<a class = "button" onclick="document.getElementById('registerFrame').style.display = 'block'; var frame = document.getElementById('innerRegisterFrame'); frame.src = frame.src;">
+	<a class = "button" onclick="document.getElementById('registerFrame').style.display = 'block';">
 		<p>Register</p>
 	</a>
-	<a class = "button">
-		<p>About</p>
+    <a class = "button" onclick="document.getElementById('loginFrame').style.display = 'block';">
+		<p>Login</p>
 	</a>
 </div>
 
 <div id="registerFrame" class="registerFrame">
-	<button class="registerFrameHideButton" type="button" onclick="document.getElementById('registerFrame').style.display = 'none'"> Hide </button>
-    <iframe id="innerRegisterFrame" class="innerRegisterFrame" src="register.html">
-      <p>Your browser does not support iframes.</p>
-    </iframe>
+	<div class="closeWindowButton" onclick="document.getElementById('registerFrame').style.display = 'none'"></div>
+    <div class="innerRegisterFrame">
+        Username:<br>
+        <input type="text" id="registerUsername" value=""> 
+        <br>Email:<br>
+        <input type="text" id="registerEmail" value="">
+        <br>Password:<br>
+        <input type="text" id="registerPassword" value="">
+        <br />
+        <div class="registerButton" onclick="tryRegister($('#registerUsername').val(), $('#registerEmail').val(), $('#registerPassword').val()); $('#registrationResult').html('Waiting for registration response..');"><p>Register</p></div>
+    	<p id="registrationResult"></p>
+    </div>
+</div>
+
+<div id="loginFrame" class="loginFrame">
+	<button class="loginFrameHideButton" type="button" onclick="document.getElementById('loginFrame').style.display = 'none'"> Hide </button>
+    
 </div>
 
 <!--<div class="chatBox">
