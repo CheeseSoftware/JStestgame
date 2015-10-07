@@ -94,6 +94,7 @@
 
 
 <!-- classes -->
+<script src="game/AudioManager.js"></script>
 <script src="game/Connection.js"></script>
 <script src="game/Keyboard.js"></script>
 <script src="game/Camera.js"></script>
@@ -127,7 +128,8 @@
 	,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
 	;
 
-
+	var audioManager = new AudioManager();
+	
 	var game = new Game();
 </script>
 
