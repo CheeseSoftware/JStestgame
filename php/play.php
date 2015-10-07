@@ -111,6 +111,11 @@
 <script src="game/TerrainRenderer.js"/></script>
 <script src="game/Terrain.js"/></script>
 
+<!-- Chunk system -->
+<script src="game/Chunk.js"></script>
+<script src="game/ChunkManager.js"></script>
+<script src="game/ChunkRenderer.js"></script>
+
 <!-- game -->
 <script src="game/Game.js"></script>
 <script>
@@ -128,7 +133,7 @@
 	,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
 	;
 
-	var audioManager = new AudioManager();
+	//var audioManager = new AudioManager();
 	
 	var game = new Game();
 </script>
@@ -144,7 +149,6 @@
 	<a class = "button">
 		<p>About</p>
 	</a>
-	<?php include("php/quotes.php"); ?>
 </div>
 
 <div id="registerFrame" class="registerFrame">
