@@ -2,13 +2,13 @@ ChunkManager = function(gl) {
 
 	this._chunkSize = 30;
 	this._chunkRenderer = new ChunkRenderer(gl, 32, 32, 32, 32);
-	
+	this._gl = gl;
 	
 	this._chunks = {};
 	//this._chunkRenderer = new ChunkRenderer();
 	
 	
-	//this.onPageCreate = function(x, y, chunk) {};
+	//this.onChunkCreate = function(x, y, chunk) {};
 	
 	this._texture = null;
 	this.loadTexture(gl);
@@ -34,7 +34,7 @@ ChunkManager.prototype.fillCircle = function(xPos, yPos, radius, density) {
 				
 			var fillStrength = Math.max(Math.min(radius-dis, 1.0), 0.0);
 			var intDensity = Math.max(oldDensity-parseInt(255.0*fillStrength), 0);
-			this.setDensity(x, y, intDensity);
+			this.setDensity(x, y, intDensity, true);
 		}
 	}
 	this._isDensityChanged = true;
@@ -110,6 +110,8 @@ ChunkManager.prototype.setDensity = function(x, y, value, createChunk) {
 		var chunk = new Chunk(this, chunkX, chunkY, this._chunkSize, this._chunkSize);
 		chunk.setDensity(localX, localY, value);
 		this._chunks[chunkPosString] = chunk;
+		
+		this.onChunkCreate(this._gl, chunkX, chunkY, chunk);
 	}
 	else {
 		this._chunks[chunkPosString].setDensity(localX, localY, value);
@@ -150,3 +152,20 @@ ChunkManager.prototype.loadTexture = function(gl) {
 	this._texture = get_texture("game/textures/ground.png");
 }
 
+ChunkManager.prototype.onChunkCreate = function(gl, x, y, chunk) {
+	console.log("onChunkCreate event! x:" + x + " y:" + y);
+	
+	var l = function(that, gl, ex, ey, x2, y2, eChunk) {
+		var chunk2 = that.getChunk(x2, y2);
+		if (chunk2) {
+			that._chunkRenderer.onChunkCreate(gl, ex, ey, x2, y2, eChunk, chunk2);
+			that._chunkRenderer.onChunkCreate(gl, x2, y2, ex, ey, chunk2, eChunk);
+		}
+	}
+	
+	l(this, gl, x, y, x+1, y, chunk);
+	l(this, gl, x, y, x-1, y, chunk);
+	l(this, gl, x, y, x, y+1, chunk);
+	l(this, gl, x, y, x, y-1, chunk);
+	
+}
