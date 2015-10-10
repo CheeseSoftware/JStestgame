@@ -211,7 +211,7 @@ ChunkRenderer.prototype.onChunkCreate = function(gl, x1, y1, x2, y2, chunk1, chu
 	//gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
 	//gl.pixelStorei(gl.PACK_ALIGNMENT, 1)
 	//gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, this._chunkSizeX, this.chunkSizeY, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.data);
-	gl.texSubImage2D(gl.TEXTURE_2D, 0, textureX1, textureY1, textureX2-textureX1+1, textureY2-textureY1+1, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk2.data);
+	gl.texSubImage2D(gl.TEXTURE_2D, 0, textureX1, textureY1, textureX2-textureX1+1, textureY2-textureY1+1, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk2.densityData);
 	gl.bindTexture(gl.TEXTURE_2D, null);
 	
 	chunk1.isChanged = false; 
