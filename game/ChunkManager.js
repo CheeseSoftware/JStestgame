@@ -50,7 +50,14 @@ ChunkManager.prototype.render = function(gl, vpMatrix, camera) {
 	
 	for (var y = y1; y <= y2; ++y) {
 		for (var x = x1; x <= x2; ++x) {
-			chunksToRender.push(this.getChunk(x, y));
+			var chunk = this.getChunk(x, y);
+			if (!chunk)
+				continue;
+			
+			chunksToRender.push(chunk);
+			
+			if (chunk.isChanged)
+				this.onChunkChange(gl, x, y, chunk);
 		}
 	}
 	
@@ -111,7 +118,7 @@ ChunkManager.prototype.setDensity = function(x, y, value, createChunk) {
 		chunk.setDensity(localX, localY, value);
 		this._chunks[chunkPosString] = chunk;
 		
-		this.onChunkCreate(this._gl, chunkX, chunkY, chunk);
+		this.onChunkChange(this._gl, chunkX, chunkY, chunk);
 	}
 	else {
 		this._chunks[chunkPosString].setDensity(localX, localY, value);
@@ -152,14 +159,17 @@ ChunkManager.prototype.loadTexture = function(gl) {
 	this._texture = get_texture("game/textures/ground.png");
 }
 
-ChunkManager.prototype.onChunkCreate = function(gl, x, y, chunk) {
-	console.log("onChunkCreate event! x:" + x + " y:" + y);
+/* Is called whenever a chunk is changed or created.
+ *
+ */
+ChunkManager.prototype.onChunkChange = function(gl, x, y, chunk) {
+	console.log("onChunkChange event! x:" + x + " y:" + y);
 	
 	var l = function(that, gl, ex, ey, x2, y2, eChunk) {
 		var chunk2 = that.getChunk(x2, y2);
 		if (chunk2) {
-			that._chunkRenderer.onChunkCreate(gl, ex, ey, x2, y2, eChunk, chunk2);
-			that._chunkRenderer.onChunkCreate(gl, x2, y2, ex, ey, chunk2, eChunk);
+			that._chunkRenderer.onChunkChange(gl, ex, ey, x2, y2, eChunk, chunk2);
+			that._chunkRenderer.onChunkChange(gl, x2, y2, ex, ey, chunk2, eChunk);
 		}
 	}
 	

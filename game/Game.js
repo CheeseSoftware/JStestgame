@@ -118,7 +118,6 @@ Game.prototype.run = function() {
 	var viewMatrix = new PIXI.Matrix();
 	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
 	//this._terrain.render(gl, projectionMatrix.clone().append(viewMatrix), this.camera);
-	this._chunkManager.setDensity(3, 3, 0, true);
 	this._chunkManager.render(gl, projectionMatrix.clone().append(viewMatrix), this.camera);
 	
 	
