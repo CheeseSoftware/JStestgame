@@ -1,10 +1,14 @@
 #version 100
 
 uniform sampler2D densityTexture;
+uniform sampler2D tileTexture;
 uniform sampler2D texture;
 
 varying highp vec2 fragUv;
 varying highp vec2 fragPos;
+
+#define TILE_DIM 2
+#define TILE_DIM_F 2.0
 
 /* Noise functions */
 	highp float rand(highp vec2 co)
@@ -86,7 +90,9 @@ void main() {
 	//highp float dis = 0.5+0.25*raymarch(vec3(fragUv*16.0, 0.0));
 	highp float density = getDensity(fragUv);
 	highp float alpha = 0.5+0.5*clamp(32.0*(density-0.5), 0.0, 1.0);
-	highp vec3 textureColor = texture2D(texture, fragUv*2.0).xyz;
+	highp float tileID = texture2D(tileTexture, floor(fragUv*30.0+1.0)/32.0).x*255.0;
+	highp vec2 texturePos = mod(fragUv*2.0/TILE_DIM_F, 1.0/TILE_DIM_F) + vec2(mod(tileID/TILE_DIM_F, 1.0), mod(floor(tileID/TILE_DIM_F)/TILE_DIM_F, 1.0));
+	highp vec3 textureColor = texture2D(texture, texturePos).xyz;
 	highp vec3 colorA = textureColor*clamp(0.125+density, 0.5, 1.0);
 	highp vec3 colorB = textureColor*clamp(0.5-0.25*density, 0.0, 1.0);
 	

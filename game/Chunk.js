@@ -10,7 +10,7 @@ Chunk = function(chunkManager, x, y, sizeX, sizeY) {
 	
 	for(var y = 0; y < sizeY; ++y) {
 		for (var x = 0; x < sizeX; ++x) {
-			this._tileIds[y*sizeX + x] = 0;
+			this._tileIds[y*sizeX + x] = ((x == 4 && y == 4)? 1 : 0) + ((x == 5 && y == 5)? 2 : 0) + ((x == 6 && y == 6)? 3 : 0);
 			this._density[y*sizeX + x] = 255;
 		}
 	}
@@ -53,7 +53,7 @@ Object.defineProperties(Chunk.prototype, {
 		}
 	},
 	
-	tileIdData: {
+	tileData: {
 		get: function()  {
 			return this._tileIds;
 		}

@@ -17,6 +17,7 @@ ChunkRenderer = function(gl, chunkSizeX, chunkSizeY, tileSizeX, tileSizeY) {
 	this._uvAttribute = 0;
 	// Uniform locations:
 	this._densityTextureUniform = 0;
+	this._tileTextureUniform = 0;
 	this._textureUniform = 0;
 	this._vpMatrixUniform = 0;
 	this._modelMatrixUniform = 0;
@@ -65,6 +66,7 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 			
 			// Get uniform locations
 			this._densityTextureUniform = this._shaderProgram.getUniformLocation(gl, "densityTexture");
+			this._tileTextureUniform = this._shaderProgram.getUniformLocation(gl, "tileTexture");
 			this._textureUniform = this._shaderProgram.getUniformLocation(gl, "texture");
 			this._vpMatrixUniform = this._shaderProgram.getUniformLocation(gl, "vpMatrix");
 			this._modelMatrixUniform = this._shaderProgram.getUniformLocation(gl, "modelMatrix");
@@ -101,7 +103,7 @@ ChunkRenderer.prototype.render = function(gl, vpMatrix, chunks, texture) {
 		
 		// Lazy init of chunk texture.
 		if (chunk.texture == undefined) {
-			this.loadChunkTexture(gl, chunk);
+			this.loadChunkTextures(gl, chunk);
 		}
 	
 		// Update density texture
@@ -130,14 +132,17 @@ ChunkRenderer.prototype.render = function(gl, vpMatrix, chunks, texture) {
 		// Bind textures
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, chunk.texture);
+		gl.activeTexture(gl.TEXTURE1);
+		gl.bindTexture(gl.TEXTURE_2D, chunk.tileTexture);
 		if (texture) {
-			gl.activeTexture(gl.TEXTURE1);
+			gl.activeTexture(gl.TEXTURE2);
 			gl.bindTexture(gl.TEXTURE_2D, texture);
 		}
 		
 		// Set texture uniforms:
 		gl.uniform1i(this._densityTextureUniform, 0);
-		gl.uniform1i(this._textureUniform, 1);
+		gl.uniform1i(this._tileTextureUniform, 1);
+		gl.uniform1i(this._textureUniform, 2);
 		
 		// Bind array buffer
 		gl.bindBuffer(gl.ARRAY_BUFFER, this._indexBuffer);
@@ -158,19 +163,23 @@ ChunkRenderer.prototype.render = function(gl, vpMatrix, chunks, texture) {
 	
 	// Unbind textures:
 	if (texture) {
-		gl.activeTexture(gl.TEXTURE0);
+		gl.activeTexture(gl.TEXTURE2);
 		gl.bindTexture(gl.TEXTURE_2D, null);
 	}
 	gl.activeTexture(gl.TEXTURE1);
+	gl.bindTexture(gl.TEXTURE_2D, null);
+	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, null);
 	
 	// unbind shader program:
 	this._shaderProgram.unbind(gl);
 }
 
-ChunkRenderer.prototype.loadChunkTexture = function(gl, chunk) {
+ChunkRenderer.prototype.loadChunkTextures = function(gl, chunk) {
 	chunk.texture = gl.createTexture();
+	chunk.tileTexture = gl.createTexture();
 	
+	// Create density texture
 	gl.bindTexture(gl.TEXTURE_2D, chunk.texture);
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, this._chunkSizeX + 2, this._chunkSizeY + 2, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, null);// chunk.data);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -178,6 +187,16 @@ ChunkRenderer.prototype.loadChunkTexture = function(gl, chunk) {
 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
 	gl.pixelStorei(gl.PACK_ALIGNMENT, 1)
 	gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, 30, 30, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.densityData);
+	gl.bindTexture(gl.TEXTURE_2D, null);
+	
+	// Create tile texture
+	gl.bindTexture(gl.TEXTURE_2D, chunk.tileTexture);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, this._chunkSizeX + 2, this._chunkSizeY + 2, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, null);// chunk.data);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
+	gl.pixelStorei(gl.PACK_ALIGNMENT, 1)
+	gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, 30, 30, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.tileData);
 	gl.bindTexture(gl.TEXTURE_2D, null);
 	
 	chunk.isChanged = false;
@@ -215,16 +234,26 @@ ChunkRenderer.prototype.onChunkChange = function(gl, x1, y1, x2, y2, chunk1, chu
 		}
 	}
 	
-	// Lazy init of chunk texture.
-	if (chunk1.texture == undefined) {
-		this.loadChunkTexture(gl, chunk1);
+	var tileData = new Uint8Array(width * height);
+	for (var xx = 0; xx < width; ++xx) {
+		for (var yy = 0; yy < height; ++yy) {
+			tileData[xx+yy*width] = chunk2.tileData[dataX+xx + (dataY+yy)*30];
+		}
 	}
 	
+	// Lazy init of chunk texture.
+	if (chunk1.texture == undefined) {
+		this.loadChunkTextures(gl, chunk1);
+	}
+	
+	// Update density texture borders
 	gl.bindTexture(gl.TEXTURE_2D, chunk1.texture);
-	//gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
-	//gl.pixelStorei(gl.PACK_ALIGNMENT, 1)
-	//gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, this._chunkSizeX, this.chunkSizeY, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.data);
 	gl.texSubImage2D(gl.TEXTURE_2D, 0, textureX1, textureY1, textureX2-textureX1+1, textureY2-textureY1+1, gl.LUMINANCE, gl.UNSIGNED_BYTE, densityData);
+	gl.bindTexture(gl.TEXTURE_2D, null);
+	
+	// Update tile texture borders
+	gl.bindTexture(gl.TEXTURE_2D, chunk1.tileTexture);
+	gl.texSubImage2D(gl.TEXTURE_2D, 0, textureX1, textureY1, textureX2-textureX1+1, textureY2-textureY1+1, gl.LUMINANCE, gl.UNSIGNED_BYTE, tileData);
 	gl.bindTexture(gl.TEXTURE_2D, null);
 	
 	//chunk1.isChanged = false; 
