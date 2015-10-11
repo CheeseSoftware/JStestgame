@@ -29,6 +29,15 @@ Chunk.prototype.setDensity = function(x, y, value) {
 	this.isChanged = true;
 }
 
+Chunk.prototype.getTileId = function(x, y) {
+	return this._tileIds[x+y*this._sizeX];
+}
+
+Chunk.prototype.setTileId = function(x, y, value) {
+	this._tileIds[x+y*this._sizeX] = value;
+	this.isChanged = true;
+}
+
 Object.defineProperties(Chunk.prototype, {
 
     width: {

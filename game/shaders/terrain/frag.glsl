@@ -62,9 +62,9 @@ Tile calcTile(highp vec2 tilePos, highp vec2 delta) {
 	highp float strength = density - delta.x*delta.y;
 	highp float tileID = texture2D(tileTexture, tilePos/32.0).x*255.0;
 	
-	strength -= 0.5*noise(64.0*fragUv + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
-	strength -= 0.5*noise(128.0*fragUv + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
-	strength -= 0.5*noise(256.0*fragUv + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
+	strength -= 0.5*noise(32.0*fragUv+0.2*tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
+	strength -= 0.5*noise(64.0*fragUv+0.2*tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
+	strength -= 0.5*noise(128.0*fragUv+0.2*tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
 	//strength += getDensity(fragUv);
 	
 	return Tile(strength, tileID);
@@ -72,10 +72,10 @@ Tile calcTile(highp vec2 tilePos, highp vec2 delta) {
 
 void main() {
 	
-	highp vec4 tilePos = vec4(floor(fragUv*30.0+vec2(1.0)), vec2(0.0));
+	highp vec4 tilePos = vec4(floor(fragUv*30.0+vec2(0.5)), vec2(0.0));
 	tilePos = vec4(tilePos.xy, tilePos.xy+1.0);
 	
-	highp vec4 delta = abs(vec4(tilePos.xy - (fragUv*30.0+1.0), tilePos.zw - (fragUv*30.0+1.0)));
+	highp vec4 delta = abs(vec4(tilePos.xy - (fragUv*30.0+0.5), tilePos.zw - (fragUv*30.0+0.5)));
 	
 	Tile a = calcTile(tilePos.xy, delta.xy);
 	Tile b = calcTile(tilePos.zy, delta.zy);

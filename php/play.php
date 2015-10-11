@@ -109,6 +109,8 @@
 <script src="game/ShaderProgram.js"/></script>
 
 <!-- Chunk system -->
+<script src="game/TileType.js"></script>
+<script src="game/TileRegister.js"></script>
 <script src="game/Chunk.js"></script>
 <script src="game/ChunkManager.js"></script>
 <script src="game/ChunkRenderer.js"></script>

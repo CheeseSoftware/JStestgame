@@ -2,6 +2,7 @@ ChunkManager = function(gl) {
 
 	this._chunkSize = 30;
 	this._chunkRenderer = new ChunkRenderer(gl, 32, 32, 32, 32);
+	this._tileRegister = new TileRegister();
 	this._gl = gl;
 	
 	this._chunks = {};
@@ -31,8 +32,10 @@ ChunkManager.prototype.fillCircle = function(xPos, yPos, radius, density) {
 				continue;
 			
 			var oldDensity = this.getDensity(x, y);
+			var tileId = this.getTileId(x, y);
+			var tile = this._tileRegister.getById(tileId);
 				
-			var fillStrength = Math.max(Math.min(radius-dis, 1.0), 0.0);
+			var fillStrength = Math.max(Math.min(radius-dis, 1.0), 0.0)/tile.hardness;
 			var intDensity = Math.max(oldDensity-parseInt(255.0*fillStrength), 0);
 			this.setDensity(x, y, intDensity, true);
 		}
@@ -146,6 +149,66 @@ ChunkManager.prototype.setDensity = function(x, y, value, createChunk) {
 	}
 	else {
 		this._chunks[chunkPosString].setDensity(localX, localY, value);
+	}
+}
+
+ChunkManager.prototype.getTileId = function(x, y) {
+	var localX = x%this._chunkSize;
+	var localY = y%this._chunkSize;
+	var chunkX = (x-localX)/this._chunkSize;
+	var chunkY = (y-localY)/this._chunkSize;
+	
+	// Fix indexing of negative values:
+	if (x < 0) {
+		chunkX--;
+		localX = (x-chunkX*this._chunkSize)%this._chunkSize;
+	}
+	if (y < 0) {
+		chunkY--;
+		localY = (y-chunkY*this._chunkSize)%this._chunkSize;
+	}
+		
+	var chunkPosString = chunkX + "," + chunkY;
+	
+	if (this._chunks[chunkPosString] == undefined) {
+		return 0;
+	}
+	
+	return this._chunks[chunkPosString].getTileId(localX, localY);
+}
+
+ChunkManager.prototype.setTileId = function(x, y, value, createChunk) {
+	if (typeof(createChunk)==='undefined') createChunk = false;
+
+	var localX = x%this._chunkSize;
+	var localY = y%this._chunkSize;
+	var chunkX = (x-localX)/this._chunkSize;
+	var chunkY = (y-localY)/this._chunkSize;
+	
+	// Fix indexing of negative values:
+	if (x < 0) {
+		chunkX--;
+		localX = (x-chunkX*this._chunkSize)%this._chunkSize;
+	}
+	if (y < 0) {
+		chunkY--;
+		localY = (y-chunkY*this._chunkSize)%this._chunkSize;
+	}
+		
+	var chunkPosString = chunkX + "," + chunkY;
+	
+	if (this._chunks[chunkPosString] == undefined) {
+		if (!createChunk)
+			return;
+	
+		var chunk = new Chunk(this, chunkX, chunkY, this._chunkSize, this._chunkSize);
+		chunk.setTileId(localX, localY, value);
+		this._chunks[chunkPosString] = chunk;
+		
+		this.onChunkChange(this._gl, chunkX, chunkY, chunk);
+	}
+	else {
+		this._chunks[chunkPosString].setTileId(localX, localY, value);
 	}
 }
 
