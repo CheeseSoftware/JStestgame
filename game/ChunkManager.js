@@ -20,8 +20,8 @@ ChunkManager.prototype.fillCircle = function(xPos, yPos, radius, density) {
 
 	for (var yy = -intR; yy < intR; ++yy) {
 		for (var xx = -intR; xx < intR; ++xx) {
-			var x = parseInt(xPos+0.5) + xx;
-			var y = parseInt(yPos+0.5) + yy;
+			var x = parseInt(xPos + ((xPos > 0)? 0.5:-0.5)) + xx;
+			var y = parseInt(yPos + ((yPos > 0)? 0.5:-0.5)) + yy;
 		
 			var xxx = xx + xPos - Math.floor(xPos);
 			var yyy = yy + yPos - Math.floor(yPos);
@@ -98,11 +98,11 @@ ChunkManager.prototype.getDensity = function(x, y) {
 	// Fix indexing of negative values:
 	if (x < 0) {
 		chunkX--;
-		localX = (localX-chunkX*this._chunkSize)%this._chunkSize;
+		localX = (x-chunkX*this._chunkSize)%this._chunkSize;
 	}
 	if (y < 0) {
 		chunkY--;
-		localY = (localY-chunkY*this._chunkSize)%this._chunkSize;
+		localY = (y-chunkY*this._chunkSize)%this._chunkSize;
 	}
 		
 	var chunkPosString = chunkX + "," + chunkY;
@@ -125,11 +125,11 @@ ChunkManager.prototype.setDensity = function(x, y, value, createChunk) {
 	// Fix indexing of negative values:
 	if (x < 0) {
 		chunkX--;
-		localX = (localX-chunkX*this._chunkSize)%this._chunkSize;
+		localX = (x-chunkX*this._chunkSize)%this._chunkSize;
 	}
 	if (y < 0) {
 		chunkY--;
-		localY = (localY-chunkY*this._chunkSize)%this._chunkSize;
+		localY = (y-chunkY*this._chunkSize)%this._chunkSize;
 	}
 		
 	var chunkPosString = chunkX + "," + chunkY;
@@ -202,4 +202,55 @@ ChunkManager.prototype.onChunkChange = function(gl, x, y, chunk) {
 	l(this, gl, x, y, x, y+1, chunk);
 	l(this, gl, x, y, x, y-1, chunk);
 	
+}
+
+ChunkManager.prototype.calcDensity = function(x, y) {
+	var x1 = Math.floor(x);
+	var y1 = Math.floor(y);
+	var x2 = x1 + 1;
+	var y2 = y1 + 1;
+		
+	var fractX = x - x1;
+	var fractY = y - y1;
+	
+	var a = [
+		1.0 - fractX,
+		1.0 - fractY,
+		fractX,
+		fractY
+	];
+	var b = [
+		this.getDensity(x1, y1),
+		this.getDensity(x2, y1),
+		this.getDensity(x1, y2),
+		this.getDensity(x2, y2)
+	];
+	
+	return a[0] * a[1] * b [0] +
+		   a[2] * a[1] * b [1] +
+		   a[0] * a[3] * b [2] +
+		   a[2] * a[3] * b [3];
+}
+
+ChunkManager.prototype.calcNormal = function(x, y) {
+	var epsilon = 0.1;
+	var a = -this.calcDensity(x+epsilon, y+epsilon);
+	var b = -this.calcDensity(x-epsilon, y+epsilon);
+	var c = -this.calcDensity(x-epsilon, y-epsilon);
+	var d = -this.calcDensity(x+epsilon, y-epsilon);
+	
+	var f = vec2.fromValues(+a, +a);
+	var g = vec2.fromValues(-b, +b);
+	var h = vec2.fromValues(-c, -c);
+	var i = vec2.fromValues(+d, -d);
+	
+	var vec = vec2.create();
+	vec2.add(vec, vec, f);
+	vec2.add(vec, vec, g);
+	vec2.add(vec, vec, h);
+	vec2.add(vec, vec, i);
+	if (vec2.sqrDist(vec, vec2.create()) > 0.0)
+		vec2.normalize(vec, vec);
+	
+	return vec;
 }

@@ -44,11 +44,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				physics.vy = 0;
 							
 			//console.log("x " + physics.x + " y " + physics.y + " vx " + physics.vx + " vy " + physics.vy);
-			
-			if(physics.x < player.sprite.width / 4 || physics.x > game.tileMap.width * game.tileSize - player.sprite.width / 4)
-				physics.x = oldX;
-			if(physics.y < player.sprite.width / 4 || physics.y > game.tileMap.height * game.tileSize - player.sprite.width / 4)
-				physics.y = oldY;
+		
 				
 			physics.oldX = physics.x;
 			physics.oldY = physics.y;

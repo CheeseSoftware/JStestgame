@@ -2,7 +2,7 @@
 ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
     update: function (dt) {
         var entities = this.world.getEntities('physics', 'player');
- 
+		return; /* DEBUG CODE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
         entities.forEach(function (entity) {
 			physics = entity.getComponent('physics');
             player = entity.getComponent('player');
@@ -13,8 +13,8 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 			var oldY = physics.oldY;
 
 					
-			var density = game._terrain._densityField.getDensity(physics.x/32.0-0.5, physics.y/32.0-0.5);
-			var normal = game._terrain._densityField.calcNormal(physics.x/32.0-0.5, physics.y/32.0-0.5);
+			var density = game._chunkManager.calcDensity(physics.x/32.0-0.5, physics.y/32.0-0.5);
+			var normal = game._chunkManager.calcNormal(physics.x/32.0-0.5, physics.y/32.0-0.5);
 			
 			if (density >= 1.0) {
 				physics.x += 0.05*normal[0]*(density-1);
