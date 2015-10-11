@@ -108,6 +108,7 @@ Game.prototype.run = function() {
             this.physicsWorld.ClearForces();
 	
 	this.camera.update(dt);
+	this._chunkManager.update(this.camera);
 	
 	
 	var gl = this.renderer.gl;
