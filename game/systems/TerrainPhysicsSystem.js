@@ -2,8 +2,8 @@
 ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
     update: function (dt) {
         var entities = this.world.getEntities('physics', 'player');
-		return; /* DEBUG CODE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-        entities.forEach(function (entity) {
+		
+		entities.forEach(function (entity) {
 			physics = entity.getComponent('physics');
             player = entity.getComponent('player');
 			// Prevent random rotation

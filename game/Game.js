@@ -22,7 +22,6 @@ Game = function() {
 	this.entityWorld = new CES.World();
 	
 	var gl = this.renderer.gl;
-	this._terrain = new Terrain(gl, 30, 30, 32, 32, "ground.png");
 	this._chunkManager = new ChunkManager(gl);
 	
 	var floatTextures = gl.getExtension('OES_texture_float');
@@ -118,13 +117,8 @@ Game.prototype.run = function() {
 	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
 	var viewMatrix = new PIXI.Matrix();
 	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
-	//this._terrain.render(gl, projectionMatrix.clone().append(viewMatrix), this.camera);
 	this._chunkManager.render(gl, projectionMatrix.clone().append(viewMatrix), this.camera);
-	
-	
 
-	
-	// TODO: Render terrain.
 	
 	this.renderer.render(this.camera);
 	
@@ -310,8 +304,6 @@ Game.prototype.initializeListeners = function() {
 		var x = data.x;
 		var y = data.y;
 		var digRadius = data.digRadius;
-		context._terrain.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, 1.5);
 		context._chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, 1.5);
-		//TODO: Change terrain
 	}, this);
 }
