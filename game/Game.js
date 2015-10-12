@@ -22,7 +22,8 @@ Game = function() {
 	this.entityWorld = new CES.World();
 	
 	var gl = this.renderer.gl;
-	this._chunkManager = new ChunkManager(gl);
+	this._chunkManager = new ChunkManager();
+	this._chunkRenderer = new ChunkRenderer(gl, this._chunkManager, 32, 32, 32, 32);
 	
 	var floatTextures = gl.getExtension('OES_texture_float');
 	if (!floatTextures) {
@@ -117,7 +118,7 @@ Game.prototype.run = function() {
 	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
 	var viewMatrix = new PIXI.Matrix();
 	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
-	this._chunkManager.render(gl, projectionMatrix.clone().append(viewMatrix), this.camera);
+	this._chunkRenderer.render(gl, this._chunkManager, projectionMatrix.clone().append(viewMatrix), this.camera);
 
 	
 	this.renderer.render(this.camera);

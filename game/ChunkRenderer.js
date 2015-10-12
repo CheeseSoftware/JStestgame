@@ -1,4 +1,7 @@
-ChunkRenderer = function(gl, chunkSizeX, chunkSizeY, tileSizeX, tileSizeY) {
+ChunkRenderer = function(gl, chunkManager, chunkSizeX, chunkSizeY, tileSizeX, tileSizeY) {
+
+	chunkManager.subscribe(this);
+
 	this._chunkSizeX = 30;
 	this._chunkSizeY = 30;
 	this._tileSizeX = tileSizeX;
@@ -6,6 +9,8 @@ ChunkRenderer = function(gl, chunkSizeX, chunkSizeY, tileSizeX, tileSizeY) {
 	this._densityTexture = null;
 	this._buffer = null;
 	this._indexBuffer = null;
+	this._gl = gl;
+	this._chunkManager = chunkManager;
 	
 	var vertexShader = new Shader("terrain/vert.glsl", gl.VERTEX_SHADER);
 	var fragmentShader = new Shader("terrain/frag.glsl", gl.FRAGMENT_SHADER);
@@ -22,6 +27,11 @@ ChunkRenderer = function(gl, chunkSizeX, chunkSizeY, tileSizeX, tileSizeY) {
 	this._vpMatrixUniform = 0;
 	this._modelMatrixUniform = 0;
 	this._isReady = false;
+	
+	
+	
+	this._texture = null;
+	this.loadTexture(gl);
 }
 
 ChunkRenderer.prototype.lazyInit = function(gl) {
@@ -76,13 +86,34 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 	}
 }
 
+ChunkRenderer.prototype.render = function(gl, chunkManager, vpMatrix, camera) {
+	var chunksToRender = [];
+
+	var x1 = Math.floor(camera.pos.x/32.0/30.0);
+	var y1 = Math.floor(camera.pos.y/32.0/30.0);
+	var x2 = Math.ceil((camera.pos.x+camera.width)/32.0/30.0);
+	var y2 = Math.ceil((camera.pos.y+camera.width)/32.0/30.0);
+	
+	for (var y = y1; y <= y2; ++y) {
+		for (var x = x1; x <= x2; ++x) {
+			var chunk = chunkManager.getChunk(x, y);
+			if (!chunk)
+				continue;
+			
+			chunksToRender.push(chunk);
+		}
+	}
+	
+	this.renderChunk(gl, vpMatrix, chunksToRender, this._texture.webglTexture);
+}
+
 /* Render terrain.
  * gl: webgl context
  * vpMatrix: View-projection-matrix.
  * chunks: array of chunks to render.
  * texture: texture of terrain.
  */
-ChunkRenderer.prototype.render = function(gl, vpMatrix, chunks, texture) {
+ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 	// Lazy init
 	if (!this._isReady)
 		this.lazyInit(gl);
@@ -202,7 +233,7 @@ ChunkRenderer.prototype.loadChunkTextures = function(gl, chunk) {
 	chunk.isChanged = false;
 }
 
-ChunkRenderer.prototype.onChunkChange = function(gl, x1, y1, x2, y2, chunk1, chunk2) {
+ChunkRenderer.prototype.onChunkChange2 = function(gl, x1, y1, x2, y2, chunk1, chunk2) {
 	if (!chunk1 || !chunk2)
 		return;
 
@@ -257,4 +288,56 @@ ChunkRenderer.prototype.onChunkChange = function(gl, x1, y1, x2, y2, chunk1, chu
 	gl.bindTexture(gl.TEXTURE_2D, null);
 	
 	//chunk1.isChanged = false; 
+}
+
+ChunkRenderer.prototype.loadTexture = function(gl) {
+	/***********************************************************
+	 * Load texture : 
+	 ***********************************************************/
+	/*========================= TEXTURES ========================= */
+	var get_texture=function(image_URL){
+		var image = new Image();
+
+		image.src = image_URL;
+		image.webglTexture = false;
+
+		image.onload = function(e) {
+			var texture = gl.createTexture();
+			gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+			gl.bindTexture(gl.TEXTURE_2D, texture);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+			gl.bindTexture(gl.TEXTURE_2D, null);
+			gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+			image.webglTexture = texture;
+		};
+		return image;
+	};
+
+	this._texture = get_texture("game/textures/ground.png");
+}
+
+
+/* Is called whenever a chunk is changed or created.
+ *
+ */
+ChunkRenderer.prototype.onChunkChange = function(x, y, chunk) {
+	console.log("onChunkChange event! x:" + x + " y:" + y);
+	var gl = this._gl;
+	
+	var l = function(that, gl, ex, ey, x2, y2, eChunk) {
+		var chunk2 = that._chunkManager.getChunk(x2, y2);
+		if (chunk2) {
+			that.onChunkChange2(gl, ex, ey, x2, y2, eChunk, chunk2);
+			that.onChunkChange2(gl, x2, y2, ex, ey, chunk2, eChunk);
+		}
+	}
+	
+	l(this, gl, x, y, x+1, y, chunk);
+	l(this, gl, x, y, x-1, y, chunk);
+	l(this, gl, x, y, x, y+1, chunk);
+	l(this, gl, x, y, x, y-1, chunk);
+	
 }

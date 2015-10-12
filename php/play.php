@@ -107,6 +107,7 @@
 <script src="game/systems/ControlSystem.js"></script>
 <script src="game/Shader.js"/></script>
 <script src="game/ShaderProgram.js"/></script>
+<script src="game/Observable.js"/></script>
 
 <!-- Chunk system -->
 <script src="game/TileType.js"></script>
@@ -131,8 +132,6 @@
 	,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
 	,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
 	;
-
-	//var audioManager = new AudioManager();
 	
 	var game = new Game();
 	

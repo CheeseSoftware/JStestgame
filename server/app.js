@@ -1,3 +1,8 @@
+
+
+
+
+
 var http = require('http'),
     fs = require('fs');
     //index = fs.readFileSync(__dirname + '/index.html');
@@ -13,6 +18,16 @@ var mapData = {
 	height: 256,
 	tileSize: 64
 };
+
+// Include Chunk system
+eval(fs.readFileSync('../game/TileType.js', 'utf8')); 
+eval(fs.readFileSync('../game/TileRegister.js', 'utf8')); 
+eval(fs.readFileSync('../game/Chunk.js', 'utf8')); 
+eval(fs.readFileSync('../game/ChunkManager.js', 'utf8')); 
+eval(fs.readFileSync('../game/ChunkRenderer.js', 'utf8')); 
+
+//var chunkManager = new ChunkManager(
+
 
 var mongo = require('mongodb'),
   Server = mongo.Server,
