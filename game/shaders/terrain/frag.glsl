@@ -59,12 +59,12 @@ highp float getDensity(highp vec2 pos) {
 
 Tile calcTile(highp vec2 tilePos, highp vec2 delta) {
 	highp float density = texture2D(densityTexture, tilePos/32.0).x;
-	highp float strength = density - delta.x*delta.y;
+	highp float strength = 1.0*density+clamp((1.0-delta.x)*(1.0-delta.y), 0.0, 1.0);
 	highp float tileID = texture2D(tileTexture, tilePos/32.0).x*255.0;
 	
-	strength -= 0.5*noise(32.0*fragUv+0.2*tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
-	strength -= 0.5*noise(64.0*fragUv+0.2*tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
-	strength -= 0.5*noise(128.0*fragUv+0.2*tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
+	strength -= 0.5*noise(64.0*fragUv+tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
+	strength -= 0.25*noise(128.0*fragUv+tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
+	strength -= 0.25*noise(256.0*fragUv+tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
 	//strength += getDensity(fragUv);
 	
 	return Tile(strength, tileID);
@@ -81,6 +81,7 @@ void main() {
 	Tile b = calcTile(tilePos.zy, delta.zy);
 	Tile c = calcTile(tilePos.xw, delta.xw);
 	Tile d = calcTile(tilePos.zw, delta.zw);
+	
 	
 	highp float strongest2nd = -1.0;
 	
@@ -124,6 +125,7 @@ void main() {
 	highp vec3 colorB = textureColor*clamp(0.5-0.25*density, 0.0, 1.0);
 	
 	gl_FragColor = vec4(mix(colorB, colorA, clamp(32.0*(density-0.5), 0.0, 1.0)), 1.0);
+	//gl_FragColor = vec4(vec3(a.strength), 1.0);
 	
 	//if (density == 0.0)
 	//	gl_FragColor = vec4(vec3(1.0), 1.0);

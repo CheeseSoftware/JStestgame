@@ -10,7 +10,7 @@ Chunk = function(chunkManager, x, y, sizeX, sizeY) {
 	
 	for(var y = 0; y < sizeY; ++y) {
 		for (var x = 0; x < sizeX; ++x) {
-			this._tileIds[y*sizeX + x] = (x/16+y/16)%2;
+			this._tileIds[y*sizeX + x] = (this._x*2+x/16+this._y*2+y/16)%4;
 			this._density[y*sizeX + x] = 255;
 		}
 	}

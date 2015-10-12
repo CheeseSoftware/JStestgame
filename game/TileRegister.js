@@ -3,7 +3,9 @@ TileRegister = function() {
 	this._nameToTypeMap = {};
 	
 	this.register("dirt", true, false, 1.0);
-	this.register("stone", true, false, 16.0);
+	this.register("stone", true, false, 4.0);
+	this.register("stone2", true, false, 8.0);
+	this.register("stone3", true, false, 16.0);
 }
 
 TileRegister.prototype.register = function(name, isSolid, isOre, hardness) {
