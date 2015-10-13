@@ -19,6 +19,10 @@ var mapData = {
 	tileSize: 64
 };
 
+
+eval(fs.readFileSync('../game/Observable.js', 'utf8')); 
+
+
 // Include Chunk system
 eval(fs.readFileSync('../game/TileType.js', 'utf8')); 
 eval(fs.readFileSync('../game/TileRegister.js', 'utf8')); 
