@@ -272,8 +272,8 @@ Game.prototype.initializeListeners = function() {
 			//Dig
 			var physics = context.player.getComponent('physics');
 			var digRadius = 5;
-			var x = physics.x;
-			var y = physics.y;
+			var x = physics.x + 32.0*Math.sin(physics.rotation);
+			var y = physics.y - 32.0*Math.cos(physics.rotation);
 			context.connection.send("playerdig", { x: x, y: y, digRadius: digRadius });
 		};
 	}, this);

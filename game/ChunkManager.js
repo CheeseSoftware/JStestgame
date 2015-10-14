@@ -5,9 +5,7 @@ ChunkManager = function(gl) {
 	this._gl = gl;
 	
 	this._chunks = {};
-	//this._chunkRenderer = new ChunkRenderer();
-	
-	//this.onChunkCreate = function(x, y, chunk) {};
+	this._generator = new Generator();
 	
 
 }
@@ -46,6 +44,7 @@ ChunkManager.prototype.fillCircle = function(xPos, yPos, radius, density) {
 
 
 ChunkManager.prototype.update = function(camera) {
+
 	var x1 = Math.floor(camera.pos.x/32.0/30.0)-2;
 	var y1 = Math.floor(camera.pos.y/32.0/30.0)-2;
 	var x2 = Math.ceil((camera.pos.x+camera.width)/32.0/30.0)+2;
@@ -61,8 +60,7 @@ ChunkManager.prototype.update = function(camera) {
 			var chunkPosString = x + "," + y;
 			
 			// Create Chunk
-			//var chunk = new Chunk(this, x, y, this._chunkSize, this._chunkSize);
-			//this._chunks[chunkPosString] = chunk;
+			var chunk = this.createChunk(x, y);
 		}
 	}
 	
@@ -120,11 +118,8 @@ ChunkManager.prototype.setDensity = function(x, y, value, createChunk) {
 		if (!createChunk)
 			return;
 	
-		var chunk = new Chunk(this, chunkX, chunkY, this._chunkSize, this._chunkSize);
+		var chunk = this.createChunk(chunkX, chunkY);
 		chunk.setDensity(localX, localY, value);
-		this._chunks[chunkPosString] = chunk;
-		
-		this.on("onChunkChange", [chunkX, chunkY, chunk]);
 	}
 	else {
 		this._chunks[chunkPosString].setDensity(localX, localY, value);
@@ -180,11 +175,8 @@ ChunkManager.prototype.setTileId = function(x, y, value, createChunk) {
 		if (!createChunk)
 			return;
 	
-		var chunk = new Chunk(this, chunkX, chunkY, this._chunkSize, this._chunkSize);
+		var chunk = this.createChunk(chunkX, chunkY);
 		chunk.setTileId(localX, localY, value);
-		this._chunks[chunkPosString] = chunk;
-		
-		this.on("onChunkChange", [chunkX, chunkY, chunk]);
 	}
 	else {
 		this._chunks[chunkPosString].setTileId(localX, localY, value);
@@ -197,7 +189,22 @@ ChunkManager.prototype.getChunk = function(chunkX, chunkY) {
 }
 
 
+ChunkManager.prototype.createChunk = function(chunkX, chunkY) {
+	var chunkPosString = chunkX + "," + chunkY;
 
+	if (this._chunks[chunkPosString])
+		return null;
+
+	var chunk = new Chunk(this, chunkX, chunkY, this._chunkSize, this._chunkSize);
+	
+	this._generator.generate(chunk);
+	
+	this._chunks[chunkPosString] = chunk;
+	
+	this.on("onChunkChange", [chunkX, chunkY, chunk]);
+	
+	return chunk;
+}
 
 
 ChunkManager.prototype.calcDensity = function(x, y) {

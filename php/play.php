@@ -91,6 +91,7 @@
 <script src="lib/pixi.js"></script>
 <script src="lib/socket.io-1.3.5.js"></script>
 <script src="lib/gl-matrix.js"></script>
+<script src="lib/perlin.js"></script>
 
 
 <!-- classes -->
@@ -112,6 +113,7 @@
 <!-- Chunk system -->
 <script src="game/TileType.js"></script>
 <script src="game/TileRegister.js"></script>
+<script src="game/Generator.js"></script>
 <script src="game/Chunk.js"></script>
 <script src="game/ChunkManager.js"></script>
 <script src="game/ChunkRenderer.js"></script>
