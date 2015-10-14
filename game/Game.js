@@ -87,13 +87,13 @@ Game.prototype.resize = function() {
 
 Game.prototype.preload = function() {
 	this.textures = {};
-	this.textures.gubbe = PIXI.Texture.fromImage('textures/gubbe.png');
-	this.textures.cheese = PIXI.Texture.fromImage('textures/cheese.png');
-	this.textures.worker = PIXI.Texture.fromImage('textures/worker.png');
-	this.textures.ground = PIXI.Texture.fromImage('textures/ground.png');
-	this.textures.block = PIXI.Texture.fromImage('textures/block.png');
-	this.textures.rock = PIXI.Texture.fromImage('textures/rock.png');
-	this.textures.largerock = PIXI.Texture.fromImage('textures/rock_large.png');
+	this.textures.gubbe = PIXI.Texture.fromImage('game/textures/gubbe.png');
+	this.textures.cheese = PIXI.Texture.fromImage('game/textures/cheese.png');
+	this.textures.worker = PIXI.Texture.fromImage('game/textures/worker.png');
+	this.textures.ground = PIXI.Texture.fromImage('game/textures/ground.png');
+	this.textures.block = PIXI.Texture.fromImage('game/textures/block.png');
+	this.textures.rock = PIXI.Texture.fromImage('game/textures/rock.png');
+	this.textures.largerock = PIXI.Texture.fromImage('game/textures/rock_large.png');
 }
 
 Game.prototype.run = function() {
