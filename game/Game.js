@@ -1,6 +1,8 @@
 Game = function() {
 	this.preload();
-	
+}
+
+Game.prototype.load = function() {
 	keyboard.keys.esc.press = function() {
 		var menu = document.getElementById('playMenu');
 		
@@ -34,6 +36,10 @@ Game = function() {
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
 	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem());
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
+	this.entityWorld.addSystem(new ECS.Systems.AnimationSystem());
+	
+	this.animationManager = new AnimationManager();
+	this.animationManager.load(this.textures);
 	
 	this.mousex = null;
 	this.mousey = null;
@@ -94,6 +100,15 @@ Game.prototype.preload = function() {
 	this.textures.block = PIXI.Texture.fromImage('game/textures/block.png');
 	this.textures.rock = PIXI.Texture.fromImage('game/textures/rock.png');
 	this.textures.largerock = PIXI.Texture.fromImage('game/textures/rock_large.png');
+	
+	var context = this;
+	var loader = new PIXI.loaders.Loader();
+	loader.add('texture', "game/textures/walkSheet.png");
+	loader.once('complete', function(e) {
+		context.textures.walk = e.resources.texture.texture;
+		context.load();		
+	});
+	loader.load();
 }
 
 Game.prototype.run = function() {
@@ -139,7 +154,7 @@ Game.prototype.sendUpdatePacket = function() {
 }
 
 Game.prototype.spawnPlayer = function(name) {
-	var sprite = new PIXI.Sprite(this.textures.gubbe);
+	var sprite = new PIXI.Sprite(this.textures.walk);
 	sprite.anchor.x = 0.5;
 	sprite.anchor.y = 0.5;
 	sprite.position.x = 0.5;//Math.random() * this.tileMap.width * this.tileSize;
@@ -176,6 +191,10 @@ Game.prototype.spawnPlayer = function(name) {
 	var player = new CES.Entity();
 	player.addComponent(new ECS.Components.Player(name, sprite, text));
 	player.addComponent(new ECS.Components.Physics(physicsBody));
+	var animComp = new ECS.Components.Animation(sprite, this.animationManager);
+	player.addComponent(animComp);
+	animComp.animate("walk", 30);
+	
 	this.entityWorld.addEntity(player);
 	this.stage.addChild(sprite);
 	this.stage.addChild(text);
