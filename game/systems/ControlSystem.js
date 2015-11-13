@@ -4,12 +4,15 @@ ECS.Systems.ControlSystem = CES.System.extend({
         var entities = this.world.getEntities('physics', 'player', 'controlledplayer');
  
         entities.forEach(function (entity) {
-			physics = entity.getComponent('physics');
-            player = entity.getComponent('player');
-			controlledplayer = entity.getComponent('controlledplayer');
+			var physics = entity.getComponent('physics');
+            var player = entity.getComponent('player');
+			var drawable = entity.getComponent('drawable');
+			var controlledplayer = entity.getComponent('controlledplayer');
 			
-			controlledplayer.oldx = player.sprite.x;
-			controlledplayer.oldy = player.sprite.y;
+			//var distanceTravelled = Math.sqrt(Math.pow(controlledplayer.oldx - physics.x, 2) + Math.pow(controlledplayer.oldy - physics.y, 2));
+			
+			controlledplayer.oldx = physics.x;
+			controlledplayer.oldy = physics.y;
 			controlledplayer.oldvx = physics.vx;
 			controlledplayer.oldvy = physics.vy;
 			controlledplayer.oldRot = Math.round(physics.rotation * 100) / 100;
@@ -44,15 +47,13 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				keyboard.isKeyDown("up") ||
 				keyboard.isKeyDown("down")) {
 					
+					
 				physics.rotateTo(physics, desiredAngle + Math.PI / 2, 0.05);
 				physics.desiredAngle = desiredAngle;
 					
 				var vx = Math.cos(desiredAngle);
 				var vy = Math.sin(desiredAngle);
 				
-			 	//var magnitude = Math.sqrt(vx*vx + vy*vy);
-				// Eftersom komposanterna tillsammans utgör hastigheten i detta fallet kan raden ovan inte användas.
-				// Därför divideras vx och vy med magnitude för att får en proportionell variabel som gör att hastigheten blir konstant i alla riktningar.
 				var magnitude = vx*vx + vy*vy;
 			  
 				vx = moveSpeed * vx;///magnitude;
@@ -62,6 +63,11 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				physics.vy += vy;
 			}
 			
+			//else
+				//drawable.unanimate("feet", "feet");
+								var konstant = 5.0;
+				drawable.animate("feet", "feet", /*Math.round(distanceTravelled * 30)*/ konstant * Math.sqrt(physics.vx*physics.vx + physics.vy*physics.vy), false);
+			
 			// Check if anything changed, if so, send player update packet
 			if(controlledplayer.oldx != physics.x 
 			|| controlledplayer.oldy != physics.y
@@ -69,6 +75,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			|| controlledplayer.oldvy != physics.vy
 			|| controlledplayer.oldRot != Math.round(physics.rotation * 100) / 100) {
 				game.sendUpdatePacket();
+				
 			}	
 			
 			game.camera.target.x = physics.x;

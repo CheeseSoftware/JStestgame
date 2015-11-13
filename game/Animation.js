@@ -25,4 +25,5 @@ Animation.prototype.load = function() {
 			}			
 		}
 	}
+	this.texture.frame = this.frames[0];
 }

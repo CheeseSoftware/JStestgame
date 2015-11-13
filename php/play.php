@@ -30,7 +30,7 @@ o
 <script src="game/Keyboard.js"></script>
 <script src="game/Camera.js"></script>
 <script src="game/PagedArray2D.js"></script>
-<script src="game/components/Animation.js"></script>
+<script src="game/components/Drawable.js"></script>
 <script src="game/components/Physics.js"></script>
 <script src="game/components/Player.js"></script>
 <script src="game/components/ControlledPlayer.js"></script>
@@ -76,7 +76,7 @@ o
 			password: password
 		});
 	};
-	
+	/*
 	game.connection.on('registerresponse', function(data) {
 		$('#registrationResult').html(data.response);
 		if(data.success == true) {
@@ -87,7 +87,7 @@ o
 			document.cookie="username=" + $('#registerUsername').val() + "; " + expires;
 			document.cookie="password=" + $('#registerPassword').val() + "; " + expires;
 		}
-	});
+	});*///TEMP
 </script>
 
 <div class = "playMenu" id = "playMenu">

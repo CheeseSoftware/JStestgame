@@ -103,11 +103,16 @@ Game.prototype.preload = function() {
 	
 	var context = this;
 	var loader = new PIXI.loaders.Loader();
-	loader.add('texture', "game/textures/walkSheet.png");
+	loader.add('walk', "game/textures/walkSheet.png");
+	loader.add('feet', "game/textures/feetSheet.png");
+	loader.add('body', "game/textures/body.png");
 	loader.once('complete', function(e) {
-		context.textures.walk = e.resources.texture.texture;
+		context.textures.walk = e.resources.walk.texture;
+		context.textures.feet = e.resources.feet.texture;
+		context.textures.body = e.resources.body.texture;
 		context.load();		
 	});
+	
 	loader.load();
 }
 
@@ -154,11 +159,16 @@ Game.prototype.sendUpdatePacket = function() {
 }
 
 Game.prototype.spawnPlayer = function(name) {
-	var sprite = new PIXI.Sprite(this.textures.walk);
+	var sprite = new PIXI.Sprite(this.textures.feet);
 	sprite.anchor.x = 0.5;
 	sprite.anchor.y = 0.5;
 	sprite.position.x = 0.5;//Math.random() * this.tileMap.width * this.tileSize;
 	sprite.position.y = 0.5;//Math.random() * this.tileMap.height * this.tileSize;	
+	var bodySprite = new PIXI.Sprite(this.textures.body);
+	bodySprite.anchor.x = 0.5;
+	bodySprite.anchor.y = 0.5;
+	bodySprite.position.x = 0.5;//Math.random() * this.tileMap.width * this.tileSize;
+	bodySprite.position.y = 0.5;//Math.random() * this.tileMap.height * this.tileSize;	
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
 	/*var circleDef = new b2CircleDef();
@@ -191,12 +201,20 @@ Game.prototype.spawnPlayer = function(name) {
 	var player = new CES.Entity();
 	player.addComponent(new ECS.Components.Player(name, sprite, text));
 	player.addComponent(new ECS.Components.Physics(physicsBody));
-	var animComp = new ECS.Components.Animation(sprite, this.animationManager);
-	player.addComponent(animComp);
-	animComp.animate("walk", 30);
+	var bodyparts = {
+		"feet": {
+			"sprite": sprite
+		},
+		"body": {
+			"sprite": bodySprite
+		}
+	};
+	var drawable = new ECS.Components.Drawable(bodyparts, this.animationManager, 0, 0);
+	player.addComponent(drawable);
 	
 	this.entityWorld.addEntity(player);
 	this.stage.addChild(sprite);
+	this.stage.addChild(bodySprite);
 	this.stage.addChild(text);
 	this.players[name] = player;
 	return player;
@@ -211,7 +229,8 @@ Game.prototype.spawnMainPlayer = function() {
 Game.prototype.despawnPlayer = function(name) {
 	var player = this.players[name];
     var player = player.getComponent('player');
-	this.stage.removeChild(player.sprite);
+	var drawable = player.getComponent('drawable');
+	drawable.remove(this.stage);
 	this.stage.removeChild(player.text);
 	delete(this.players[name]);
 }

@@ -4,8 +4,10 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
         var entities = this.world.getEntities('physics', 'player');
  
         entities.forEach(function (entity) {
-			physics = entity.getComponent('physics');
-            player = entity.getComponent('player');
+			var physics = entity.getComponent('physics');
+            var player = entity.getComponent('player');
+			var drawable = entity.getComponent('drawable');
+			
 			// Prevent random rotation
 			physics.angularVelocity = 0;
 			
@@ -79,9 +81,9 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				player.text.x = physics.x - player.text.width/2;
 				player.text.y = physics.y - 80;
 				
-				player.sprite.position.x = physics.x;
-				player.sprite.position.y = physics.y;
-				player.sprite.rotation = physics.rotation;
+				drawable.positionAll(physics.x, physics.y, physics.rotation);
+				
+
 				
 			}
 			
