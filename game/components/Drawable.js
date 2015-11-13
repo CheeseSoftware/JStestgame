@@ -13,9 +13,11 @@ ECS.Components.Drawable = CES.Component.extend({
 ECS.Components.Drawable.prototype.animate = function(bodypartName, animation, fps, runToEnd) {
 	var bodypart = this.bodyparts[bodypartName];
 	if(bodypart) {
-		bodypart.animInstance = this.animationManager.getAnimation(animation);
-		bodypart.sprite.texture = bodypart.animInstance.texture;
-		bodypart.mspf = 1000/fps;
+		if(!bodypart.animInstance) {
+			bodypart.animInstance = this.animationManager.getAnimation(animation);
+			bodypart.sprite.texture = bodypart.animInstance.texture.clone();
+		}
+		bodypart.mspf = Math.round(1000/fps);
 		if(!bodypart.lastFrame)
 			bodypart.lastFrame = new Date();
 		if(!bodypart.currentFrame)

@@ -65,8 +65,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			
 			//else
 				//drawable.unanimate("feet", "feet");
-								var konstant = 5.0;
-				drawable.animate("feet", "feet", /*Math.round(distanceTravelled * 30)*/ konstant * Math.sqrt(physics.vx*physics.vx + physics.vy*physics.vy), false);
+
 			
 			// Check if anything changed, if so, send player update packet
 			if(controlledplayer.oldx != physics.x 

@@ -83,7 +83,11 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				
 				drawable.positionAll(physics.x, physics.y, physics.rotation);
 				
-
+				var konstant = 1;
+				var disWalked = konstant * Math.sqrt(physics.vx*physics.vx + physics.vy*physics.vy);
+				console.log(Math.round(disWalked));
+				//if(disWalked > 0)
+					drawable.animate("feet", "feet", disWalked, false);
 				
 			}
 			

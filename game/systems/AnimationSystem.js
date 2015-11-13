@@ -15,11 +15,12 @@ ECS.Systems.AnimationSystem = CES.System.extend({
 				if(bodypart.animating) {
 					//console.log("nice animation");
 					if(now - bodypart.lastFrame > bodypart.mspf) {	
-						console.log("found animation to animate " + player.text.text);				
+						//console.log("found animation to animate " + player.text.text);				
 						bodypart.currentFrame += 1;
 						if(bodypart.currentFrame >= bodypart.animInstance.numFrames)
 							bodypart.currentFrame = 0;
 						bodypart.sprite.texture.frame = bodypart.animInstance.frames[bodypart.currentFrame];
+						//console.log("ms since last frame " + (new Date() - bodypart.lastFrame));
 						bodypart.lastFrame = new Date();
 						
 						if(bodypart.finishing && bodypart.currentFrame == 0) {
@@ -27,7 +28,8 @@ ECS.Systems.AnimationSystem = CES.System.extend({
 							bodypart.finishing = false;
 						}
 						
-						//console.log("changed frame");
+						//console.log("frame " + bodypart.currentFrame);
+						
 					}
 				}
 			}
