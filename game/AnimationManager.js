@@ -5,7 +5,7 @@ AnimationManager = function() {
 
 AnimationManager.prototype.load = function(textures) {
 	this.addAnimation("walk", new Animation("walk", textures.walk, 30, 150, 120));
-	this.addAnimation("feet", new Animation("feet", textures.feet, 8, 75, 75));
+	this.addAnimation("feet", new Animation("feet", textures.feet, 30, 75, 75));
 }
 
 AnimationManager.prototype.addAnimation = function(name, animation) {
