@@ -103,13 +103,15 @@ Game.prototype.preload = function() {
 	
 	var context = this;
 	var loader = new PIXI.loaders.Loader();
-	loader.add('walk', "game/textures/walkSheet.png");
+	//loader.add('walk', "game/textures/walkSheet.png");
 	loader.add('feet', "game/textures/feetSheet.png");
 	loader.add('body', "game/textures/body.png");
+	loader.add('dig', "game/textures/digSheet.png");
 	loader.once('complete', function(e) {
-		context.textures.walk = e.resources.walk.texture;
+		//context.textures.walk = e.resources.walk.texture;
 		context.textures.feet = e.resources.feet.texture;
 		context.textures.body = e.resources.body.texture;
+		context.textures.dig = e.resources.dig.texture;
 		context.load();		
 	});
 	
@@ -164,7 +166,7 @@ Game.prototype.spawnPlayer = function(name) {
 	sprite.anchor.y = 0.5;
 	sprite.position.x = 0.5;//Math.random() * this.tileMap.width * this.tileSize;
 	sprite.position.y = 0.5;//Math.random() * this.tileMap.height * this.tileSize;	
-	var bodySprite = new PIXI.Sprite(this.textures.body);
+	var bodySprite = new PIXI.Sprite(this.textures.dig);
 	bodySprite.anchor.x = 0.5;
 	bodySprite.anchor.y = 0.5;
 	bodySprite.position.x = 0.5;//Math.random() * this.tileMap.width * this.tileSize;
@@ -228,10 +230,10 @@ Game.prototype.spawnMainPlayer = function() {
 
 Game.prototype.despawnPlayer = function(name) {
 	var player = this.players[name];
-    var player = player.getComponent('player');
+    var playerComp = player.getComponent('player');
 	var drawable = player.getComponent('drawable');
 	drawable.remove(this.stage);
-	this.stage.removeChild(player.text);
+	this.stage.removeChild(playerComp.text);
 	delete(this.players[name]);
 }
 
@@ -247,35 +249,6 @@ Game.prototype.initializeListeners = function() {
 		
 		context.camera.target.x = context.tileMap.width * context.tileSize - context.camera.viewport.width / 2;
 		context.camera.target.y = context.tileMap.height * context.tileSize - context.camera.viewport.height / 2;
-		
-		/*// Draw map ground
-		for(var x = 0; x < context.tileMap.width; ++x) {	
-			for(var y = 0; y < context.tileMap.height; ++y) {
-				if(x * context.tileSize % 1024 == 0 && y * context.tileSize % 1024 == 0) {
-					var sprite = new PIXI.Sprite(context.textures.ground);
-					sprite.position.x = x * context.tileSize;
-					sprite.position.y = y * context.tileSize;
-					context.stage.addChild(sprite);
-				}
-			}
-		}*/
-		
-		
-		//LAGGY CODE DONT USE
-		
-		// Draw map border
-		/*for(var x = -1024; x <= context.tileMap.width * context.tileSize; ++x) {	
-			for(var y = -1024; y <= context.tileMap.height * context.tileSize; ++y) {
-				if(x == -1024 || x == context.tileMap.width * context.tileSize || y == -1024 || y ==  context.tileMap.height * context.tileSize) {
-					if(x % 1024 == 0 && y % 1024 == 0) {
-						var sprite = new PIXI.Sprite(context.textures.block);
-						sprite.position.x = x;
-						sprite.position.y = y;
-						context.stage.addChild(sprite);
-					}
-				}
-			}
-		}*/
 	}, this);
 	
 	this.connection.on('error', console.error.bind(console));
@@ -306,14 +279,7 @@ Game.prototype.initializeListeners = function() {
 		physics.y = data.y;
 		physics.rotation = data.rotation;
 		
-		keyboard.keys.space.press = function() {
-			//Dig
-			var physics = context.player.getComponent('physics');
-			var digRadius = 5;
-			var x = physics.x + 32.0*Math.sin(physics.rotation);
-			var y = physics.y - 32.0*Math.cos(physics.rotation);
-			context.connection.send("playerdig", { x: x, y: y, digRadius: digRadius });
-		};
+
 	}, this);
 	
 	this.connection.on('playerupdate', function(data, context) {

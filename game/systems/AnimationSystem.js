@@ -23,7 +23,7 @@ ECS.Systems.AnimationSystem = CES.System.extend({
 						//console.log("ms since last frame " + (new Date() - bodypart.lastFrame));
 						bodypart.lastFrame = new Date();
 						
-						if(bodypart.finishing && bodypart.currentFrame == 0) {
+						if(bodypart.runToEnd && bodypart.currentFrame == 0) {
 							bodypart.animating = false;
 							bodypart.finishing = false;
 						}

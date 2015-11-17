@@ -11,6 +11,7 @@ ECS.Components.Drawable = CES.Component.extend({
 });
 
 ECS.Components.Drawable.prototype.animate = function(bodypartName, animation, fps, runToEnd) {
+	//console.log(bodypartName);
 	var bodypart = this.bodyparts[bodypartName];
 	if(bodypart) {
 		if(!bodypart.animInstance) {

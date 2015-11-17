@@ -83,7 +83,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				
 				drawable.positionAll(physics.x, physics.y, physics.rotation);
 				
-				var konstant = 50;
+				var konstant = 100;
 				var disWalked = konstant * Math.sqrt(Math.pow(physics.x - oldX, 2) + Math.pow(physics.y - oldY, 2));
 				//console.log(Math.round(disWalked));
 				//if(disWalked > 0)

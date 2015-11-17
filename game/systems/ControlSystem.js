@@ -63,9 +63,16 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				physics.vy += vy;
 			}
 			
-			//else
-				//drawable.unanimate("feet", "feet");
-
+			if(keyboard.keys.space.isDown && !drawable.bodyparts.body.animating) {// && (new Date() - player.lastDig > 400)) {
+				//Dig
+				player.lastDig = new Date();
+				var digRadius = 5;
+				var x = physics.x + 32.0*Math.sin(physics.rotation);
+				var y = physics.y - 32.0*Math.cos(physics.rotation);
+				game.connection.send("playerdig", { x: x, y: y, digRadius: digRadius });
+				drawable.animate("body", "dig", 240, true);
+				
+			};
 			
 			// Check if anything changed, if so, send player update packet
 			if(controlledplayer.oldx != physics.x 
