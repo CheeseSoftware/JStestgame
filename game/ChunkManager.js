@@ -162,10 +162,10 @@ ChunkManager.prototype.getChunk = function(chunkX, chunkY) {
 }
 
 
-ChunkManager.prototype.createChunk = function(chunkX, chunkY, tileData, densityData) {
+ChunkManager.prototype.createChunk = function(chunkX, chunkY, tileData, densityData, force) {
 	var chunkPosString = chunkX + "," + chunkY;
 
-	if (this._chunks[chunkPosString])
+	if (!force && this._chunks[chunkPosString])
 		return null;
 
 	var chunk = new Chunk(this, chunkX, chunkY, this._chunkSize, this._chunkSize, tileData, densityData);

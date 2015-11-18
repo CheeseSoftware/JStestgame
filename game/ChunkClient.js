@@ -41,11 +41,7 @@ ChunkClient.prototype.update = function(camera) {
 }
 
 ChunkClient.prototype.onMessageGetChunk = function(x, y, tileData, densityData) {
-	chunk = this._chunkManager.getChunk(x, y);
-	if (!chunk)
-		chunk = this._chunkManager.createChunk(x, y, new Uint8Array(tileData), new Uint8Array(densityData));
-	else
-		console.log("bad");
+	var chunk = this._chunkManager.createChunk(x, y, new Uint8Array(tileData), new Uint8Array(densityData), true);
 
 	//chunk.tileData = new Uint8Array(tileData);
 	//chunk.densityData = new Uint8Array(densityData);

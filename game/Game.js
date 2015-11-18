@@ -70,6 +70,8 @@ Game.prototype.load = function() {
 	this.physicsWorld.SetContactListener(playerContactListener);
 	// Contact listener end
 	
+	
+	
 	this.players = {};
 	this.lastUpdate = Date.now();
 	
@@ -77,6 +79,8 @@ Game.prototype.load = function() {
 	
 	this.connection = new Connection(vars.ip, 3000);
 	this.initializeListeners();
+	
+	this.chunkClient = new ChunkClient(this.chunkManager, this.connection);
 }
 
 Game.prototype.onMouseUpdate = function (e) {
@@ -280,7 +284,7 @@ Game.prototype.initializeListeners = function() {
 		physics.y = data.y;
 		physics.rotation = data.rotation;
 		
-		context.chunkClient = new ChunkClient(context.chunkManager, context.connection);
+		
 		
 
 	}, this);

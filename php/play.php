@@ -20,6 +20,7 @@
 <script src="lib/socket.io-1.3.5.js"></script>
 <script src="lib/gl-matrix.js"></script>
 <script src="lib/perlin.js"></script>
+<script src="lib/jquery-2.1.x.js"></script>
 
 
 <!-- classes -->
