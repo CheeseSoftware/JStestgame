@@ -20,7 +20,7 @@ ChunkServer.prototype.onMessageGetChunk = function(socket, x, y) {
 		chunk = this._chunkManager.createChunk(x, y);
 	}
 
-	socket.emit("chunk", {x:x, y:y, tileData:chunk.tileData, densityData:chunk.densityData});
+	socket.emit("chunk", {x:x, y:y, tileData:chunk.tileData.buffer, densityData:chunk.densityData.buffer});
 	
 	//socket.emit("chunk", {x:x, y:y, tileData:{}, densityData:{}});
 	console.log("sent chunk x:" + x + " y:" + y);

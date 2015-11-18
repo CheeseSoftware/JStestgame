@@ -162,15 +162,21 @@ ChunkManager.prototype.getChunk = function(chunkX, chunkY) {
 }
 
 
-ChunkManager.prototype.createChunk = function(chunkX, chunkY) {
+ChunkManager.prototype.createChunk = function(chunkX, chunkY, tileData, densityData) {
 	var chunkPosString = chunkX + "," + chunkY;
 
 	if (this._chunks[chunkPosString])
 		return null;
 
-	var chunk = new Chunk(this, chunkX, chunkY, this._chunkSize, this._chunkSize);
+	var chunk = new Chunk(this, chunkX, chunkY, this._chunkSize, this._chunkSize, tileData, densityData);
 	
 	this._generator.generate(chunk);
+	
+	if(tileData)
+		chunk.tileData = tileData;
+		
+	if(densityData)
+		chunk.densityData = densityData;
 	
 	this._chunks[chunkPosString] = chunk;
 	

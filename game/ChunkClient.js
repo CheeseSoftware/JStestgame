@@ -28,7 +28,7 @@ ChunkClient.prototype.update = function(camera) {
 				continue;
 			
 			// Request Chunk (and create a temporary chunk)
-			var chunk = this._chunkManager.createChunk(x, y);
+			//var chunk = this._chunkManager.createChunk(x, y);
 			
 			var chunkPosString = x + "," + y;
 			if(!this.requestedChunks[chunkPosString]) {
@@ -43,10 +43,13 @@ ChunkClient.prototype.update = function(camera) {
 ChunkClient.prototype.onMessageGetChunk = function(x, y, tileData, densityData) {
 	chunk = this._chunkManager.getChunk(x, y);
 	if (!chunk)
-		chunk = this._chunkManager.createChunk(x, y);
+		chunk = this._chunkManager.createChunk(x, y, new Uint8Array(tileData), new Uint8Array(densityData));
+	else
+		console.log("bad");
 
-	chunk.tileData = tileData;
-	chunk.densityData = densityData;
+	//chunk.tileData = new Uint8Array(tileData);
+	//chunk.densityData = new Uint8Array(densityData);
+	chunk.isChanged = true;
 	
 	var chunkPosString = x + "," + y;
 	delete this.requestedChunks[chunkPosString];
