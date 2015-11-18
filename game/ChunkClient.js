@@ -34,7 +34,6 @@ ChunkClient.prototype.update = function(camera) {
 			if(!this.requestedChunks[chunkPosString]) {
 				this.requestedChunks[chunkPosString] = true;
 				this._connection.send("getChunk", {x:x, y:y});
-				console.log("request chunk x:" + x + " y:" + y);
 			}
 		}
 	}
@@ -49,6 +48,4 @@ ChunkClient.prototype.onMessageGetChunk = function(x, y, tileData, densityData) 
 	
 	var chunkPosString = x + "," + y;
 	delete this.requestedChunks[chunkPosString];
-	
-	console.log("got chunk x:" + x + " y:" + y);
 }
