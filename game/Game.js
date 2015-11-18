@@ -93,30 +93,30 @@ Game.prototype.resize = function() {
 }
 
 Game.prototype.preload = function() {
-	this.textures = {};
-	this.textures.gubbe = PIXI.Texture.fromImage('game/textures/gubbe.png');
-	this.textures.cheese = PIXI.Texture.fromImage('game/textures/cheese.png');
-	this.textures.worker = PIXI.Texture.fromImage('game/textures/worker.png');
-	this.textures.ground = PIXI.Texture.fromImage('game/textures/ground.png');
-	this.textures.block = PIXI.Texture.fromImage('game/textures/block.png');
-	this.textures.rock = PIXI.Texture.fromImage('game/textures/rock.png');
-	this.textures.largerock = PIXI.Texture.fromImage('game/textures/rock_large.png');
+	var loader = new TextureLoader();
+	loader.queueTexture("gubbe");
+	loader.queueTexture("cheese");
+	loader.queueTexture("worker");
+	loader.queueTexture("ground");
+	loader.queueTexture("block");
+	loader.queueTexture("rock");
+	loader.queueTexture("largerock", "rock_large");
+	loader.queueTexture("feet", "feetSheet");
+	//loader.queueTexture("body");
+	loader.queueTexture("dig", "digSheet");
 	
-	var context = this;
-	var loader = new PIXI.loaders.Loader();
-	//loader.add('walk', "game/textures/walkSheet.png");
-	loader.add('feet', "game/textures/feetSheet.png");
-	loader.add('body', "game/textures/body.png");
-	loader.add('dig', "game/textures/digSheet.png");
-	loader.once('complete', function(e) {
-		//context.textures.walk = e.resources.walk.texture;
-		context.textures.feet = e.resources.feet.texture;
-		context.textures.body = e.resources.body.texture;
-		context.textures.dig = e.resources.dig.texture;
-		context.load();		
+	loader.onProgress(function(name, file, progress) {
+		console.log(progress + "% complete");
 	});
 	
-	loader.load();
+	var context = this;
+	loader.onComplete(function(textures) {
+		console.log("100% complete");
+		context.textures = textures;
+		context.load();
+	});
+
+	loader.loadTextures();
 }
 
 Game.prototype.run = function() {

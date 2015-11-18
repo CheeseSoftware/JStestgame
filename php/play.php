@@ -13,7 +13,7 @@
 			Systems: {}
 	    };		
 </script>
-o
+
 <script src="lib/Box2D.js"></script>
 <script src="lib/ces-browser.js"></script>
 <script src="lib/pixi.js"></script>
@@ -23,6 +23,7 @@ o
 
 
 <!-- classes -->
+<script src="game/TextureLoader.js"></script>
 <script src="game/Animation.js"></script>
 <script src="game/AnimationManager.js"></script>
 <script src="game/AudioManager.js"></script>
@@ -123,41 +124,3 @@ o
 	<button class="loginFrameHideButton" type="button" onclick="document.getElementById('loginFrame').style.display = 'none'"> Hide </button>
     
 </div>
-
-<!--<div class="chatBox">
-	<div id="chatTextContainer" name="chatTextContainer" class="chatTextContainer"></div>
-    <input type="text" name="chatInput" class="chatInput" name="bertil"></input>
-    <button class ="chatButton" type="button" name="chatButton" onclick="sendChat()">Send</button>
-</div>
-
-<script>
-	sendChat = function(){
-		var chatText = document.getElementsByName('chatTextContainer')[0];
-		var chatInput = document.getElementsByName('chatInput')[0];
-		var sent = chatInput.value;
-		if(sent == "")
-			return;
-		chatInput.value = "";
-		if(game.player != undefined)
-			sent = game.player.getComponent("player").username + " says " + sent;
-		else
-			sent = "guest says " + sent;
-		game.connection.send("chatmessage", { message: sent });
-	}
-	
-	addChat = function(text){
-		var chatText = document.getElementsByName('chatTextContainer')[0];
-		chatText.innerHTML += text + "<br/>";		
-  		chatText.scrollTop = chatText.scrollHeight;	
-	}
-	
-	$("*").click(function(e) {
-		$(".chatBox input").focus();
-	});
-	$(".chatBox input").keydown(function (e) {
-		if (e.keyCode == 13) {
-			sendChat();
-		}
-	});
-	$(".chatBox input").focus();
-</script>-->
