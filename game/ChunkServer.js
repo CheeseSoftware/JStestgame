@@ -3,17 +3,11 @@ ChunkServer = function(chunkManager, io) {
 	this._chunkManager = chunkManager;
 	this._generator = new Generator();
 
+	var context = this;
 	io.on('connection', (function(socket) {
 		var chunk = chunkManager.getChunk(0, 0);
 		socket.on('getChunk', (function(data) {
-			//that.onMessageGetChunk(socket, data.x, data.y);
-			chunk = chunkManager.getChunk(data.x, data.y);
-			if (!chunk) {
-				chunk = chunkManager.createChunk(data.x, data.y);
-			}
-
-			console.log("sent join chunk");
-			socket.emit("chunk", {x:data.x, y:data.y, tileData:chunk.tileData, densityData:chunk.densityData});
+			context.onMessageGetChunk(socket, data.x, data.y);
 		}));
 	}));
 
@@ -21,14 +15,14 @@ ChunkServer = function(chunkManager, io) {
 }
 
 ChunkServer.prototype.onMessageGetChunk = function(socket, x, y) {
-	chunk = this._chunkManager.getChunk(x, y);
+	var chunk = this._chunkManager.getChunk(x, y);
 	if (!chunk) {
-		chunk = this._chunkManager.createChunk();
+		chunk = this._chunkManager.createChunk(x, y);
 	}
 
-	console.log("sent chunk");
 	socket.emit("chunk", {x:x, y:y, tileData:chunk.tileData, densityData:chunk.densityData});
-
-
+	
+	//socket.emit("chunk", {x:x, y:y, tileData:{}, densityData:{}});
+	console.log("sent chunk x:" + x + " y:" + y);
 }
 

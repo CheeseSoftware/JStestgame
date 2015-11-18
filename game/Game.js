@@ -24,8 +24,8 @@ Game.prototype.load = function() {
 	this.entityWorld = new CES.World();
 	
 	var gl = this.renderer.gl;
-	this._chunkManager = new ChunkManager();
-	this._chunkRenderer = new ChunkRenderer(gl, this._chunkManager, 32, 32, 32, 32);
+	this.chunkManager = new ChunkManager();
+	this.chunkRenderer = new ChunkRenderer(gl, this.chunkManager, 32, 32, 32, 32);
 	
 	var floatTextures = gl.getExtension('OES_texture_float');
 	if (!floatTextures) {
@@ -73,10 +73,9 @@ Game.prototype.load = function() {
 	this.players = {};
 	this.lastUpdate = Date.now();
 	
-	this._intervalId = setInterval(function(){game.run()}, 0);
+	this.intervalId = setInterval(function(){game.run()}, 0);
 	
 	this.connection = new Connection(vars.ip, 3000);
-	this._chunkClient = new ChunkClient(this._chunkManager, this.connection);
 	this.initializeListeners();
 }
 
@@ -131,8 +130,9 @@ Game.prototype.run = function() {
             this.physicsWorld.ClearForces();
 	
 	this.camera.update(dt);
-	this._chunkClient.update(this.camera);
 	
+	if(this.chunkClient)
+		this.chunkClient.update(this.camera);
 	
 	var gl = this.renderer.gl;
 	this.renderer.setRenderTarget(this.renderer.renderTarget);
@@ -141,7 +141,7 @@ Game.prototype.run = function() {
 	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
 	var viewMatrix = new PIXI.Matrix();
 	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
-	this._chunkRenderer.render(gl, this._chunkManager, projectionMatrix.clone().append(viewMatrix), this.camera);
+	this.chunkRenderer.render(gl, this.chunkManager, projectionMatrix.clone().append(viewMatrix), this.camera);
 
 	
 	this.renderer.render(this.camera);
@@ -280,6 +280,8 @@ Game.prototype.initializeListeners = function() {
 		physics.y = data.y;
 		physics.rotation = data.rotation;
 		
+		context.chunkClient = new ChunkClient(context.chunkManager, context.connection);
+		
 
 	}, this);
 	
@@ -310,6 +312,6 @@ Game.prototype.initializeListeners = function() {
 		var x = data.x;
 		var y = data.y;
 		var digRadius = data.digRadius;
-		context._chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, 1.5);
+		context.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, 1.5);
 	}, this);
 }

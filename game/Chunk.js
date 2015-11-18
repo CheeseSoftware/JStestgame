@@ -68,12 +68,18 @@ Object.defineProperties(Chunk.prototype, {
 	tileData: {
 		get: function()  {
 			return this._tileIds;
+		},
+		set: function(data)  {
+			this._tileIds = data;
 		}
 	},
 	
 	densityData: {
 		get: function()  {
 			return this._density;
+		},
+		set: function(data)  {
+			this._density = data;
 		}
 	},
 	
