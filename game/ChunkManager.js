@@ -42,33 +42,6 @@ ChunkManager.prototype.fillCircle = function(xPos, yPos, radius, density) {
 	this._isDensityChanged = true;
 }
 
-
-ChunkManager.prototype.update = function(camera) {
-
-	var x1 = Math.floor(camera.pos.x/32.0/30.0)-2;
-	var y1 = Math.floor(camera.pos.y/32.0/30.0)-2;
-	var x2 = Math.ceil((camera.pos.x+camera.width)/32.0/30.0)+2;
-	var y2 = Math.ceil((camera.pos.y+camera.width)/32.0/30.0)+2;
-	
-	// Create/Load chunks:
-	for (var y = y1; y <= y2; ++y) {
-		for (var x = x1; x <= x2; ++x) {
-			var chunk = this.getChunk(x, y);
-			if (chunk)
-				continue;
-			
-			var chunkPosString = x + "," + y;
-			
-			// Create Chunk
-			var chunk = this.createChunk(x, y);
-		}
-	}
-	
-}
-
-
-
-
 ChunkManager.prototype.getDensity = function(x, y) {
 	var localX = x%this._chunkSize;
 	var localY = y%this._chunkSize;

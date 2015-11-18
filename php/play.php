@@ -49,6 +49,7 @@ o
 <script src="game/Chunk.js"></script>
 <script src="game/ChunkManager.js"></script>
 <script src="game/ChunkRenderer.js"></script>
+<script src="game/ChunkClient.js"></script>
 
 <!-- game -->
 <script src="game/Game.js"></script>

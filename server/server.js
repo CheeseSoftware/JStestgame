@@ -19,12 +19,13 @@ include("game/TileType.js");
 include("game/TileRegister.js");
 
 // Chunks
-include("game/chunk.js");
+include("game/Chunk.js");
 include("game/Generator.js");
-include("game/chunkmanager.js");
+include("game/ChunkManager.js");
+include("game/ChunkServer.js");
 
 
-//_chunkManager = new ChunkManager();
+_chunkManager = new ChunkManager();
 
 var http = require('http'),
     fs = require('fs');
@@ -33,6 +34,7 @@ var app = http.createServer(function(req, res) {
     res.end();
 });
 var io = require('socket.io').listen(app);
+_chunkServer = new ChunkServer(_chunkManager, io);
 
 var players = {};
 

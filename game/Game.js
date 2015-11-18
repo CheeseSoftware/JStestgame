@@ -76,6 +76,7 @@ Game.prototype.load = function() {
 	this._intervalId = setInterval(function(){game.run()}, 0);
 	
 	this.connection = new Connection(vars.ip, 3000);
+	this._chunkClient = new ChunkClient(this._chunkManager, this.connection);
 	this.initializeListeners();
 }
 
@@ -130,7 +131,7 @@ Game.prototype.run = function() {
             this.physicsWorld.ClearForces();
 	
 	this.camera.update(dt);
-	this._chunkManager.update(this.camera);
+	this._chunkClient.update(this.camera);
 	
 	
 	var gl = this.renderer.gl;

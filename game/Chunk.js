@@ -20,6 +20,7 @@ Chunk = function(chunkManager, x, y, sizeX, sizeY) {
 }
 
 
+
 Chunk.prototype.getDensity = function(x, y) {
 	return this._density[x+y*this._sizeX];
 }
