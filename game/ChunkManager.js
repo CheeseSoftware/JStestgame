@@ -97,6 +97,8 @@ ChunkManager.prototype.setDensity = function(x, y, value, createChunk) {
 	else {
 		this._chunks[chunkPosString].setDensity(localX, localY, value);
 	}
+
+	this.on("onChunkChange", [chunkX, chunkY, chunk]);
 }
 
 ChunkManager.prototype.getTileId = function(x, y) {
@@ -154,6 +156,8 @@ ChunkManager.prototype.setTileId = function(x, y, value, createChunk) {
 	else {
 		this._chunks[chunkPosString].setTileId(localX, localY, value);
 	}
+
+	this.on("onChunkChange", [chunkX, chunkY, chunk]);
 }
 
 ChunkManager.prototype.getChunk = function(chunkX, chunkY) {
