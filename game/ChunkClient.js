@@ -4,9 +4,10 @@ ChunkClient = function(chunkManager, connection) {
 	this._generator = new Generator();
 	this._connection = connection;
 
+	var context = this;
 	connection.on("chunk", function(data) {
 		//_chunkManager.loadChunk(x, y, tileData, densityData);
-		onMessageGetChunk(data.x, data.y, data.tileData, data.densityData);
+		context.onMessageGetChunk(data.x, data.y, data.tileData, data.densityData);
 	});
 
 	return this;
@@ -32,7 +33,7 @@ ChunkClient.prototype.update = function(camera) {
 	}
 }
 
-ChunkClient.prototype.onMessageChunk = function(x, y, tileData, densityData) {
+ChunkClient.prototype.onMessageGetChunk = function(x, y, tileData, densityData) {
 	chunk = this._chunkManager.getChunk(x, y);
 	if (!chunk)
 		chunk = this._chunkManager.createChunk(x, y);
