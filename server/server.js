@@ -138,7 +138,7 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('playerdig', function(data) {
-		//TODO: Change terrain
+		_chunkManager.fillCircle(parseFloat(data.x)/32.0, parseFloat(data.y)/32.0, data.digRadius);
 		io.sockets.emit('dig', data);
 	});
 	

@@ -316,6 +316,8 @@ Game.prototype.initializeListeners = function() {
 		var x = data.x;
 		var y = data.y;
 		var digRadius = data.digRadius;
-		context.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, 1.5);
+		context.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, digRadius);
+		if(!context.players[data.username].getComponent("controlledplayer"))
+			context.players[data.username].getComponent("drawable").animate("body", "dig", 240, true);
 	}, this);
 }
