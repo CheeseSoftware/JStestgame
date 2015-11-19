@@ -179,8 +179,8 @@ ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this._indexBuffer);
 
 		// Attributes
-		gl.vertexAttribPointer(this._positionAttribute, 2, gl.FLOAT, false,4*4,0) ;
-		gl.vertexAttribPointer(this._uvAttribute, 2, gl.FLOAT, false,4*4,8) ;
+		gl.vertexAttribPointer(this._positionAttribute, 2, gl.FLOAT, false,4*4,0);
+		gl.vertexAttribPointer(this._uvAttribute, 2, gl.FLOAT, false,4*4,8);
 
 		// Render chunk
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffer);
