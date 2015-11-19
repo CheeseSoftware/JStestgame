@@ -9,7 +9,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			var drawable = entity.getComponent('drawable');
 			var state = physics.playState;
 			
-			var moveSpeed = 3;
+			var moveSpeed = 5.0;
 			
 			var desiredAngle = physics.desiredAngle || 0;
 			if(state.left && state.up)
