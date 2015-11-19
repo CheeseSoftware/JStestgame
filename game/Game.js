@@ -3,6 +3,8 @@ Game = function() {
 }
 
 Game.prototype.load = function() {
+	
+	//TODO: Move esc code somewhere else
 	keyboard.keys.esc.press = function() {
 		var menu = document.getElementById('playMenu');
 		
@@ -13,34 +15,7 @@ Game.prototype.load = function() {
 			$("#playMenu").fadeOut(100);
 	};
 	
-	// Initialize window
-	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000}, true, false);
-	this.renderer.clearBeforeRender = false;
-	document.body.appendChild(this.renderer.view);
-	this.stage = new PIXI.Container();
-	this.camera = new Camera(this.stage);	
-	this.camera.zoom = 1.0;
-	
-	this.entityWorld = new CES.World();
-	
-	var gl = this.renderer.gl;
-	this.chunkManager = new ChunkManager();
-	this.chunkRenderer = new ChunkRenderer(gl, this.chunkManager, 32, 32, 32, 32);
-	
-	var floatTextures = gl.getExtension('OES_texture_float');
-	if (!floatTextures) {
-		alert('no floating point texture support');
-	}
-	
-	// Add more systems here!
-	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
-	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem());
-	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
-	this.entityWorld.addSystem(new ECS.Systems.AnimationSystem());
-	
-	this.animationManager = new AnimationManager();
-	this.animationManager.load(this.textures);
-	
+	//TODO: Move input code somewhere else
 	this.mousex = null;
 	this.mousey = null;
 	document.addEventListener('mousemove', this.onMouseUpdate, false);
@@ -48,12 +23,42 @@ Game.prototype.load = function() {
 	
 	window.addEventListener('resize', this.resize.bind(this), false);
 	
-	var gravity = new b2Vec2(0, 0);
-	var doSleep = false;
-	this.physicsWorld = new b2World(gravity, doSleep); 
+	// Initialize window
+	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000}, true, false);
+	this.renderer.clearBeforeRender = false;
+	document.body.appendChild(this.renderer.view);
 	
-	// Contact listener begin: Temporarily disable player-to-player collisions
-	var playerContactListener = new Box2D.Dynamics.b2ContactListener;
+	// Initialize stage, camera, entityWorld
+	this.stage = new PIXI.Container();
+	
+	this.camera = new Camera(this.stage);	
+	this.camera.zoom = 1.0;
+	
+	// Initialize chunkManager and chunkRenderer
+	var gl = this.renderer.gl;
+	this.chunkManager = new ChunkManager();
+	this.chunkRenderer = new ChunkRenderer(gl, this.chunkManager, 32, 32, 32, 32);	
+	var floatTextures = gl.getExtension('OES_texture_float');
+	if (!floatTextures) {
+		alert('no floating point texture support');
+	}
+	
+	// Initialize entityWorld and add entity component systems
+	this.entityWorld = new CES.World();
+	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
+	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem());
+	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
+	this.entityWorld.addSystem(new ECS.Systems.AnimationSystem());
+	
+	// Initialize animationManager
+	this.animationManager = new AnimationManager();
+	this.animationManager.load(this.textureManager);
+	
+	// Initialize physicsWorld
+	this.physicsWorld = new b2World(new b2Vec2(0, 0), false); // Args: gravity, sleep
+	
+	//TODO: Fix and move playerContactListener
+	/*var playerContactListener = new Box2D.Dynamics.b2ContactListener;// Contact listener begin: Temporarily disable player-to-player collisions
 	playerContactListener.BeginContact = function (contact) {
 	  //console.log("begincontact");
 	}
@@ -67,8 +72,7 @@ Game.prototype.load = function() {
 		//console.log("PreSolve");
 		contact.SetEnabled(false);
 	}
-	this.physicsWorld.SetContactListener(playerContactListener);
-	// Contact listener end
+	this.physicsWorld.SetContactListener(playerContactListener);*/
 	
 	
 	
@@ -96,30 +100,13 @@ Game.prototype.resize = function() {
 }
 
 Game.prototype.preload = function() {
-	var loader = new TextureLoader();
-	loader.queueTexture("gubbe");
-	loader.queueTexture("cheese");
-	loader.queueTexture("worker");
-	loader.queueTexture("ground");
-	loader.queueTexture("block");
-	loader.queueTexture("rock");
-	loader.queueTexture("largerock", "rock_large");
-	loader.queueTexture("feet", "feetSheet");
-	//loader.queueTexture("body");
-	loader.queueTexture("dig", "digSheet");
-	
-	loader.onProgress(function(name, file, progress) {
-		console.log(progress + "% complete");
-	});
-	
+	// Load textures and sound and heavy things. Progress shown on progressbar.
+	this.textureManager = new TextureManager();
 	var context = this;
-	loader.onComplete(function(textures) {
-		console.log("100% complete");
-		context.textures = textures;
-		context.load();
+	this.textureManager.onComplete(function(textures) {
+		context.load(); // Continue loading the game
 	});
-
-	loader.loadTextures();
+	this.textureManager.load();
 }
 
 Game.prototype.run = function() {
@@ -166,30 +153,17 @@ Game.prototype.sendUpdatePacket = function() {
 }
 
 Game.prototype.spawnPlayer = function(name) {
-	var sprite = new PIXI.Sprite(this.textures.feet);
+	var sprite = new PIXI.Sprite(this.textureManager.textures.feet);
 	sprite.anchor.x = 0.5;
 	sprite.anchor.y = 0.5;
-	sprite.position.x = 0.5;//Math.random() * this.tileMap.width * this.tileSize;
-	sprite.position.y = 0.5;//Math.random() * this.tileMap.height * this.tileSize;	
-	var bodySprite = new PIXI.Sprite(this.textures.dig);
+	sprite.position.x = 0.5;
+	sprite.position.y = 0.5;
+	var bodySprite = new PIXI.Sprite(this.textureManager.textures.dig);
 	bodySprite.anchor.x = 0.5;
 	bodySprite.anchor.y = 0.5;
-	bodySprite.position.x = 0.5;//Math.random() * this.tileMap.width * this.tileSize;
-	bodySprite.position.y = 0.5;//Math.random() * this.tileMap.height * this.tileSize;	
+	bodySprite.position.x = 0.5;
+	bodySprite.position.y = 0.5;
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
-	
-	/*var circleDef = new b2CircleDef();
-	circleDef.density = 0.9;
-	circleDef.radius = sprite.width / 6;
-	circleDef.restitution = 0;
-	circleDef.friction = 0;
-	var bodyDef = new b2BodyDef();
-	bodyDef.AddShape(circleDef);
-	bodyDef.type=b2Body.b2_staticBody;
-	bodyDef.isSensor = true;
-	bodyDef.position.Set(100,100);
-	bodyDef.userData = { type: "player" };
-	var circleBody = this.physicsWorld.CreateBody(bodyDef);*/
 	
 	var fixDef = new b2FixtureDef;
 	fixDef.density = 1.0;

@@ -25,6 +25,7 @@
 
 <!-- classes -->
 <script src="game/TextureLoader.js"></script>
+<script src="game/TextureManager.js"></script>
 <script src="game/Animation.js"></script>
 <script src="game/AnimationManager.js"></script>
 <script src="game/AudioManager.js"></script>

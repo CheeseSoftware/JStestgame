@@ -3,10 +3,10 @@ AnimationManager = function() {
 	this.animations = {};
 }
 
-AnimationManager.prototype.load = function(textures) {
+AnimationManager.prototype.load = function(textureManager) {
 	//this.addAnimation("walk", new Animation("walk", textures.walk, 30, 150, 120));
-	this.addAnimation("feet", new Animation("feet", textures.feet, 60, 75, 75));
-	this.addAnimation("dig", new Animation("dig", textures.dig, 60, 75, 75));
+	this.addAnimation("feet", new Animation("feet", textureManager.textures.feet, 60, 75, 75));
+	this.addAnimation("dig", new Animation("dig", textureManager.textures.dig, 60, 75, 75));
 }
 
 AnimationManager.prototype.addAnimation = function(name, animation) {
