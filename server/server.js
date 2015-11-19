@@ -69,14 +69,15 @@ io.on('connection', function(socket) {
 
 	// Send existing players to the new player
 	Object.keys(players).forEach(function (key) { 
-		var player = players[key]
+		var player = players[key];
 		socket.emit('playerjoin', {
 			name: player.name,
 			x: player.x,
 			y: player.y,
 			vx: player.vx,
 			vy: player.vy,
-			rotation: player.rotation
+			rotation: player.rotation,
+			playState: player.playState
 		});
 	});
 	
@@ -92,15 +93,25 @@ io.on('connection', function(socket) {
 	
 	socket.on('playerupdate', function(data) {
 		//console.log("Received playerupdate " + data.name);
-		if(players[socket.id] != undefined)
-			players[socket.id] = { name: data.name, x: data.x, y: data.y, vx: data.vx, vy: data.vy, rotation: data.rotation };
+		if(players[socket.id] != undefined) {
+			players[socket.id] = { 
+				name: data.name, 
+				x: data.x, 
+				y: data.y, 
+				vx: data.vx, 
+				vy: data.vy, 
+				rotation: data.rotation, 
+				playState: data.playState 
+			};
+		}
 		socket.broadcast.emit('playerupdate', {
 			name: data.name,
 			x: data.x,
 			y: data.y,
 			vx: data.vx,
 			vy: data.vy,
-			rotation: data.rotation
+			rotation: data.rotation,
+			playState: data.playState
 		});
 	});
 	
@@ -114,11 +125,14 @@ io.on('connection', function(socket) {
 			y: players[socket.id].y,
 			rotation: players[socket.id].rotation
 		});
+		
+		
 		socket.broadcast.emit('playerjoin', {
 			name: data.name,
 			x: players[socket.id].x,
 			y: players[socket.id].y,
-			rotation: players[socket.id].rotation
+			rotation: players[socket.id].rotation,		
+			playState: { up: false, down: false, left: false, right: false, dig: false }
 		});
 	});
 	

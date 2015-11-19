@@ -1,68 +1,13 @@
 
 ECS.Systems.ControlSystem = CES.System.extend({
     update: function (dt) {
-        var entities = this.world.getEntities('physics', 'player', 'controlledplayer');
+        var entities = this.world.getEntities('physics', 'player', 'drawable', 'controlledplayer');
  
         entities.forEach(function (entity) {
 			var physics = entity.getComponent('physics');
             var player = entity.getComponent('player');
 			var drawable = entity.getComponent('drawable');
 			var controlledplayer = entity.getComponent('controlledplayer');
-			
-			//var distanceTravelled = Math.sqrt(Math.pow(controlledplayer.oldx - physics.x, 2) + Math.pow(controlledplayer.oldy - physics.y, 2));
-			
-			controlledplayer.oldx = physics.x;
-			controlledplayer.oldy = physics.y;
-			controlledplayer.oldvx = physics.vx;
-			controlledplayer.oldvy = physics.vy;
-			controlledplayer.oldRot = Math.round(physics.rotation * 100) / 100;
-			
-			//var dx = physics.x - (game.camera.pos.x + mousex);
-			//var dy = physics.y - (game.camera.pos.y + mousey);		
-			//var mouseAngle = Math.atan2(dy, dx);
-			
-			var moveSpeed = 3;
-			
-			var desiredAngle = physics.desiredAngle || 0;
-			if(keyboard.isKeyDown("left") && keyboard.isKeyDown("up"))
-				desiredAngle = -0.75*Math.PI;
-			else if(keyboard.isKeyDown("left") && keyboard.isKeyDown("down"))
-				desiredAngle = -1.25*Math.PI;
-			else if(keyboard.isKeyDown("right") && keyboard.isKeyDown("up"))
-				desiredAngle = -0.25*Math.PI;
-			else if(keyboard.isKeyDown("right") && keyboard.isKeyDown("down"))
-				desiredAngle = 0.25*Math.PI;
-				
-			else if(keyboard.isKeyDown("left"))
-				desiredAngle = Math.PI;
-			else if(keyboard.isKeyDown("right"))
-				desiredAngle = 0;
-			else if(keyboard.isKeyDown("up"))
-				desiredAngle = -0.5*Math.PI;
-			else if(keyboard.isKeyDown("down"))
-				desiredAngle = 0.5*Math.PI;
-		
-			if(keyboard.isKeyDown("left") ||
-				keyboard.isKeyDown("right") ||
-				keyboard.isKeyDown("up") ||
-				keyboard.isKeyDown("down")) {
-					
-					
-				physics.rotateTo(physics, desiredAngle + Math.PI / 2, 0.05);
-				physics.desiredAngle = desiredAngle;
-					
-				var vx = Math.cos(desiredAngle);
-				var vy = Math.sin(desiredAngle);
-				
-				var vec = new b2Vec2(vx, vy);
-				vec.Normalize();
-			  
-				vx = moveSpeed * vec.x;
-				vy = moveSpeed * vec.y;
-				
-				physics.vx += vx;
-				physics.vy += vy;
-			}
 			
 			if(keyboard.keys.space.isDown && !drawable.bodyparts.body.animating) {// && (new Date() - player.lastDig > 400)) {
 				//Dig
@@ -75,15 +20,12 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				
 			};
 			
-			// Check if anything changed, if so, send player update packet
-			if(controlledplayer.oldx != physics.x 
-			|| controlledplayer.oldy != physics.y
-			|| controlledplayer.oldvx != physics.vx
-			|| controlledplayer.oldvy != physics.vy
-			|| controlledplayer.oldRot != Math.round(physics.rotation * 100) / 100) {
+			if(keyboard.isDifferent(controlledplayer.oldKeyboardState)) {
 				game.sendUpdatePacket();
-				
-			}	
+				console.log("sent update packet");
+				physics.playState = keyboard.getPlayState();
+			}		
+			controlledplayer.oldKeyboardState = keyboard.getState();
 			
 			game.camera.target.x = physics.x;
 			game.camera.target.y = physics.y;	

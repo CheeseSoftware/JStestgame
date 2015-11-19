@@ -162,7 +162,8 @@ Game.prototype.sendUpdatePacket = function() {
 		y: physics.y,
 		vx: physics.vx,
 		vy: physics.vy,
-		rotation: physics.rotation
+		rotation: physics.rotation,
+		playState: keyboard.getPlayState()
 	});
 }
 
@@ -257,6 +258,7 @@ Game.prototype.initializeListeners = function() {
 		physics.x = data.x;
 		physics.y = data.y;
 		physics.rotation = data.rotation;
+		physics.playState = data.playState;
 		physics.body.userData = { type: "mainPlayer" };
 		context.players[data.name] = player;
 	}, this);
@@ -271,10 +273,7 @@ Game.prototype.initializeListeners = function() {
 		physics.x = data.x;
 		physics.y = data.y;
 		physics.rotation = data.rotation;
-		
-		
-		
-
+		physics.playState = keyboard.getPlayState();
 	}, this);
 	
 	this.connection.on('playerupdate', function(data, context) {
@@ -286,6 +285,8 @@ Game.prototype.initializeListeners = function() {
 			physics.vx = data.vx;
 			physics.vy = data.vy;
 			physics.rotation = data.rotation;
+			if(!player.hasComponent("controlledplayer"))
+				physics.playState = data.playState;
 		}
 		else
 			console.log("undefined");

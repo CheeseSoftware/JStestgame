@@ -15,7 +15,7 @@ ChunkRegenerator = function(chunkManager) {
 }
 
 ChunkRegenerator.prototype.update = function(deltaTime) {
-
+	return;
 	var keys = Object.keys(this._collapsingTiles);
 
 	// Time for each tile to regenerate. (seconds)

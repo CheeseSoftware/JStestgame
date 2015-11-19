@@ -64,4 +64,62 @@ Keyboard.prototype.isKeyUp = function(key) {
 	return this.keys[key].isUp;
 }
 
+Keyboard.prototype.getPlayState = function() {
+	var state = {};
+    state.up = this.keys["up"].isDown || this.keys["w"].isDown;
+	state.down = this.keys["down"].isDown || this.keys["s"].isDown;
+    state.left = this.keys["left"].isDown || this.keys["a"].isDown;
+	state.right = this.keys["right"].isDown || this.keys["d"].isDown;
+	state.dig = this.keys["space"].isDown;
+	return state;
+}
+
+Keyboard.prototype.getState = function() {
+	var state = {};
+    for (var key in this.keys) {
+		if (this.keys.hasOwnProperty(key)) {
+			var keyValue = this.keys[key];
+			state[key] = {};
+			state[key].code = keyValue.code;
+			state[key].isDown = keyValue.isDown;
+			state[key].isUp = keyValue.isUp;
+		}
+    }
+	return state;
+}
+
+/*Keyboard.prototype.applyState = function(state) {
+    for (var key in state) {
+		if (state.hasOwnProperty(key)) {
+			var keyValue = state[key];
+			
+			if(!this.keys[key])
+				this.keys[key] = {};
+			this.keys[key].code = keyValue.code;
+			this.keys[key].isDown = keyValue.isDown;
+			this.keys[key].isUp = keyValue.isUp;
+		}
+    }
+}*/
+
+Keyboard.prototype.isDifferent = function(state) {
+	if(!state)
+		return true;
+	
+	for (var key in this.keys) {
+		if (this.keys.hasOwnProperty(key)) {
+			var keyValue = this.keys[key];
+			if(state[key]) {
+				if(state[key].code != keyValue.code
+					|| state[key].isDown != keyValue.isDown
+					|| state[key].isUp != keyValue.isUp)
+					return true;
+			}
+			else
+				return true;
+		}
+	}
+	return false;
+}
+
 var keyboard = new Keyboard();

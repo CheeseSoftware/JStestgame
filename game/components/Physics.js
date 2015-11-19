@@ -6,6 +6,7 @@ ECS.Components.Physics = CES.Component.extend({
 		this.oldX = 0;
 		this.oldY = 0;
 		this.rotation = 0;
+		this.playState = {};
     }
 });
 

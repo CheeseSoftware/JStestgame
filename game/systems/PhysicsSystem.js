@@ -7,6 +7,50 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			var physics = entity.getComponent('physics');
             var player = entity.getComponent('player');
 			var drawable = entity.getComponent('drawable');
+			var state = physics.playState;
+			
+			var moveSpeed = 3;
+			
+			var desiredAngle = physics.desiredAngle || 0;
+			if(state.left && state.up)
+				desiredAngle = -0.75*Math.PI;
+			else if(state.left && state.down)
+				desiredAngle = -1.25*Math.PI;
+			else if(state.right && state.up)
+				desiredAngle = -0.25*Math.PI;
+			else if(state.right && state.down)
+				desiredAngle = 0.25*Math.PI;
+				
+			else if(state.left)
+				desiredAngle = Math.PI;
+			else if(state.right)
+				desiredAngle = 0;
+			else if(state.up)
+				desiredAngle = -0.5*Math.PI;
+			else if(state.down)
+				desiredAngle = 0.5*Math.PI;
+		
+			if(state.left ||
+				state.right ||
+				state.up ||
+				state.down) {
+					
+					
+				physics.rotateTo(physics, desiredAngle + Math.PI / 2, 0.05);
+				physics.desiredAngle = desiredAngle;
+					
+				var vx = Math.cos(desiredAngle);
+				var vy = Math.sin(desiredAngle);
+				
+				var vec = new b2Vec2(vx, vy);
+				vec.Normalize();
+			  
+				vx = moveSpeed * vec.x;
+				vy = moveSpeed * vec.y;
+				
+				physics.vx += vx;
+				physics.vy += vy;
+			}
 			
 			// Prevent random rotation
 			physics.angularVelocity = 0;
