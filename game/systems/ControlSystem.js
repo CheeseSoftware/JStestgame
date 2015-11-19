@@ -22,7 +22,6 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			
 			if(keyboard.isDifferent(controlledplayer.oldKeyboardState)) {
 				game.sendUpdatePacket();
-				console.log("sent update packet");
 				physics.playState = keyboard.getPlayState();
 			}		
 			controlledplayer.oldKeyboardState = keyboard.getState();
