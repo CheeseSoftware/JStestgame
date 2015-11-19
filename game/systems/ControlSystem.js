@@ -21,7 +21,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			//var dy = physics.y - (game.camera.pos.y + mousey);		
 			//var mouseAngle = Math.atan2(dy, dx);
 			
-			var moveSpeed = 3;
+			var moveSpeed = 5.0;
 			
 			var desiredAngle = physics.desiredAngle || 0;
 			if(keyboard.isKeyDown("left") && keyboard.isKeyDown("up"))
