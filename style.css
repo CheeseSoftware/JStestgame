@@ -21,6 +21,7 @@ body {
   	left: 50%;
  	transform: translate(-50%, -50%);
 	text-align: center;
+	display: none;
 	
 	
 	/* Make text unselectable. */
@@ -37,17 +38,21 @@ body {
 	font-size: 18px;
 }
 
+.playMenu >  img {
+	width:230px;
+}
+
 .playMenu > .button {
 	display: block;
 	
-	width: 298px;
+	width: 230px;
 	height: 48px;
 	margin: auto;
 	margin-top: 8;
 	margin-bottom: 8;
 	text-align: center;
 	color: #FFF;
-	line-height: 0px;
+	line-height: 40px;
 	font-family: "Comic Sans MS", cursive, sans-serif;
 	font-size: 24px;
 
@@ -196,4 +201,24 @@ body {
  	transform: translate(-50%, -50%);
 	text-align: center;
 	display: none;
+}
+
+.progresscontainer {
+	position:absolute;
+	width:100%;
+	height:100%;
+	background-color:#000;
+	opacity:0.9;
+	z-index: 50;
+}
+
+.progress {
+	position:absolute;
+	bottom:10%;
+	width:70%;
+	height:30px;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
 }

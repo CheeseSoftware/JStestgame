@@ -16,15 +16,14 @@ TextureManager = function() {
 	this.loader.onProgress(function(name, file, progress) {
 		console.log(progress + "% complete");
 		if(context.onProgressFunc)
-			context.onProgressFunc();
+			context.onProgressFunc(name, file, progress);
 	});
 	
 	var context = this;
 	this.loader.onComplete(function(textures) {
-		console.log("100% complete");
 		context.textures = textures;
 		if(context.onCompleteFunc)
-			context.onCompleteFunc();
+			context.onCompleteFunc(textures);
 	});
 }
 

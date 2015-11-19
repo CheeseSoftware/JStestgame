@@ -1,6 +1,7 @@
 <html>
 <head>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="lib/bootstrap.min.css">
 
 <script type="application/javascript">
 		window.vars = { 
@@ -25,6 +26,7 @@
 <script src="lib/gl-matrix.js"></script>
 <script src="lib/perlin.js"></script>
 <script src="lib/jquery-2.1.x.js"></script>
+<script src="lib/bootstrap.min.js"></script> <!-- For progressbar -->
 
 
 <!-- classes -->
@@ -90,6 +92,7 @@
 	include("playMenu.html");
 	include("registerFrame.html");
 	include("loginFrame.html");
+	include("progress.html");
 ?>
 </body>
 </html>

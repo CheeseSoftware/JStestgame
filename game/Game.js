@@ -104,8 +104,20 @@ Game.prototype.preload = function() {
 	// Load textures and sound and heavy things. Progress shown on progressbar.
 	this.textureManager = new TextureManager();
 	var context = this;
+	
+	this.textureManager.onProgress(function(name, file, progress) {
+		$("#progressbar").css("width", progress + "%");
+		$("#progressbar").attr("aria-valuenow", progress);
+		$("#progressbar").html(progress + "%");
+	});
+	
 	this.textureManager.onComplete(function(textures) {
 		context.load(); // Continue loading the game
+		
+		window.setTimeout ( function() {
+			$("#progresscontainer").fadeOut();
+			$("#playMenu").show();
+		}, 800);
 	});
 	this.textureManager.load();
 }

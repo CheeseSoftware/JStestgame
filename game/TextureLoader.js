@@ -25,8 +25,8 @@ TextureLoader.prototype.loadTextures = function() {
 		var loaded = context.texturesToLoad[context.current];
 		context.textures[loaded.name] = e.resources[loaded.name].texture;
 		
-		if(context.current + 1 < context.total) {
-			context.onProgressFunc(loaded.name, loaded.file, Math.ceil(100 * context.current / context.total));
+		context.onProgressFunc(loaded.name, loaded.file, Math.ceil(100 * context.current / (context.total - 1)));
+		if(context.current + 1 < context.total) {		
 			++context.current;
 			context.loadTextures();
 		}
