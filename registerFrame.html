@@ -1,0 +1,21 @@
+<div id="registerFrame" class="registerFrame">
+	<div class="closeWindowButton" onClick="document.getElementById('registerFrame').style.display = 'none'"></div>
+    <div class="innerRegisterLoginFrame">
+        Username:<br>
+        <input type="text" id="registerUsername" value=""> 
+        <br>Email:<br>
+        <input type="text" id="registerEmail" value="">
+        <br>Password:<br>
+        <input type="text" id="registerPassword" value="">
+        <br />
+        <div class="registerLoginButton" onClick="
+        	tryRegister(
+            	$('#registerUsername').val(), 
+            	$('#registerEmail').val(), 
+            	$('#registerPassword').val()); 
+            $('#registrationResult').html('Waiting for registration response..');
+        ">
+        <p>Register</p></div>      
+    	<p id="registrationResult"></p>
+    </div>
+</div>

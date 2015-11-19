@@ -1,3 +1,13 @@
+
+html {
+	overflow:hidden;
+}
+
+body { 
+	margin: 0; 
+	padding: 0
+}
+
 .playMenu {
 	z-index: 1;
 	width: 298px;
@@ -110,7 +120,7 @@
 .closeWindowButton {
 	width:32px;
 	height:32px;
-	background-image:url(../textures/closewindow.png);
+	background-image:url(game/textures/closewindow.png);
 	float:right;
 	margin-top:5px;
 	margin-right:5px;
@@ -135,14 +145,14 @@
 	display: none;
 }
 
-.innerRegisterFrame {
+.innerRegisterLoginFrame {
 	width:90%;
 	height:90%;
 	margin-top:30px;
 	/*background-color:#03F;*/
 }
 
-.registerButton {
+.registerLoginButton {
 	display: block;
 	
 	width: 298px;
@@ -164,7 +174,7 @@
 	transition: 0.25s;
 }
 
-.registerButton:hover {
+.registerLoginButton:hover {
 
 	background-color: #808080;
 }
@@ -186,8 +196,4 @@
  	transform: translate(-50%, -50%);
 	text-align: center;
 	display: none;
-}
-
-.loginFrameHideButton {
-	float:right;
 }

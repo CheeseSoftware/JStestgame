@@ -1,26 +1,94 @@
-<?php 
-	$action = "index";
-	$disallowedPaths = array("header", "footer");
-	$tempAction = "";
-	
-	if (!isset($_GET['action']) || empty($_GET['action'])) 
-		$tempAction = "play";
-	else
-		$tempAction = $_GET['action'];
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+
+<script type="application/javascript">
+		window.vars = { 
+			<?php
+				$ip = (isset($_GET["ip"]) ? '"' . $_GET["ip"] . '"' : '"107.6.140.41"');
+				if(empty($ip))
+					$ip = '"107.6.140.41"';
+				echo ("ip: " . $ip);
+			?>
+		};
 		
-	$tempAction = basename($tempAction);
+		window.ECS = {
+        	Components: {},
+			Systems: {}
+	    };		
+</script>
+
+<script src="lib/Box2D.js"></script>
+<script src="lib/ces-browser.js"></script>
+<script src="lib/pixi.js"></script>
+<script src="lib/socket.io-1.3.5.js"></script>
+<script src="lib/gl-matrix.js"></script>
+<script src="lib/perlin.js"></script>
+<script src="lib/jquery-2.1.x.js"></script>
+
+
+<!-- classes -->
+<script src="game/TextureLoader.js"></script>
+<script src="game/TextureManager.js"></script>
+<script src="game/Animation.js"></script>
+<script src="game/AnimationManager.js"></script>
+<script src="game/AudioManager.js"></script>
+<script src="game/Connection.js"></script>
+<script src="game/Keyboard.js"></script>
+<script src="game/Camera.js"></script>
+<script src="game/PagedArray2D.js"></script>
+<script src="game/components/Drawable.js"></script>
+<script src="game/components/Physics.js"></script>
+<script src="game/components/Player.js"></script>
+<script src="game/components/ControlledPlayer.js"></script>
+<script src="game/systems/AnimationSystem.js"></script>
+<script src="game/systems/PhysicsSystem.js"></script>
+<script src="game/systems/TerrainPhysicsSystem.js"></script>
+<script src="game/systems/ControlSystem.js"></script>
+<script src="game/Shader.js"/></script>
+<script src="game/ShaderProgram.js"/></script>
+<script src="game/Observable.js"/></script>
+
+<!-- Chunk system -->
+<script src="game/TileType.js"></script>
+<script src="game/TileRegister.js"></script>
+<script src="game/Generator.js"></script>
+<script src="game/Chunk.js"></script>
+<script src="game/ChunkManager.js"></script>
+<script src="game/ChunkRenderer.js"></script>
+<script src="game/ChunkClient.js"></script>
+
+<!-- game -->
+<script src="game/Game.js"></script>
+<script>
+	var   b2Vec2 = Box2D.Common.Math.b2Vec2
+	,  b2AABB = Box2D.Collision.b2AABB
+	,	b2BodyDef = Box2D.Dynamics.b2BodyDef
+	,	b2Body = Box2D.Dynamics.b2Body
+	,	b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+	,	b2Fixture = Box2D.Dynamics.b2Fixture
+	,	b2World = Box2D.Dynamics.b2World
+	,	b2MassData = Box2D.Collision.Shapes.b2MassData
+	,	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+	,	b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+	,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+	,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
+	;
 	
-	if (!in_array($tempAction, $disallowedPaths) &&
-		file_exists("php/$tempAction.php"))
-	{
-		$action = $tempAction;
-	}
-	else {
-		$action = "quotes";
-	}
+	var game = new Game();
 	
-	
-	include("php/header.php");
-	include("php/$action.php");
-	include("php/footer.php");
+	function tryRegister(username, email, password) {		
+		game.connection.send('register', { 
+			username: username,
+			email: email,
+			password: password
+		});
+	};
+</script>
+<?php
+	include("playMenu.html");
+	include("registerFrame.html");
+	include("loginFrame.html");
 ?>
+</body>
+</html>

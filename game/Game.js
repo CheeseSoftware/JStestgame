@@ -294,4 +294,15 @@ Game.prototype.initializeListeners = function() {
 		if(!context.players[data.username].getComponent("controlledplayer"))
 			context.players[data.username].getComponent("drawable").animate("body", "dig", 240, true);
 	}, this);
+	
+	this.connection.on('registerresponse', function(data) {
+		$('#registrationResult').html(data.response);
+		if(data.success == true) {
+			var d = new Date();
+			d.setTime(d.getTime() + (14*24*60*60*1000));
+			var expires = "expires="+d.toUTCString();
+			document.cookie="username=" + $('#registerUsername').val() + "; " + expires;
+			document.cookie="password=" + $('#registerPassword').val() + "; " + expires;
+		}
+	});
 }

@@ -1,0 +1,18 @@
+<div id="loginFrame" class="loginFrame">
+	<div class="closeWindowButton" onClick="document.getElementById('loginFrame').style.display = 'none'"></div>
+    <div class="innerRegisterLoginFrame">
+        Username/E-mail:<br>
+        <input type="text" id="loginUsernameEmail" value=""> 
+        <br>Password:<br>
+        <input type="text" id="loginPassword" value="">
+        <br />
+        <div class="registerLoginButton" onClick="
+        	tryLogin(
+            	$('#loginUsernameEmail').val(), 
+            	$('#loginPassword').val()); 
+            $('#loginResult').html('Waiting for login response..');
+        ">
+        <p>Login</p></div>      
+    	<p id="loginResult"></p>
+    </div>
+</div>

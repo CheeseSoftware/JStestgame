@@ -70,7 +70,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				var x = physics.x + 32.0*Math.sin(physics.rotation);
 				var y = physics.y - 32.0*Math.cos(physics.rotation);
 				game.connection.send("playerdig", { x: x, y: y, digRadius: digRadius, username:player.username });
-				drawable.animate("body", "dig", 240, true);
+				drawable.animate("body", "dig", 400, true);
 				
 			};
 			
