@@ -1,3 +1,4 @@
+
 fs = require('fs');
 
 var include = function( lib ) {
@@ -6,12 +7,12 @@ var include = function( lib ) {
 	eval(data);
 }
 
-//Libraries
+// Libraries
 //include("lib/Box2D.js");
-include("lib/ces-browser.js");
+var CES = require('ces');
 include("lib/perlin.js");
 
-//Core
+// Core
 include("game/Observable.js");
 
 // Tiles
@@ -24,7 +25,10 @@ include("game/Generator.js");
 include("game/ChunkManager.js");
 include("game/ChunkServer.js");
 
+// Initialize entityWorld
+entityWorld = new CES.World();
 
+// Initialize chunkManager
 _chunkManager = new ChunkManager();
 
 var http = require('http'),
@@ -43,20 +47,6 @@ var mapData = {
 	height: 256,
 	tileSize: 64
 };
-
-
-eval(fs.readFileSync('../game/Observable.js', 'utf8')); 
-
-
-// Include Chunk system
-eval(fs.readFileSync('../game/TileType.js', 'utf8')); 
-eval(fs.readFileSync('../game/TileRegister.js', 'utf8')); 
-eval(fs.readFileSync('../game/Chunk.js', 'utf8')); 
-eval(fs.readFileSync('../game/ChunkManager.js', 'utf8')); 
-eval(fs.readFileSync('../game/ChunkRenderer.js', 'utf8')); 
-
-//var chunkManager = new ChunkManager(
-
 
 var mongo = require('mongodb'),
   Server = mongo.Server,

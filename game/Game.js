@@ -305,4 +305,15 @@ Game.prototype.initializeListeners = function() {
 			document.cookie="password=" + $('#registerPassword').val() + "; " + expires;
 		}
 	});
+	
+	this.connection.on('loginresponse', function(data) {
+		$('#loginResult').html(data.response);
+		if(data.success == true) {
+			var d = new Date();
+			d.setTime(d.getTime() + (14*24*60*60*1000));
+			var expires = "expires="+d.toUTCString();
+			document.cookie="username=" + $('#loginUsername').val() + "; " + expires;
+			document.cookie="password=" + $('#loginPassword').val() + "; " + expires;
+		}
+	});
 }
