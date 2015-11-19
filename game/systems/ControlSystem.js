@@ -54,10 +54,11 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				var vx = Math.cos(desiredAngle);
 				var vy = Math.sin(desiredAngle);
 				
-				var magnitude = vx*vx + vy*vy;
+				var vec = new b2Vec2(vx, vy);
+				vec.Normalize();
 			  
-				vx = moveSpeed * vx;///magnitude;
-				vy = moveSpeed * vy;///magnitude;
+				vx = moveSpeed * vec.x;
+				vy = moveSpeed * vec.y;
 				
 				physics.vx += vx;
 				physics.vy += vy;
