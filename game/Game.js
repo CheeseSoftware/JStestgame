@@ -112,8 +112,11 @@ Game.prototype.preload = function() {
 	
 	this.textureManager.onComplete(function(textures) {
 		context.load(); // Continue loading the game
-		$("#progresscontainer").hide();
-		$("#playMenu").show();
+		
+		window.setTimeout ( function() {
+			$("#progresscontainer").fadeOut();
+			$("#playMenu").show();
+		}, 800);
 	});
 	this.textureManager.load();
 }

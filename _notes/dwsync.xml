@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name=".gitattributes" server="107.6.140.41//var/www/digminer/" local="130634386487196491" remote="130859996550000000" Dst="2" />
-<file name=".gitignore" server="107.6.140.41//var/www/digminer/" local="130859394558838882" remote="130859996550000000" Dst="2" />
+<file name=".gitattributes" server="107.6.140.41//var/www/digminer/" local="130634386487196491" remote="130860032550000000" Dst="1" />
+<file name=".gitignore" server="107.6.140.41//var/www/digminer/" local="130859394558838882" remote="130860032550000000" Dst="1" />
+<file name="index.php" server="107.6.140.41//var/www/digminer/" local="130924291118741169" remote="130924296650000000" Dst="1" />
+<file name="login.html" server="107.6.140.41//var/www/digminer/" local="130889608140313143" remote="130924296650000000" Dst="1" />
+<file name="loginFrame.html" server="107.6.140.41//var/www/digminer/" local="130924244247530628" remote="130924296650000000" Dst="1" />
+<file name="playMenu.html" server="107.6.140.41//var/www/digminer/" local="130924235219185449" remote="130924296650000000" Dst="1" />
+<file name="progress.html" server="107.6.140.41//var/www/digminer/" local="130924282148712099" remote="130924296660000000" Dst="1" />
+<file name="registerFrame.html" server="107.6.140.41//var/www/digminer/" local="130924243974295652" remote="130924296660000000" Dst="1" />
+<file name="style.css" server="107.6.140.41//var/www/digminer/" local="130924294951315772" remote="130924296690000000" Dst="1" />
 </dwsync>
