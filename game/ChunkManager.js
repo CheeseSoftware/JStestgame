@@ -10,7 +10,7 @@ ChunkManager = function(gl) {
 
 }
 // Inherits observable
-ChunkManager.prototype = new Observable(["onChunkChange"]);
+ChunkManager.prototype = new Observable(["onChunkChange", "onDensityChange"]);
 ChunkManager.prototype.constructor = ChunkManager;    
 
 
@@ -99,6 +99,7 @@ ChunkManager.prototype.setDensity = function(x, y, value, createChunk) {
 	}
 
 	this.on("onChunkChange", [chunkX, chunkY, chunk]);
+	this.on("onDensityChange", [x, y, value]);
 }
 
 ChunkManager.prototype.getTileId = function(x, y) {
