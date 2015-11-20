@@ -50,6 +50,7 @@
 <script src="game/Shader.js"/></script>
 <script src="game/ShaderProgram.js"/></script>
 <script src="game/Observable.js"/></script>
+<script src="game/vec2.js"></script>
 
 <!-- Chunk system -->
 <script src="game/TileType.js"></script>
