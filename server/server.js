@@ -127,7 +127,8 @@ io.on('connection', function(socket) {
 		if(player.entity) {
 			var physics = player.entity.getComponent('physics');
 			socket.emit('playerjoin', {
-				name: player.name,
+				uuid: player.entity.uuid,
+				username: player.username,
 				x: physics.x,
 				y: physics.y,
 				vx: physics.vx,
@@ -141,27 +142,19 @@ io.on('connection', function(socket) {
 	
 	socket.on('disconnect', function(){
 		if(players[socket.id] != undefined) {
-			console.log(players[socket.id].name + ' has disconnected.');
-			socket.broadcast.emit('playerleave', { name: players[socket.id].name });
+			console.log(players[socket.id].username + ' has disconnected.');
+			socket.broadcast.emit('playerleave', { 
+				uuid: players[socket.id].entity.uuid,
+				username: players[socket.id].username,		
+			});
+			
+			entityWorld.removeEntity(players[socket.id].entity);
+			entityServer.entityMap.remove(players[socket.id].entity.uuid);
 			delete players[socket.id];
 		}
     });
 	
-	socket.on('playerupdate', function(data) {
-		
-		/*if(players[socket.id] != undefined) {
-			players[socket.id] = { 
-				name: data.name, 
-				x: data.x, 
-				y: data.y, 
-				vx: data.vx, 
-				vy: data.vy, 
-				dx: data.dx, 
-				dy: data.dy,
-				rotation: data.rotation 
-			};
-		}*/
-		
+	socket.on('entityupdate', function(data) {
 		var physics = players[socket.id].entity.getComponent('physics');
 		physics.x = data.x;
 		physics.y = data.y;
@@ -171,8 +164,8 @@ io.on('connection', function(socket) {
 		physics.dy = data.dy;
 		physics.rotation = data.rotation;
 		
-		socket.broadcast.emit('playerupdate', {
-			name: data.name,
+		socket.broadcast.emit('entityupdate', {
+			uuid: data.uuid,
 			x: data.x,
 			y: data.y,
 			vx: data.vx,
@@ -184,10 +177,7 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('playerinit', function(data) {
-		data.name = "player" + Math.round(Math.random() * 65536);
-		console.log(data.name + " has connected.");
-		players[socket.id] = { name: data.name };
-		
+			
 		// Initialize physics stuff
 		var fixDef = new b2FixtureDef;
 		fixDef.density = 1.0;
@@ -203,6 +193,11 @@ io.on('connection', function(socket) {
 		ghostBody.CreateFixture(fixDef);
 		
 		var entity = entityServer.createEntity();
+		
+		data.username = entity.uuid;
+		console.log(data.username + " has connected.");
+		players[socket.id] = { username: data.username };
+		
 		var physics = new ECS.Components.Physics(physicsBody, ghostBody);
 		physics.x = 128;
 		physics.y = 128;
@@ -212,7 +207,7 @@ io.on('connection', function(socket) {
 		
 		socket.emit('playerinit', {
 			uuid: entity.uuid,
-			name: data.name,
+			username: data.username,
 			x: physics.x,
 			y: physics.y,
 			rotation: physics.rotation
@@ -220,27 +215,19 @@ io.on('connection', function(socket) {
 		
 		socket.broadcast.emit('playerjoin', {
 			uuid: entity.uuid,
-			name: data.name,
+			username: data.username,
 			x: physics.x,
 			y: physics.y,
 			rotation: physics.rotation
 		});
 	});
 	
-	socket.on('chatmessage', function(data) {
-		io.sockets.emit('chatmessage', { message: data.message });
-		console.log(data.message);
-	});
-	
 	socket.on('playerdig', function(data) {
-		//console.log("x " + data.x + " y" + data.y);
 		_chunkManager.fillCircle(parseFloat(data.x)/32.0, parseFloat(data.y)/32.0, data.digRadius);
 		io.sockets.emit('dig', data);
 	});
 	
-	
-	//MENU PACKETS
-	
+	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Register and login below >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 	
 	socket.on('register', function(data) {
 		//TODO: verify data

@@ -78,9 +78,6 @@ Game.prototype.load = function() {
 	}
 	this.physicsWorld.SetContactListener(playerContactListener);
 	
-	
-	
-	this.players = {};
 	this.lastUpdate = Date.now();
 	
 	this.intervalId = setInterval(function(){game.run()}, 0);
@@ -89,6 +86,7 @@ Game.prototype.load = function() {
 	this.initializeListeners();
 	
 	// Initialize client systems
+	this.entityClient = new EntityClient();
 	this.chunkClient = new ChunkClient(this.chunkManager, this.connection);
 	this.regeneratorClient = new RegeneratorClient(this.chunkManager, this.connection);
 }
@@ -158,33 +156,50 @@ Game.prototype.run = function() {
 };
 
 Game.prototype.sendUpdatePacket = function() {
-	var physics = this.player.getComponent('physics');
-	var player = this.player.getComponent('player');
-	var direction = keyboard.calculateDirection();
-	this.connection.send('playerupdate', { 
-		name: player.username,
-		x: physics.x,
-		y: physics.y,
-		vx: physics.vx,
-		vy: physics.vy,
-		dx: direction.x,
-		dy: direction.y,
-		rotation: physics.rotation
+	var entities = this.entityWorld.getEntities('controlled', 'physics', 'player');
+	var context = this;
+	entities.forEach(function (entity) {
+		var physics = entity.getComponent('physics');
+		var player = entity.getComponent('player');
+		var direction = keyboard.calculateDirection();
+		context.connection.send('entityupdate', {
+			uuid: player.uuid, 
+			username: player.username,
+			x: physics.x,
+			y: physics.y,
+			vx: physics.vx,
+			vy: physics.vy,
+			dx: direction.x,
+			dy: direction.y,
+			rotation: physics.rotation
+		});
 	});
 }
 
-Game.prototype.spawnPlayer = function(name) {
+Game.prototype.spawnPlayer = function(uuid, username) {
+	
 	var sprite = new PIXI.Sprite(this.textureManager.textures.feet);
 	sprite.anchor.x = 0.5;
 	sprite.anchor.y = 0.5;
 	sprite.position.x = 0.5;
 	sprite.position.y = 0.5;
+	
 	var bodySprite = new PIXI.Sprite(this.textureManager.textures.dig);
 	bodySprite.anchor.x = 0.5;
 	bodySprite.anchor.y = 0.5;
 	bodySprite.position.x = 0.5;
 	bodySprite.position.y = 0.5;
-	var text = new PIXI.Text(name, { fill: '#ffffff' });
+	
+	var bodyparts = {
+		"feet": {
+			"sprite": sprite
+		},
+		"body": {
+			"sprite": bodySprite
+		}
+	};
+	
+	var text = new PIXI.Text(username, { fill: '#ffffff' });
 	
 	// Initialize physics stuff
 	var fixDef = new b2FixtureDef;
@@ -200,46 +215,47 @@ Game.prototype.spawnPlayer = function(name) {
 	physicsBody.CreateFixture(fixDef);
 	ghostBody.CreateFixture(fixDef);
 	
-	var player = new CES.Entity();
-	player.addComponent(new ECS.Components.Player(name, sprite, text));
-	player.addComponent(new ECS.Components.Physics(physicsBody, ghostBody));
-	var bodyparts = {
-		"feet": {
-			"sprite": sprite
-		},
-		"body": {
-			"sprite": bodySprite
-		}
-	};
+	var entity = this.entityClient.createEntity(uuid);
+	entity.addComponent(new ECS.Components.Player(uuid, username, text));
+	entity.addComponent(new ECS.Components.Physics(physicsBody, ghostBody));
 	var drawable = new ECS.Components.Drawable(bodyparts, this.animationManager, 0, 0);
-	player.addComponent(drawable);
+	entity.addComponent(drawable);
 	
-	this.entityWorld.addEntity(player);
 	this.stage.addChild(sprite);
 	this.stage.addChild(bodySprite);
 	this.stage.addChild(text);
-	this.players[name] = player;
-	
-	return player;
+	this.entityWorld.addEntity(entity);
+	return entity;
 }
 
 Game.prototype.spawnMainPlayer = function() {
 	this.connection.send('playerinit', { 
-		name: "player username that will be selected when accounts exist"
+		username: "player username that will be selected when accounts exist"
 	});
 }
 
-Game.prototype.despawnPlayer = function(name) {
-	var player = this.players[name];
-    var playerComp = player.getComponent('player');
-	var drawable = player.getComponent('drawable');
-	drawable.remove(this.stage);
-	this.stage.removeChild(playerComp.text);
-	delete(this.players[name]);
+Game.prototype.despawnEntity = function(uuid) {
+	var entityId = this.entityClient.entityMap.getEntityId(uuid);
+	var entity = this.entityWorld.getEntity(entityId);
+	if(entity) {
+		var player = entity.getComponent('player');
+		if(player) {
+			this.stage.removeChild(player.text);
+		}
+		
+		var drawable = entity.getComponent('drawable');
+		if(drawable)
+			drawable.remove(this.stage);
+			
+		this.entityWorld.removeEntity(entity);
+		this.entityClient.entityMap.remove(uuid);
+	}
+	else
+		console.log("Could not despawn entity " + uuid);
 }
 
 Game.prototype.initializeListeners = function() {
-	this.connection.on('init', function(data, context) {	
+	this.connection.on('init', function(data, context) {
 		context.tileMap = { 
 			width: data.mapWidth,
 			height: data.mapHeight,
@@ -259,38 +275,44 @@ Game.prototype.initializeListeners = function() {
 	});
 	
 	this.connection.on('playerjoin', function(data, context) {
-		console.log(data.name + " has connected.");
-		var player = context.spawnPlayer(data.name);
+		console.log(data.username + " has connected.");
+		var player = context.spawnPlayer(data.uuid, data.username);
+		
 		var physics = player.getComponent("physics");
-		physics.gx = data.x;
-		physics.gy = data.y;
 		physics.x = data.x;
 		physics.y = data.y;
+		physics.oldX = data.x;
+		physics.oldY = data.y;
+		physics.gx = data.x;
+		physics.gy = data.y;
 		physics.rotation = data.rotation;
-		physics.playState = data.playState;
-		//physics.body.userData = { type: "mainPlayer" };
-		context.players[data.name] = player;
 	}, this);
 	
 	this.connection.on('playerinit', function(data, context) {
-		context.player = context.spawnPlayer(data.name);
-		context.player.addComponent(new ECS.Components.Controlled());
-	
-		var player = context.player.getComponent('player');
-		var physics = context.player.getComponent('physics');
+		var player = context.spawnPlayer(data.uuid, data.username);
+		player.addComponent(new ECS.Components.Controlled());
+		
+		var physics = player.getComponent('physics');
 		physics.x = data.x;
 		physics.y = data.y;
+		physics.oldX = data.x;
+		physics.oldY = data.y;
 		physics.gx = data.x;
 		physics.gy = data.y;
 		physics.rotation = data.rotation;
-		physics.playState = keyboard.getPlayState();
 	}, this);
 	
-	this.connection.on('playerupdate', function(data, context) {
-		var player = context.players[data.name];
-		if(player != undefined) {
-			var physics = player.getComponent("physics");
-
+	this.connection.on('playerleave', function(data, context) {
+		console.log(data.username + ' has disconnected.');
+		context.despawnEntity(data.uuid);
+	}, this);
+	
+	this.connection.on('entityupdate', function(data, context) {
+		var entityId = context.entityClient.entityMap.getEntityId(data.uuid);
+		var entity = context.entityWorld.getEntity(entityId);
+		
+		if(entity != undefined) {
+			var physics = entity.getComponent("physics");
 			physics.gx = data.x;
 			physics.gy = data.y;
 			physics.gvx = data.vx;
@@ -301,26 +323,25 @@ Game.prototype.initializeListeners = function() {
 			physics.time = new Date();
 		}
 		else
-			console.log("undefined");
+			console.log("entity is undefined in 'entityupdate' Game.js");
 	}, this);
-	
-	this.connection.on('playerleave', function(data, context) {
-		console.log(data.name + ' has disconnected.');
-		context.despawnPlayer(data.name);
-	}, this);
-	
-	this.connection.on('chatmessage', function(data) {
-		addChat(data.message);
-	});
 	
 	this.connection.on('dig', function(data, context) {
+		var uuid = data.uuid;
 		var x = data.x;
 		var y = data.y;
 		var digRadius = data.digRadius;
 		context.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, digRadius);
-		if(!context.players[data.username].getComponent("controlled"))
-			context.players[data.username].getComponent("drawable").animate("body", "dig", 240, true);
+		
+		if(data.uuid) {
+			var entityId = context.entityClient.entityMap.getEntityId(uuid);
+			var entity = context.entityWorld.getEntity(entityId);
+			if(!entity.getComponent("controlled") && entity.getComponent("drawable"))
+				entity.getComponent("drawable").animate("body", "dig", 240, true);
+		}
 	}, this);
+	
+	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Register and login below >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 	
 	this.connection.on('registerresponse', function(data) {
 		$('#registrationResult').html(data.response);

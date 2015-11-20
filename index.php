@@ -31,6 +31,8 @@
 <script src="lib/bootstrap.min.js"></script> <!-- For progressbar -->
 
 <!-- classes -->
+<script src="game/EntityMap.js"></script>
+<script src="game/EntityClient.js"></script>
 <script src="game/TextureLoader.js"></script>
 <script src="game/TextureManager.js"></script>
 <script src="game/Animation.js"></script>
