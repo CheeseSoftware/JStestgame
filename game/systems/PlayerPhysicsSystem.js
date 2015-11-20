@@ -8,7 +8,7 @@ ECS.Systems.PlayerPhysicsSystem = CES.System.extend({
 			var ghost = entity.getComponent('ghostphysics');
             var player = entity.getComponent('player');
 			var drawable = entity.getComponent('drawable');
-			var isControlled = entity.hasComponent('controlledplayer');
+			var isControlled = entity.hasComponent('controlled');
 			var state = physics.playState;
 			
 			var moveSpeed = 5.0;
@@ -54,24 +54,21 @@ ECS.Systems.PlayerPhysicsSystem = CES.System.extend({
 				var vx = normal.x * moveSpeed;
 				var vy = normal.y * moveSpeed;
 				
-				if(isControlled) {
-					physics.vx += vx;
-					physics.vy += vy;	
-				} else {
+				physics.vx += vx;
+				physics.vy += vy;	
+				if(!isControlled) {
 					physics.vx += vx;
 					physics.vy += vy;	
 					ghost.vx += vx;		
 					ghost.vy += vy;
 					
-					//console.log("ghost x" + ghost.x + " y" + ghost.y);
-					//console.log("physics x" + physics.x + " y" + physics.y);
-					
 					// Now do some linear interpolation!		
 					var duration = 500;
-					var c = Math.min((new Date()-physics.time)/duration, 1.0);
-					console.log("c " + c);
-					physics.x = c*ghost.x + (1.0-c)*physics.x;
-					physics.y = c*ghost.y + (1.0-c)*physics.y;
+					var interpolationConstant = Math.min((new Date()-physics.time)/duration, 1.0);
+					physics.x = interpolationConstant*ghost.x + (1.0-interpolationConstant)*physics.x;
+					physics.y = interpolationConstant*ghost.y + (1.0-interpolationConstant)*physics.y;
+					physics.vx = interpolationConstant*ghost.vx + (1.0-interpolationConstant)*physics.vx;
+					physics.vy = interpolationConstant*ghost.vy + (1.0-interpolationConstant)*physics.vy;
 
 				}
 				
@@ -156,10 +153,10 @@ ECS.Systems.PlayerPhysicsSystem = CES.System.extend({
 				
 				drawable.positionAll(physics.x, physics.y, physics.rotation);
 				
-				if(!isControlled) {
+				/*if(!isControlled) {
 					ghost.sprite.x = ghost.x;
 					ghost.sprite.y = ghost.y;
-				}
+				}*/
 				
 				var konstant = 100;
 				var disWalked = konstant * Math.sqrt(Math.pow(physics.x - physics.oldX, 2) + Math.pow(physics.y - physics.oldY, 2));

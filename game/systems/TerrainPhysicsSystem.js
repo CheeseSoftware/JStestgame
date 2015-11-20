@@ -7,7 +7,7 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 			var physics = entity.getComponent('physics');
 			var ghost = entity.getComponent('ghostphysics');
             var player = entity.getComponent('player');
-			var isControlled = entity.getComponent('controlledplayer');
+			var isControlled = entity.getComponent('controlled');
 			
 			// Simulate terrain for PLAYERS
 			var density = game.chunkManager.calcDensity(physics.x/32.0-0.5, physics.y/32.0-0.5);

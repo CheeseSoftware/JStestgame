@@ -1,13 +1,13 @@
 
 ECS.Systems.ControlSystem = CES.System.extend({
     update: function (dt) {
-        var entities = this.world.getEntities('physics', 'player', 'drawable', 'controlledplayer');
+        var entities = this.world.getEntities('physics', 'player', 'drawable', 'controlled');
  
         entities.forEach(function (entity) {
 			var physics = entity.getComponent('physics');
             var player = entity.getComponent('player');
 			var drawable = entity.getComponent('drawable');
-			var controlledplayer = entity.getComponent('controlledplayer');
+			var isControlled = entity.getComponent('controlled');
 			
 			if(keyboard.keys.space.isDown && !drawable.bodyparts.body.animating) {// && (new Date() - player.lastDig > 400)) {
 				//Dig
@@ -20,11 +20,13 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				
 			};
 			
-			if(keyboard.isDifferent(controlledplayer.oldKeyboardState)) {
-				game.sendUpdatePacket();
-				physics.playState = keyboard.getPlayState();
-			}		
-			controlledplayer.oldKeyboardState = keyboard.getState();
+			if(isControlled) {
+				if(keyboard.isDifferent(player.oldKeyboardState)) {
+					game.sendUpdatePacket();
+					physics.playState = keyboard.getPlayState();
+				}		
+				player.oldKeyboardState = keyboard.getState();
+			}
 			
 			game.camera.target.x = physics.x;
 			game.camera.target.y = physics.y;	

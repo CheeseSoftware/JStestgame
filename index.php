@@ -43,7 +43,7 @@
 <script src="game/components/Physics.js"></script>
 <script src="game/components/GhostPhysics.js"></script>
 <script src="game/components/Player.js"></script>
-<script src="game/components/ControlledPlayer.js"></script>
+<script src="game/components/Controlled.js"></script>
 <script src="game/systems/AnimationSystem.js"></script>
 <script src="game/systems/PlayerPhysicsSystem.js"></script>
 <script src="game/systems/TerrainPhysicsSystem.js"></script>

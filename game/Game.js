@@ -284,7 +284,7 @@ Game.prototype.initializeListeners = function() {
 	this.connection.on('playerinit', function(data, context) {
 		context.player = context.spawnPlayer(data.name);
 		//context.player.username = data.name;
-		context.player.addComponent(new ECS.Components.ControlledPlayer());
+		context.player.addComponent(new ECS.Components.Controlled());
 	
 		var player = context.player.getComponent('player');
 		var physics = context.player.getComponent('physics');
@@ -306,8 +306,8 @@ Game.prototype.initializeListeners = function() {
 			// Player is always little behind.
 			//physics.x = ghost.x;
 			//physics.y = ghost.y;
-			physics.vx = data.vx;
-			physics.vy = data.vy;
+			//physics.vx = data.vx;
+			//physics.vy = data.vy;
 				
 			// Ghost is always at correct position.
 			ghost.x = data.x;
@@ -319,7 +319,7 @@ Game.prototype.initializeListeners = function() {
 			
 			physics.rotation = data.rotation;
 			ghost.rotation = data.rotation;
-			if(!player.hasComponent("controlledplayer")) {
+			if(!player.hasComponent("controlled")) {
 				physics.playState = data.playState;
 				ghost.playState = data.playState;
 			}
@@ -342,7 +342,7 @@ Game.prototype.initializeListeners = function() {
 		var y = data.y;
 		var digRadius = data.digRadius;
 		context.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, digRadius);
-		if(!context.players[data.username].getComponent("controlledplayer"))
+		if(!context.players[data.username].getComponent("controlled"))
 			context.players[data.username].getComponent("drawable").animate("body", "dig", 240, true);
 	}, this);
 	
