@@ -59,7 +59,7 @@
 <script src="game/ChunkManager.js"></script>
 <script src="game/ChunkRenderer.js"></script>
 <script src="game/ChunkClient.js"></script>
-<script src="game/ChunkRegenerator.js"></script>
+<script src="game/RegeneratorClient.js"></script>
 
 <!-- game -->
 <script src="game/Game.js"></script>

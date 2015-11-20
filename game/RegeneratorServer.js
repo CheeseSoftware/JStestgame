@@ -1,21 +1,33 @@
-ChunkRegenerator = function(chunkManager) {
+RegeneratorServer = function(chunkManager, io) {
 
 	this._chunkManager = chunkManager;
+	this._io = io;
+	this._socket = null;
 	this._collapsingTiles = {};
 	this._tilesCount = 0;
+
+	this._regeneratedTiles = [];
+	this._lastSync = Date();
 
 	//
 	this._wastedDeltaTime = 0.0;
 
+	// Constants
+	this._regenerateAmount = 65;
+
 	chunkManager.subscribe(this);
 
+
+	var that = this;
+	io.on('connection', function(socket) {
+		that._socket = socket;
+	});
 
 
 	return this;
 }
 
-ChunkRegenerator.prototype.update = function(deltaTime) {
-	return;
+RegeneratorServer.prototype.update = function(deltaTime) {
 	var keys = Object.keys(this._collapsingTiles);
 
 	// Time for each tile to regenerate. (seconds)
@@ -33,7 +45,10 @@ ChunkRegenerator.prototype.update = function(deltaTime) {
 		key = keys[Math.floor(keys.length * Math.random())];
 		tilePos = this._collapsingTiles[key];
 		density = this._chunkManager.getDensity(tilePos.x, tilePos.y);
-		newDensity = Math.min(density+67, 255);this._chunkManager.setDensity(tilePos.x, tilePos.y, newDensity);
+		newDensity = Math.min(density+this._regenerateAmount, 255);
+		this._chunkManager.setDensity(tilePos.x, tilePos.y, newDensity);
+		this._regeneratedTiles.push(tilePos);
+
 
 		if (newDensity == 255) {
 			delete this._collapsingTiles[key];
@@ -46,9 +61,16 @@ ChunkRegenerator.prototype.update = function(deltaTime) {
 		}
 	}
 
+	if ((Date() - this._lastSync) >= 0.5 && this._socket != null) {
+		this._lastSync = Date();
+
+		this._socket.broadcast.emit("regenerate", {regenerateAmount : this._regenerateAmount, regeneratedTiles : this._regeneratedTiles});
+		this._regeneratedTiles = [];
+	}
+
 }
 
-ChunkRegenerator.prototype.onDensityChange = function(tileX, tileY, newDensity) {
+RegeneratorServer.prototype.onDensityChange = function(tileX, tileY, newDensity) {
 	if (newDensity == 255)
 		return;
 
@@ -63,7 +85,7 @@ ChunkRegenerator.prototype.onDensityChange = function(tileX, tileY, newDensity) 
 }
 
 // Check whetever a tile should collapse
-ChunkRegenerator.prototype.notifyTile = function(tileX, tileY) {
+RegeneratorServer.prototype.notifyTile = function(tileX, tileY) {
 	density = this._chunkManager.getDensity(tileX, tileY);
 
 	if (density == 255)
@@ -79,7 +101,7 @@ ChunkRegenerator.prototype.notifyTile = function(tileX, tileY) {
 }
 
 // Checks whetever a tile should stop collapsing
-ChunkRegenerator.prototype.notifyTile2 = function(tileX, tileY) {
+RegeneratorServer.prototype.notifyTile2 = function(tileX, tileY) {
 	density = this._chunkManager.getDensity(tileX, tileY);
 
 	if (density == 255)

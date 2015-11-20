@@ -38,7 +38,6 @@ Game.prototype.load = function() {
 	var gl = this.renderer.gl;
 	this.chunkManager = new ChunkManager();
 	this.chunkRenderer = new ChunkRenderer(gl, this.chunkManager, 32, 32, 32, 32);	
-	this.chunkRegenerator = new ChunkRegenerator(this.chunkManager);
 	var floatTextures = gl.getExtension('OES_texture_float');
 	if (!floatTextures) {
 		alert('no floating point texture support');
@@ -85,7 +84,9 @@ Game.prototype.load = function() {
 	this.connection = new Connection(vars.ip, 3000);
 	this.initializeListeners();
 	
+	// Initialize client systems
 	this.chunkClient = new ChunkClient(this.chunkManager, this.connection);
+	this.regeneratorClient = new RegeneratorClient(this.chunkManager, this.connection);
 }
 
 Game.prototype.onMouseUpdate = function (e) {
@@ -128,7 +129,6 @@ Game.prototype.run = function() {
 	this.lastUpdate = Date.now()
 	
     this.entityWorld.update(dt);
-    this.chunkRegenerator.update(dt);
 	
 	this.physicsWorld.Step(1 / 60.0, 10, 10);
 	            this.physicsWorld.DrawDebugData();

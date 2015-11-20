@@ -19,11 +19,12 @@ include("game/Observable.js");
 include("game/TileType.js");
 include("game/TileRegister.js");
 
-// Chunks
+// Chunks, World
 include("game/Chunk.js");
 include("game/Generator.js");
 include("game/ChunkManager.js");
 include("game/ChunkServer.js");
+include("game/RegeneratorServer.js");
 
 // Initialize entityWorld
 entityWorld = new CES.World();
@@ -38,7 +39,9 @@ var app = http.createServer(function(req, res) {
     res.end();
 });
 var io = require('socket.io').listen(app);
+// Initialize server systems
 _chunkServer = new ChunkServer(_chunkManager, io);
+_regeneratorServer = new RegeneratorServer(_chunkManager, io)
 
 var players = {};
 
@@ -204,3 +207,15 @@ io.on('connection', function(socket) {
 
 app.listen(3000);
 console.log("Listening on port 3000");
+
+
+
+run = function() {
+	var now = Date.now();
+    var dt = now - this.lastUpdate;
+	this.lastUpdate = Date.now()
+
+	_regeneratorServer.update(dt);
+}
+// Run game loop:
+var intervalId = setInterval(run, 100);
