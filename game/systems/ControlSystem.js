@@ -15,7 +15,12 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				var digRadius = 1.5;
 				var x = physics.x + 32.0*Math.sin(physics.rotation);
 				var y = physics.y - 32.0*Math.cos(physics.rotation);
-				game.connection.send("playerdig", { x: x, y: y, digRadius: digRadius, username:player.username });
+				game.connection.send("playerdig", { 
+					uuid: player.uuid,
+					x: x,
+					y: y,
+					digRadius: digRadius
+				});
 				drawable.animate("body", "dig", 400, true);
 				
 			};
