@@ -62,8 +62,8 @@ RegeneratorServer.prototype.update = function(deltaTime) {
 		}
 	}
 
-	{//if ((Date() - this._lastSync) >= 0.5 && this._socket != null) {
-		this._lastSync = Date();
+	if (((new Date()) - this._lastSync) >= 500 && this._socket != null) {
+		this._lastSync = new Date();
 
 		this._io.sockets.emit("regenerate", {regenerateAmount : this._regenerateAmount, regeneratedTiles : this._regeneratedTiles});
 
