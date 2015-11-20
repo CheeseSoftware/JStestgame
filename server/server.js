@@ -13,10 +13,12 @@ var CES = require('ces');
 var crypto = require('crypto');
 var Box2D = require('box2dweb-commonjs').Box2D;
 include("lib/perlin.js");
+include("lib/gl-matrix.js");
 
 // Core
 include("game/Observable.js");
 include("game/EntityMap.js");
+include("game/vec2.js");
 
 // Tiles
 include("game/TileType.js");
@@ -58,10 +60,14 @@ var   b2Vec2 = Box2D.Common.Math.b2Vec2
 
 physicsWorld = new b2World(new b2Vec2(0, 0), false)
 
+// Initialize chunkManager
+_chunkManager = new ChunkManager();
+
 // Initialize entityWorld
 entityWorld = new CES.World();
 entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
-entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem());
+var terrainPhysicsSystem = new ECS.Systems.TerrainPhysicsSystem(_chunkManager);
+entityWorld.addSystem(terrainPhysicsSystem);
 
 // Initialize entityServer
 entityServer = new EntityServer();
@@ -70,9 +76,6 @@ for(var i = 0; i < 10; i++) {
 	console.log(uuid);
 }
 
-// Initialize chunkManager
-_chunkManager = new ChunkManager();
-
 var http = require('http'),
     fs = require('fs');
     //index = fs.readFileSync(__dirname + '/index.html');
@@ -80,6 +83,7 @@ var app = http.createServer(function(req, res) {
     res.end();
 });
 var io = require('socket.io').listen(app);
+var isServer = true;
 
 // Initialize server systems
 _chunkServer = new ChunkServer(_chunkManager, io);
@@ -229,6 +233,7 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('playerdig', function(data) {
+		//console.log("x " + data.x + " y" + data.y);
 		_chunkManager.fillCircle(parseFloat(data.x)/32.0, parseFloat(data.y)/32.0, data.digRadius);
 		io.sockets.emit('dig', data);
 	});

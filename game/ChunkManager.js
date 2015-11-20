@@ -32,6 +32,7 @@ ChunkManager.prototype.fillCircle = function(xPos, yPos, radius, density) {
 			
 			var oldDensity = this.getDensity(x, y);
 			var tileId = this.getTileId(x, y);
+			
 			var tile = this._tileRegister.getById(tileId);
 				
 			var fillStrength = Math.max(Math.min(radius-dis, 1.0), 0.0)/tile.hardness;

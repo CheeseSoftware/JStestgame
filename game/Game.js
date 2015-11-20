@@ -46,7 +46,7 @@ Game.prototype.load = function() {
 	// Initialize entityWorld and add entity component systems
 	this.entityWorld = new CES.World();
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
-	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem());
+	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem(this.chunkManager));
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
 	this.entityWorld.addSystem(new ECS.Systems.AnimationSystem());
 	

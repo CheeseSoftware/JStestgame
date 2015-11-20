@@ -60,6 +60,10 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 					drawable.animate("feet", "feet", disWalked, false);
 			}
 			
+			/*if(isServer) {
+				console.log("x" + physics.x + " y" + physics.y);
+			}*/
+			
 			physics.oldX = physics.x;
 			physics.oldY = physics.y;
 			
