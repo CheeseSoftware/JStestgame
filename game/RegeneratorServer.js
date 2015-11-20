@@ -28,45 +28,63 @@ RegeneratorServer = function(chunkManager, io) {
 }
 
 RegeneratorServer.prototype.update = function(deltaTime) {
-	var keys = Object.keys(this._collapsingTiles);
+	keys = Object.keys(this._collapsingTiles);
 
 	// Time for each tile to regenerate. (seconds)
-	regenerateTime = 100000.0;
+	regenerateTime = 100.0;
 
 	// Calculate the amount of tiles to regenerate.
 	temp = keys.length * (deltaTime) / regenerateTime + this._wastedDeltaTime;
 	tilesToRegenerate = Math.floor(temp);
 	this._wastedDeltaTime = temp - tilesToRegenerate;
 
-
+	// Return when there isn't anything to do!
+	if (keys.length == 0)
+		return;
 	
 	// Regenerate tiles:
 	for (i = 0; i < tilesToRegenerate; ++i) {
-		key = keys[Math.floor(keys.length * Math.random())];
+		index = Math.floor(keys.length * Math.random());
+		key = keys[index];
 		tilePos = this._collapsingTiles[key];
+		
 		density = this._chunkManager.getDensity(tilePos.x, tilePos.y);
 		newDensity = Math.min(density+this._regenerateAmount, 255);
 		this._chunkManager.setDensity(tilePos.x, tilePos.y, newDensity);
 		this._regeneratedTiles.push(tilePos);
+		console.log("Tile regenerated!");
+		console.log("RegeneratedTiles size: " + this._regeneratedTiles.length);
 
 
 		if (newDensity == 255) {
-			delete this._collapsingTiles[key];
+			delete this._collapsingTiles[keys[index]];
+			keys.splice(index, 1);
 			this._tilesCount--;
 
 			this.notifyTile(tilePos.x, tilePos.y+1);
 			this.notifyTile(tilePos.x, tilePos.y-1);
 			this.notifyTile(tilePos.x+1, tilePos.y);
 			this.notifyTile(tilePos.x-1, tilePos.y);
+
+			if (keys.length == 0)
+				break;
 		}
 	}
 
-	if ((Date() - this._lastSync) >= 0.5 && this._socket != null) {
+	if (this._socket != null) {//((Date() - this._lastSync) >= 0.5 && this._socket != null) {
 		this._lastSync = Date();
 
 		this._socket.broadcast.emit("regenerate", {regenerateAmount : this._regenerateAmount, regeneratedTiles : this._regeneratedTiles});
+		
+
+		console.log("Packet sent with size: " + this._regeneratedTiles.length);
+
+
 		this._regeneratedTiles = [];
 	}
+
+	if (this._socket == null)
+		console.log("Error: Socket is null!!!");
 
 }
 

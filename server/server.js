@@ -216,6 +216,7 @@ run = function() {
 	this.lastUpdate = Date.now()
 
 	_regeneratorServer.update(dt);
+	console.log("Deltatime:" + dt);
 }
 // Run game loop:
 var intervalId = setInterval(run, 100);
