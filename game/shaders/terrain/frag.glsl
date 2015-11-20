@@ -4,8 +4,9 @@ uniform sampler2D densityTexture;
 uniform sampler2D tileTexture;
 uniform sampler2D texture;
 
-varying highp vec2 fragUv;
+varying highp vec2 fragTilePos;
 varying highp vec2 fragPos;
+varying highp vec2 fragUV;
 
 #define TILE_DIM 2
 #define TILE_DIM_F 2.0
@@ -43,7 +44,7 @@ highp float noise(in highp vec2 pos)
 }
 
 highp vec3 getTileColor(Tile tile) {
-	highp vec2 texturePos = mod(fragUv*2.0/TILE_DIM_F, 1.0/TILE_DIM_F) + vec2(mod(tile.tileID/TILE_DIM_F, 1.0), mod(floor(tile.tileID/TILE_DIM_F)/TILE_DIM_F, 1.0));
+	highp vec2 texturePos = mod(fragTilePos*2.0/TILE_DIM_F, 1.0/TILE_DIM_F) + vec2(mod(tile.tileID/TILE_DIM_F, 1.0), mod(floor(tile.tileID/TILE_DIM_F)/TILE_DIM_F, 1.0));
 	return texture2D(texture, texturePos).xyz;
 }
 
@@ -65,26 +66,37 @@ Tile calcTile(highp vec2 tilePos, highp vec2 delta) {
 	highp float strength = 1.0*density+clamp((1.0-delta.x)*(1.0-delta.y), 0.0, 1.0);
 	highp float tileID = texture2D(tileTexture, tilePos/32.0).x*255.0;
 	
-	strength -= 0.5*noise(64.0*fragUv+tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
-	strength -= 0.25*noise(128.0*fragUv+tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
-	strength -= 0.25*noise(256.0*fragUv+tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
-	//strength += getDensity(fragUv);
+	strength -= 0.5*noise(64.0*fragTilePos+tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
+	strength -= 0.25*noise(128.0*fragTilePos+tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
+	strength -= 0.25*noise(256.0*fragTilePos+tileID);// + vec2(0.2*tileID, 0.2*mod(tileID, 4.0)));
+	//strength += getDensity(fragTilePos);
 	
 	return Tile(strength, tileID);
 }
 
 void main() {
+	highp float density = getDensity(fragUV);
+	highp vec3 textureColor = texture2D(texture, (fragUV*30.0+1.0)/32.0).xyz;
+
+	highp vec3 colorA = textureColor*clamp(0.125+density, 0.5, 1.0);
+	highp vec3 colorB = textureColor*clamp(0.5-0.25*density, 0.0, 1.0);
 	
-	highp vec4 tilePos = vec4(floor(fragUv*30.0+vec2(0.5)), vec2(0.0));
+	gl_FragColor = vec4(mix(colorB, colorA, clamp(32.0*(density-0.5), 0.0, 1.0)), 1.0);
+
+
+	//gl_FragColor = vec4(texture2D(densityTexture, fragTilePos).xyz, 1.0);
+	return;
+
+	/*highp vec4 tilePos = vec4(floor(fragTilePos*30.0+vec2(0.5)), vec2(0.0));
 	tilePos = vec4(tilePos.xy, tilePos.xy+1.0);
 	
-	highp vec4 delta = abs(vec4(tilePos.xy - (fragUv*30.0+0.5), tilePos.zw - (fragUv*30.0+0.5)));
+	highp vec4 delta = abs(vec4(tilePos.xy - (fragTilePos*30.0+0.5), tilePos.zw - (fragTilePos*30.0+0.5)));
 	
 	Tile a = calcTile(tilePos.xy, delta.xy);
 	Tile b = calcTile(tilePos.zy, delta.zy);
 	Tile c = calcTile(tilePos.xw, delta.xw);
 	Tile d = calcTile(tilePos.zw, delta.zw);
-	
+	* /
 	highp vec3 aColor = getTileColor(a);
 	highp vec3 bColor = getTileColor(b);
 	highp vec3 cColor = getTileColor(c);
@@ -130,19 +142,19 @@ void main() {
 	}
 	if (b.strength > strongest2nd && b.strength < tile.strength) {
 		strongest2nd = d.strength;
-	}*/
+	}* /
 	
 	highp float deltaStrength = 1.0;//clamp(tile.strength - strongest2nd, 0.0, 1.0);
 	
-	//highp float dis = 0.5+0.25*raymarch(vec3(fragUv*16.0, 0.0));
-	highp float density = getDensity(fragUv);
+	//highp float dis = 0.5+0.25*raymarch(vec3(fragTilePos*16.0, 0.0));
+	highp float density = getDensity(fragTilePos);
 	highp float alpha = 0.5+0.5*clamp(32.0*(density-0.5), 0.0, 1.0);
 	
 	
 	
 	
-	//highp float tileID = 0.0;//tile.tileID;//texture2D(tileTexture, floor(fragUv*30.0+1.0)/32.0).x*255.0;
-	//highp vec2 texturePos = mod(fragUv*2.0/TILE_DIM_F, 1.0/TILE_DIM_F) + vec2(mod(tileID/TILE_DIM_F, 1.0), mod(floor(tileID/TILE_DIM_F)/TILE_DIM_F, 1.0));
+	//highp float tileID = 0.0;//tile.tileID;//texture2D(tileTexture, floor(fragTilePos*30.0+1.0)/32.0).x*255.0;
+	//highp vec2 texturePos = mod(fragTilePos*2.0/TILE_DIM_F, 1.0/TILE_DIM_F) + vec2(mod(tileID/TILE_DIM_F, 1.0), mod(floor(tileID/TILE_DIM_F)/TILE_DIM_F, 1.0));
 	highp vec3 textureColor = tileColor;//texture2D(texture, texturePos).xyz;
 	highp vec3 colorA = textureColor*clamp(0.125+density+0.5*(deltaStrength-1.0), 0.5, 1.0);
 	highp vec3 colorB = textureColor*clamp(0.5-0.25*density, 0.0, 1.0);
@@ -151,5 +163,5 @@ void main() {
 	//gl_FragColor = vec4(vec3(a.strength), 1.0);
 	
 	//if (density == 0.0)
-	//	gl_FragColor = vec4(vec3(1.0), 1.0);
+	//	gl_FragColor = vec4(vec3(1.0), 1.0);*/
 }
