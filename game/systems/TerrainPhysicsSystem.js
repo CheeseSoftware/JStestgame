@@ -1,3 +1,5 @@
+include("game/core/v2.js");
+
 
 ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 	init: function(chunkManager) {

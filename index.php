@@ -19,6 +19,8 @@
 	    };		
 </script>
 
+<script src="game/common.js"/></script>
+
 <script src="lib/Box2D.js"></script>
 <script src="lib/ces-browser.js"></script>
 <script src="lib/pixi.js"></script>
@@ -27,7 +29,6 @@
 <script src="lib/perlin.js"></script>
 <script src="lib/jquery-2.1.x.js"></script>
 <script src="lib/bootstrap.min.js"></script> <!-- For progressbar -->
-
 
 <!-- classes -->
 <script src="game/TextureLoader.js"></script>
@@ -38,7 +39,7 @@
 <script src="game/Connection.js"></script>
 <script src="game/Keyboard.js"></script>
 <script src="game/Camera.js"></script>
-<script src="game/PagedArray2D.js"></script>
+<script src="game/core/PagedArray2D.js"></script>
 <script src="game/components/Drawable.js"></script>
 <script src="game/components/Physics.js"></script>
 <script src="game/components/Player.js"></script>
@@ -49,8 +50,8 @@
 <script src="game/systems/ControlSystem.js"></script>
 <script src="game/Shader.js"/></script>
 <script src="game/ShaderProgram.js"/></script>
-<script src="game/Observable.js"/></script>
-<script src="game/vec2.js"></script>
+<script src="game/core/Observable.js"/></script>
+<!--<script src="game/core/v2.js"/></script>-->
 
 <!-- Chunk system -->
 <script src="game/TileType.js"></script>
