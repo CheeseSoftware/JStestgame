@@ -203,19 +203,11 @@ io.on('connection', function(socket) {
 		physics.x = 128;
 		physics.y = 128;
 		
-		_chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 6);
-		_chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 6);
-		_chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 6);
-		_chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 6);
-		_chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 6);
-		_chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 6);
-		
-		io.sockets.emit('dig', { uuid: entity.uuid, x: physics.x, y: physics.y, digRadius: 6});
-		io.sockets.emit('dig', { uuid: entity.uuid, x: physics.x, y: physics.y, digRadius: 6});
-		io.sockets.emit('dig', { uuid: entity.uuid, x: physics.x, y: physics.y, digRadius: 6});
-		io.sockets.emit('dig', { uuid: entity.uuid, x: physics.x, y: physics.y, digRadius: 6});
-		io.sockets.emit('dig', { uuid: entity.uuid, x: physics.x, y: physics.y, digRadius: 6});
-		io.sockets.emit('dig', { uuid: entity.uuid, x: physics.x, y: physics.y, digRadius: 6});
+		// Dig spawn
+		for(var i = 0; i < 10; i++) {
+			_chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 6);
+			io.sockets.emit('dig', { uuid: entity.uuid, x: physics.x, y: physics.y, digRadius: 6});
+		}
 		
 		entity.addComponent(physics);
 		entityWorld.addEntity(entity);
