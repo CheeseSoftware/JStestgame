@@ -68,7 +68,6 @@
 <script src="game/RegeneratorClient.js"></script>
 
 <!-- game -->
-<script src="game/Game.js"></script>
 <script>
 	var   b2Vec2 = Box2D.Common.Math.b2Vec2
 	,  b2AABB = Box2D.Collision.b2AABB
@@ -84,7 +83,13 @@
 	,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
 	;
 	
-	var game = new Game();
+	include("game/Game.js")
+
+	var game = null;
+
+	finishInclude(function() {
+		game = new Game();
+	});
 	
 	function tryRegister(username, email, password) {		
 		game.connection.send('register', { 

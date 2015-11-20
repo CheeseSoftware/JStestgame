@@ -1,9 +1,7 @@
 
 
 Game = function() {
-	finishInclude((function() {
-		this.preload();
-	}).bind(this));
+	this.preload();
 }
 
 Game.prototype.load = function() {
