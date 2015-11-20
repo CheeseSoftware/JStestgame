@@ -109,7 +109,7 @@ Game.prototype.preload = function() {
 	this.textureManager.onProgress(function(name, file, progress) {
 		$("#progressbar").css("width", progress + "%");
 		$("#progressbar").attr("aria-valuenow", progress);
-		$("#progressbar").html(progress + "%");
+		$("#progressbar").html(progress + "% - " + file + ".png");
 	});
 	
 	this.textureManager.onComplete(function(textures) {

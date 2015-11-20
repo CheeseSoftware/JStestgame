@@ -231,18 +231,18 @@ ChunkManager.prototype.calcNormal = function(x, y) {
 	var c = -this.calcDensity(x-epsilon, y-epsilon);
 	var d = -this.calcDensity(x+epsilon, y-epsilon);
 	
-	var f = vec2.fromValues(+a, +a);
-	var g = vec2.fromValues(-b, +b);
-	var h = vec2.fromValues(-c, -c);
-	var i = vec2.fromValues(+d, -d);
+	var f = v2.create(+a, +a);
+	var g = v2.create(-b, +b);
+	var h = v2.create(-c, -c);
+	var i = v2.create(+d, -d);
 	
-	var vec = vec2.create();
-	vec2.add(vec, vec, f);
-	vec2.add(vec, vec, g);
-	vec2.add(vec, vec, h);
-	vec2.add(vec, vec, i);
-	if (vec2.sqrDist(vec, vec2.create()) > 0.0)
-		vec2.normalize(vec, vec);
+	var vec = v2.create(0, 0);
+	v2.add(vec, f, vec);
+	v2.add(vec, g, vec);
+	v2.add(vec, h, vec);
+	v2.add(vec, i, vec);
+	if (v2.lengthSquared(vec) > 0.0)
+		v2.normalize(vec, vec);
 	
 	return vec;
 }

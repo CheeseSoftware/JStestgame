@@ -74,10 +74,6 @@ entityWorld.addSystem(terrainPhysicsSystem);
 
 // Initialize entityServer
 entityServer = new EntityServer();
-for(var i = 0; i < 10; i++) {
-	var uuid = entityServer.generateUUID(); 
-	console.log(uuid);
-}
 
 var http = require('http'),
     fs = require('fs');
@@ -118,6 +114,8 @@ db.open(function(err, db) {
 	else
 		console.log("There was an error connecting to MongoDB");
 });
+
+
 
 io.on('connection', function(socket) {
     socket.emit('init', { mapWidth: mapData.width, mapHeight: mapData.height, tileSize: mapData.tileSize });
@@ -201,8 +199,16 @@ io.on('connection', function(socket) {
 		players[socket.id] = { username: data.username };
 		
 		var physics = new ECS.Components.Physics(physicsBody, ghostBody);
+		
 		physics.x = 128;
 		physics.y = 128;
+		
+		// Dig spawn
+		for(var i = 0; i < 10; i++) {
+			_chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 6);
+			io.sockets.emit('dig', { uuid: entity.uuid, x: physics.x, y: physics.y, digRadius: 6});
+		}
+		
 		entity.addComponent(physics);
 		entityWorld.addEntity(entity);
 		players[socket.id].entity = entity;

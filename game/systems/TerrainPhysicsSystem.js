@@ -8,7 +8,7 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
     update: function (dt) {
         var entities = this.world.getEntities('physics');
 		
-		return;
+		//return;
 		// DO NOT REMOVE THIS RETURN UNTIL YOU HAVE FIXED "vec2" ON SERVER
 		
 		entities.forEach(function (entity) {
@@ -133,7 +133,7 @@ raymarch = function(pos, dir, numIterations) {
  * pos: float[2]
  */
 map = function(pos) {
-	var floatDensity = game.chunkManager.calcDensity(pos[0]/32.0-0.5, pos[1]/32.0-0.5)/255.0;
+	var floatDensity = ECS.Systems.TerrainPhysicsSystem.chunkManager.calcDensity(pos[0]/32.0-0.5, pos[1]/32.0-0.5)/255.0;
 
 	var distance = 0.5-floatDensity;
 	return distance;
