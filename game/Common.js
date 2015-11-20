@@ -5,20 +5,42 @@ var g_includeFinished = false;
 var g_includeIntervalID = null
 var g_includeFinishCallback = null;
 
-include = function(filePath) {
-	if (g_includedFiles.hasOwnProperty(filePath))
-		return;
 
-	g_includedFiles[filePath] = true;
+if (isServer) {
+	/************************************************
+	 * Server-side Include
+	 ************************************************/
+	include = function(filePath) {
+		if (g_includedFiles.hasOwnProperty(filePath))
+			return;
 
+		g_includedFiles[filePath] = true;
 
-	var includeRequest = new XMLHttpRequest();
-	includeRequest.open('GET', filePath);
-	includeRequest.onreadystatechange = function() {
-		data = includeRequest.responseText;
+		fs = require("fs");
+		data = fs.readFileSync("../" + filePath, 'utf8');
 		eval(data);
-	};
-	includeRequest.send();
+	}
+}
+else {
+	/************************************************
+	 * Client-side Include
+	 ************************************************/
+	include = function(filePath) {
+		if (g_includedFiles.hasOwnProperty(filePath))
+			return;
+
+		g_includedFiles[filePath] = true;
+
+
+		var includeRequest = new XMLHttpRequest();
+		includeRequest.open('GET', filePath);
+		includeRequest.onreadystatechange = function() {
+			data = includeRequest.responseText;
+			eval(data);
+		};
+		includeRequest.send();
+		g_includeRequests.push(includeRequest);
+	}
 }
 
 finishInclude = function(callback) {

@@ -1,10 +1,14 @@
+var isServer = true;
 
 fs = require('fs');
 
-var include = function( lib ) {
+var simple_include = function( lib ) {
 	data = fs.readFileSync("../" + lib, 'utf8');
 	eval(data);
 }
+
+// Include common.js with the include system.
+simple_include("game/common.js");
 
 //include("lib/Box2D.js");	<- evil library
 
@@ -16,9 +20,8 @@ include("lib/perlin.js");
 include("lib/gl-matrix.js");
 
 // Core
-include("game/Observable.js");
+include("game/core/Observable.js");
 include("game/EntityMap.js");
-include("game/vec2.js");
 
 // Tiles
 include("game/TileType.js");
@@ -83,7 +86,6 @@ var app = http.createServer(function(req, res) {
     res.end();
 });
 var io = require('socket.io').listen(app);
-var isServer = true;
 
 // Initialize server systems
 _chunkServer = new ChunkServer(_chunkManager, io);

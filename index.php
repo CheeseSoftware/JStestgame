@@ -17,6 +17,8 @@
         	Components: {},
 			Systems: {}
 	    };		
+
+	    var isServer = false;
 </script>
 
 <script src="game/common.js"/></script>
@@ -81,8 +83,6 @@
 	,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
 	,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
 	;
-	
-	var isServer = false;
 	
 	var game = new Game();
 	
