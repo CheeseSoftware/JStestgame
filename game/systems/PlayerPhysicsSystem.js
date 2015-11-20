@@ -1,12 +1,14 @@
 
-ECS.Systems.PhysicsSystem = CES.System.extend({
+ECS.Systems.PlayerPhysicsSystem = CES.System.extend({
     update: function (dt) {
         var entities = this.world.getEntities('physics', 'player');
  
         entities.forEach(function (entity) {
 			var physics = entity.getComponent('physics');
+			var ghost = entity.getComponent('ghostphysics');
             var player = entity.getComponent('player');
 			var drawable = entity.getComponent('drawable');
+			var isControlled = entity.hasComponent('controlledplayer');
 			var state = physics.playState;
 			
 			var moveSpeed = 5.0;
@@ -37,26 +39,47 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 					
 					
 				physics.rotateTo(physics, desiredAngle + Math.PI / 2, 0.05);
+				if(!isControlled)
+					ghost.rotateTo(ghost, desiredAngle + Math.PI / 2, 0.05);
 				physics.desiredAngle = desiredAngle;
+				if(!isControlled)
+					ghost.desiredAngle = desiredAngle;
 					
 				var vx = Math.cos(desiredAngle);
 				var vy = Math.sin(desiredAngle);
 				
-				var vec = new b2Vec2(vx, vy);
-				vec.Normalize();
-			  
-				vx = moveSpeed * vec.x;
-				vy = moveSpeed * vec.y;
+				var normal = new b2Vec2(vx, vy);
+				normal.Normalize();
 				
-				physics.vx += vx;
-				physics.vy += vy;
+				var vx = normal.x * moveSpeed;
+				var vy = normal.y * moveSpeed;
+				
+				if(isControlled) {
+					physics.vx += vx;
+					physics.vy += vy;	
+				} else {
+					physics.vx += vx;
+					physics.vy += vy;	
+					ghost.vx += vx;		
+					ghost.vy += vy;
+					
+					//console.log("ghost x" + ghost.x + " y" + ghost.y);
+					//console.log("physics x" + physics.x + " y" + physics.y);
+					
+					// Now do some linear interpolation!		
+					var duration = 500;
+					var c = Math.min((new Date()-physics.time)/duration, 1.0);
+					console.log("c " + c);
+					physics.x = c*ghost.x + (1.0-c)*physics.x;
+					physics.y = c*ghost.y + (1.0-c)*physics.y;
+
+				}
+				
 			}
 			
+			// PLAYER BEGIN
 			// Prevent random rotation
 			physics.angularVelocity = 0;
-			
-			var oldX = physics.oldX;
-			var oldY = physics.oldY;
 
 			var speedDecreaseSpeed = 0.05;
 			var speedLimit = 160;
@@ -88,52 +111,66 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				physics.vx = 0;
 			if(physics.vy > -0.01 && physics.vy < 0.01)
 				physics.vy = 0;
-							
-			//console.log("x " + physics.x + " y " + physics.y + " vx " + physics.vx + " vy " + physics.vy);
-		
 				
-			physics.oldX = physics.x;
-			physics.oldY = physics.y;
+			// GHOST BEGIN
+			if(!isControlled) {
+				// Prevent random rotation
+				physics.angularVelocity = 0;
+	
+				var speedDecreaseSpeed = 0.05;
+				var speedLimit = 160;
 				
+				if(ghost.vx > speedLimit)
+					ghost.vx = speedLimit;
+				else if(ghost.vx < -speedLimit)
+					ghost.vx = -speedLimit;
+				if(ghost.vy > speedLimit)
+					ghost.vy = speedLimit;
+				else if(ghost.vy < -speedLimit)
+					ghost.vy = -speedLimit;
 				
-			/*if (game.physicsWorld.GetContactList()) {
-				var contactList = game.physicsWorld.GetContactList();			
-				if ( contactList.GetShape1().GetBody().GetUserData().type == "player" ) {
-					var body1 = contactList.GetShape1().GetBody();
-					contactList.SetEnabled(false);
+				// Functions for soft retardation
+				if(ghost.vx > 0) {
+					ghost.vx = ghost.vx - speedDecreaseSpeed * ghost.vx;
+				} else if(physics.vx < 0) {
+					ghost.vx = ghost.vx + speedDecreaseSpeed * -ghost.vx;
 				}
-			}*/
-				
-			/*entities.forEach(function (entity2) {
-				physics2 = entity2.getComponent('physics');
-            	player2 = entity2.getComponent('player');
-				
-				if(player.username != player2.username) {
 					
-					var r1 = player.sprite.width / 2;
-					var r2 = player2.sprite.width / 2;
-					if(checkCollision(physics.x, physics.y, r1, physics2.x, physics2.y, r2)) {
-						physics.x = oldX;
-						physics.y = oldY;
-						console.log("collision");
-					}
-					console.log("no collision");
+				if(ghost.vy > 0) {
+					ghost.vy = ghost.vy - speedDecreaseSpeed * ghost.vy;
+				} else if(ghost.vy < 0) {
+					ghost.vy = ghost.vy + speedDecreaseSpeed * -ghost.vy;
 				}
-			});*/
-			
+				
+				// If physics is close to 0, set it to 0
+				if(ghost.vx > -0.01 && ghost.vx < 0.01)
+					ghost.vx = 0;
+				if(ghost.vy > -0.01 && ghost.vy < 0.01)
+					ghost.vy = 0;
+			}
+				
+						
 			if(player != undefined) {
 				player.text.x = physics.x - player.text.width/2;
 				player.text.y = physics.y - 80;
 				
 				drawable.positionAll(physics.x, physics.y, physics.rotation);
 				
+				if(!isControlled) {
+					ghost.sprite.x = ghost.x;
+					ghost.sprite.y = ghost.y;
+				}
+				
 				var konstant = 100;
-				var disWalked = konstant * Math.sqrt(Math.pow(physics.x - oldX, 2) + Math.pow(physics.y - oldY, 2));
+				var disWalked = konstant * Math.sqrt(Math.pow(physics.x - physics.oldX, 2) + Math.pow(physics.y - physics.oldY, 2));
 				//console.log(Math.round(disWalked));
 				//if(disWalked > 0)
 					drawable.animate("feet", "feet", disWalked, false);
 				
 			}
+			
+			physics.oldX = physics.x;
+			physics.oldY = physics.y;
 			
         });
     }

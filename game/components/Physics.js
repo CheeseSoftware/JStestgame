@@ -3,9 +3,18 @@ ECS.Components.Physics = CES.Component.extend({
     name: 'physics',
 	init: function (body) {
 		this.body = body;
+		
 		this.oldX = 0;
 		this.oldY = 0;
+		
+		//this.oldPos = new b2Vec2(0, 0);
+		//this.newPos = new b2Vec2(0, 0);
+		//this.oldVel = new b2Vec2(0, 0);
+		//this.newVel = new b2Vec2(0, 0);
+		this.time = new Date();
+		//this.newTime = new Date();
 		this.rotation = 0;
+		
 		this.playState = {};
     }
 });

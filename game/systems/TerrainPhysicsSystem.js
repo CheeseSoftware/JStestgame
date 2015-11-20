@@ -4,21 +4,29 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
         var entities = this.world.getEntities('physics', 'player');
 		
 		entities.forEach(function (entity) {
-			physics = entity.getComponent('physics');
-            player = entity.getComponent('player');
-			// Prevent random rotation
-			physics.angularVelocity = 0;
+			var physics = entity.getComponent('physics');
+			var ghost = entity.getComponent('ghostphysics');
+            var player = entity.getComponent('player');
+			var isControlled = entity.getComponent('controlledplayer');
 			
-			var oldX = physics.oldX;
-			var oldY = physics.oldY;
-
-					
+			// Simulate terrain for PLAYERS
 			var density = game.chunkManager.calcDensity(physics.x/32.0-0.5, physics.y/32.0-0.5);
 			var normal = game.chunkManager.calcNormal(physics.x/32.0-0.5, physics.y/32.0-0.5);
 			
 			if (density >= 1.0) {
 				physics.x += 0.05*normal[0]*(density-1);
 				physics.y += 0.05*normal[1]*(density-1);
+			}
+			
+			if(!isControlled) {
+				// Simulate terrain for GHOSTS
+				var density = game.chunkManager.calcDensity(ghost.x/32.0-0.5, ghost.y/32.0-0.5);
+				var normal = game.chunkManager.calcNormal(ghost.x/32.0-0.5, ghost.y/32.0-0.5);
+				
+				if (density >= 1.0) {
+					ghost.x += 0.05*normal[0]*(density-1);
+					ghost.y += 0.05*normal[1]*(density-1);
+				}
 			}
         });
     }
