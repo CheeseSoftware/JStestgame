@@ -25,7 +25,7 @@ RegeneratorServer.prototype.update = function(deltaTime) {
 	keys = Object.keys(this._collapsingTiles);
 
 	// Time for each tile to regenerate. (seconds)
-	regenerateTime = 100.0;
+	regenerateTime = 10.0;
 
 	// Calculate the amount of tiles to regenerate.
 	temp = keys.length * (deltaTime) / regenerateTime + this._wastedDeltaTime;
@@ -47,7 +47,6 @@ RegeneratorServer.prototype.update = function(deltaTime) {
 		this._chunkManager.setDensity(tilePos.x, tilePos.y, newDensity);
 		this._regeneratedTiles.push(tilePos);
 
-
 		if (newDensity == 255) {
 			delete this._collapsingTiles[keys[index]];
 			keys.splice(index, 1);
@@ -63,7 +62,7 @@ RegeneratorServer.prototype.update = function(deltaTime) {
 		}
 	}
 
-	if (this._socket != null) {//((Date() - this._lastSync) >= 0.5 && this._socket != null) {
+	{//if ((Date() - this._lastSync) >= 0.5 && this._socket != null) {
 		this._lastSync = Date();
 
 		this._io.sockets.emit("regenerate", {regenerateAmount : this._regenerateAmount, regeneratedTiles : this._regeneratedTiles});
