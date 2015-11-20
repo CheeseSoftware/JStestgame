@@ -74,6 +74,7 @@ ChunkManager.prototype.setDensity = function(x, y, value, createChunk) {
 	var localY = y%this._chunkSize;
 	var chunkX = (x-localX)/this._chunkSize;
 	var chunkY = (y-localY)/this._chunkSize;
+	var chunk = null;
 	
 	// Fix indexing of negative values:
 	if (x < 0) {
@@ -91,12 +92,13 @@ ChunkManager.prototype.setDensity = function(x, y, value, createChunk) {
 		if (!createChunk)
 			return;
 	
-		var chunk = this.createChunk(chunkX, chunkY);
-		chunk.setDensity(localX, localY, value);
+		chunk = this.createChunk(chunkX, chunkY);
 	}
 	else {
-		this._chunks[chunkPosString].setDensity(localX, localY, value);
+		chunk = this._chunks[chunkPosString]
 	}
+
+	chunk.setDensity(localX, localY, value);
 
 	this.on("onChunkChange", [chunkX, chunkY, chunk]);
 	this.on("onDensityChange", [x, y, value]);
@@ -134,6 +136,7 @@ ChunkManager.prototype.setTileId = function(x, y, value, createChunk) {
 	var localY = y%this._chunkSize;
 	var chunkX = (x-localX)/this._chunkSize;
 	var chunkY = (y-localY)/this._chunkSize;
+	var chunk = null;
 	
 	// Fix indexing of negative values:
 	if (x < 0) {
@@ -151,12 +154,13 @@ ChunkManager.prototype.setTileId = function(x, y, value, createChunk) {
 		if (!createChunk)
 			return;
 	
-		var chunk = this.createChunk(chunkX, chunkY);
-		chunk.setTileId(localX, localY, value);
+		chunk = this.createChunk(chunkX, chunkY);
 	}
 	else {
-		this._chunks[chunkPosString].setTileId(localX, localY, value);
+		chunk = this._chunks[chunkPosString];
 	}
+	
+	chunk.setTileId(localX, localY, value);
 
 	this.on("onChunkChange", [chunkX, chunkY, chunk]);
 }
