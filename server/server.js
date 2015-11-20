@@ -212,7 +212,7 @@ console.log("Listening on port 3000");
 
 run = function() {
 	var now = Date.now();
-    var dt = now - this.lastUpdate;
+    var dt = 0.1;//now - this.lastUpdate;
 	this.lastUpdate = Date.now()
 
 	_regeneratorServer.update(dt);
