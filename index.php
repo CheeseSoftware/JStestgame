@@ -41,11 +41,10 @@
 <script src="game/PagedArray2D.js"></script>
 <script src="game/components/Drawable.js"></script>
 <script src="game/components/Physics.js"></script>
-<script src="game/components/GhostPhysics.js"></script>
 <script src="game/components/Player.js"></script>
 <script src="game/components/Controlled.js"></script>
 <script src="game/systems/AnimationSystem.js"></script>
-<script src="game/systems/PlayerPhysicsSystem.js"></script>
+<script src="game/systems/PhysicsSystem.js"></script>
 <script src="game/systems/TerrainPhysicsSystem.js"></script>
 <script src="game/systems/ControlSystem.js"></script>
 <script src="game/Shader.js"/></script>

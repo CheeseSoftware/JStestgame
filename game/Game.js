@@ -45,7 +45,7 @@ Game.prototype.load = function() {
 	
 	// Initialize entityWorld and add entity component systems
 	this.entityWorld = new CES.World();
-	this.entityWorld.addSystem(new ECS.Systems.PlayerPhysicsSystem());
+	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
 	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem());
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
 	this.entityWorld.addSystem(new ECS.Systems.AnimationSystem());
@@ -180,16 +180,14 @@ Game.prototype.spawnPlayer = function(name) {
 	bodySprite.position.y = 0.5;
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
+	// Initialize physics stuff
 	var fixDef = new b2FixtureDef;
 	fixDef.density = 1.0;
 	fixDef.friction = 0.5;
 	fixDef.restitution = 0.2;
-	
 	var bodyDef = new b2BodyDef;
 	bodyDef.type = b2Body.b2_dynamicBody;
-	
 	fixDef.shape = new b2CircleShape(sprite.width/6);
-	
 	bodyDef.position.Set(10, 400 / 30 + 1.8);
 	var physicsBody = this.physicsWorld.CreateBody(bodyDef);
 	var ghostBody = this.physicsWorld.CreateBody(bodyDef);
@@ -198,8 +196,7 @@ Game.prototype.spawnPlayer = function(name) {
 	
 	var player = new CES.Entity();
 	player.addComponent(new ECS.Components.Player(name, sprite, text));
-	player.addComponent(new ECS.Components.Physics(physicsBody));
-	player.addComponent(new ECS.Components.GhostPhysics(ghostBody));
+	player.addComponent(new ECS.Components.Physics(physicsBody, ghostBody));
 	var bodyparts = {
 		"feet": {
 			"sprite": sprite
@@ -216,15 +213,6 @@ Game.prototype.spawnPlayer = function(name) {
 	this.stage.addChild(bodySprite);
 	this.stage.addChild(text);
 	this.players[name] = player;
-	
-	// Uncomment to be one with the Cheese
-	/*var sprite = new PIXI.Sprite(this.textureManager.textures.cheese);
-	sprite.anchor.x = 0.5;
-	sprite.anchor.y = 0.5;
-	sprite.position.x = 0.5;
-	sprite.position.y = 0.5;
-	this.stage.addChild(sprite);
-	player.getComponent("ghostphysics").sprite = sprite;*/
 	
 	return player;
 }
@@ -268,31 +256,26 @@ Game.prototype.initializeListeners = function() {
 		console.log(data.name + " has connected.");
 		var player = context.spawnPlayer(data.name);
 		var physics = player.getComponent("physics");
-		var ghost = player.getComponent("ghostphysics");
-		ghost.x = data.x;
-		ghost.y = data.y;
-		ghost.rotation = data.rotation;
-		ghost.playState = data.playState;
+		physics.gx = data.x;
+		physics.gy = data.y;
 		physics.x = data.x;
 		physics.y = data.y;
 		physics.rotation = data.rotation;
 		physics.playState = data.playState;
-		physics.body.userData = { type: "mainPlayer" };
+		//physics.body.userData = { type: "mainPlayer" };
 		context.players[data.name] = player;
 	}, this);
 	
 	this.connection.on('playerinit', function(data, context) {
 		context.player = context.spawnPlayer(data.name);
-		//context.player.username = data.name;
 		context.player.addComponent(new ECS.Components.Controlled());
 	
 		var player = context.player.getComponent('player');
 		var physics = context.player.getComponent('physics');
-		var ghost = context.player.getComponent("ghostphysics");
-		context.physicsWorld.DestroyBody(ghost.body);
-		context.player.removeComponent("ghostphysics");
 		physics.x = data.x;
 		physics.y = data.y;
+		physics.gx = data.x;
+		physics.gy = data.y;
 		physics.rotation = data.rotation;
 		physics.playState = keyboard.getPlayState();
 	}, this);
@@ -301,28 +284,16 @@ Game.prototype.initializeListeners = function() {
 		var player = context.players[data.name];
 		if(player != undefined) {
 			var physics = player.getComponent("physics");
-			var ghost = player.getComponent("ghostphysics");
 
-			// Player is always little behind.
-			//physics.x = ghost.x;
-			//physics.y = ghost.y;
-			//physics.vx = data.vx;
-			//physics.vy = data.vy;
-				
-			// Ghost is always at correct position.
-			ghost.x = data.x;
-			ghost.y = data.y;
-			ghost.vx = data.vx;
-			ghost.vy = data.vy;
+			physics.gx = data.x;
+			physics.gy = data.y;
+			physics.gvx = data.vx;
+			physics.gvy = data.vy;
 			
 			physics.time = new Date();
 			
-			physics.rotation = data.rotation;
-			ghost.rotation = data.rotation;
-			if(!player.hasComponent("controlled")) {
-				physics.playState = data.playState;
-				ghost.playState = data.playState;
-			}
+			physics.rotation = data.rotation;		
+			physics.playState = data.playState;
 		}
 		else
 			console.log("undefined");
