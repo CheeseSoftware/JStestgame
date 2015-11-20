@@ -91,10 +91,19 @@
 		game = new Game();
 	});
 	
-	function tryRegister(username, email, password) {		
+	function tryRegister(username, email, password) {
+		$('#registrationResult').html('<img src="game/textures/loading.gif" loop=infinite>');	
 		game.connection.send('register', { 
 			username: username,
 			email: email,
+			password: password
+		});
+	};
+	
+	function tryLogin(username, password) {		
+	$('#loginResult').html('<img src="game/textures/loading.gif" loop=infinite>');	
+		game.connection.send('login', { 
+			username: username,
 			password: password
 		});
 	};

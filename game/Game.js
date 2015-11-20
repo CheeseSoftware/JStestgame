@@ -8,9 +8,17 @@ Game.prototype.load = function() {
 	
 	//TODO: Move esc code somewhere else
 	keyboard.keys.esc.press = function() {
+		if($("#registerFrame").is(":visible")) {
+			$("#registerFrame").hide();
+			return;
+		}
+			
+		if($("#loginFrame").is(":visible")) {
+			$("#loginFrame").hide();
+			return;
+		}
+		
 		var menu = document.getElementById('playMenu');
-		
-		
 		if(menu.style.display == "none")
 			$("#playMenu").fadeIn(400);
 		else

@@ -9,11 +9,7 @@
         <input type="text" id="registerPassword" value="">
         <br />
         <div class="registerLoginButton" onClick="
-        	tryRegister(
-            	$('#registerUsername').val(), 
-            	$('#registerEmail').val(), 
-            	$('#registerPassword').val()); 
-            $('#registrationResult').html('Waiting for registration response..');
+        	tryRegister($('#registerUsername').val(), $('#registerEmail').val(), $('#registerPassword').val()); 
         ">
         <p>Register</p></div>      
     	<p id="registrationResult"></p>

@@ -115,6 +115,15 @@ db.open(function(err, db) {
 		console.log("There was an error connecting to MongoDB");
 });
 
+validateEmail = function(email) {
+	var re = new RegExp("^.{1,}@.{1,}\..{1,}$");
+	return re.test(email);
+}
+
+validateUsername = function(username) {
+	var re = new RegExp("^[A-Z,a-z,0-9]{3,20}$");
+	return re.test(username);
+}
 
 
 io.on('connection', function(socket) {
@@ -240,13 +249,13 @@ io.on('connection', function(socket) {
 	socket.on('register', function(data) {
 		//TODO: verify data
 		
-		if(!data.username) {
-			socket.emit('registerresponse', { success: false, response:"Username is empty."});
+		if(!data.username || !validateUsername(data.username)) {
+			socket.emit('registerresponse', { success: false, response:"Username is invalid. It has to be between 3-20 normal characters."});
 			return;
 		}
 		
-		if(!data.email) {
-			socket.emit('registerresponse', { success: false, response:"Email is empty."});
+		if(!data.email || !validateEmail(data.email)) {
+			socket.emit('registerresponse', { success: false, response:"Email is invalid."});
 			return;
 		}
 		
@@ -257,8 +266,7 @@ io.on('connection', function(socket) {
 		
 		db.collection('users', function(err, collectionref) { 
 			if(err)
-				console.log(err);
-			
+				console.log(err);			
 			collectionref.findOne({"username":data.username}, function(err, doc) {
 				if(err)
 					console.log(err);
@@ -285,6 +293,68 @@ io.on('connection', function(socket) {
 				});
 				}
 			});
+		});
+	});
+	
+	socket.on('login', function(data) {
+		//TODO: verify data
+		
+		if(!data.username) {
+			socket.emit('registerresponse', { success: false, response:"Username/email is empty."});
+			return;
+		}
+		
+		if(!data.password) {
+			socket.emit('registerresponse', { success: false, response:"Password is empty."});
+			return;
+		}
+		
+		db.collection('users', function(err, collectionref) { 
+			if(err)
+				console.log(err);
+				
+			var user;
+				
+			if(validateEmail(data.username)) {
+				//username is email
+				collectionref.findOne({"email:":data.username}, function(err, doc) {
+					if(err)
+						console.log(err);
+					if(doc) {
+						user = doc;
+					}
+					else {
+						socket.emit('registerresponse', { success: false, response:"User with specified email does not exist."});
+						return;
+					}
+				});
+			} else if(validateUsername(data.username)) {
+				//username is email
+				collectionref.findOne({"username:":data.username}, function(err, doc) {
+					if(err)
+						console.log(err);
+					if(doc) {
+						user = doc;
+					}
+					else {
+						socket.emit('registerresponse', { success: false, response:"User with specified username does not exist."});
+						return;
+					}
+				});
+			}
+			
+			if(user) {
+				// User with email found, check password match
+				if(doc["password"] == data.password) {
+					//TODO: LOGIN
+					socket.emit('registerresponse', { success: true, response:"You have been logged in."});
+					return;
+				}
+			}
+			else {
+				socket.emit('registerresponse', { success: false, response:"Invalid username/email."});
+				return;
+			}
 		});
 	});
 });

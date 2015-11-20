@@ -136,7 +136,7 @@ body {
 .registerFrame {
 	z-index: 2;
 	width: 400px;
-	height: 250px;
+	height: 350px;
 	padding: 32px;
 
 	background-color: rgba(255,255,255,0.95);
@@ -163,11 +163,11 @@ body {
 	width: 298px;
 	height: 48px;
 	margin: auto;
-	margin-top: 8;
+	margin-top: 30;
 	margin-bottom: 8;
 	text-align: center;
 	color: #FFF;
-	line-height: 0px;
+	line-height: 40px;
 	font-family: "Comic Sans MS", cursive, sans-serif;
 	font-size: 24px;
 
@@ -189,7 +189,7 @@ body {
 .loginFrame {
 	z-index: 2;
 	width: 400px;
-	height: 250px;
+	height: 280px;
 	padding: 32px;
 
 	background-color: rgba(255,255,255,0.95);
