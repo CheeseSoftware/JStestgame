@@ -189,7 +189,7 @@ Game.prototype.spawnPlayer = function(name) {
 	fixDef.restitution = 0.2;
 	var bodyDef = new b2BodyDef;
 	bodyDef.type = b2Body.b2_dynamicBody;
-	fixDef.shape = new b2CircleShape(sprite.width/6);
+	fixDef.shape = new b2CircleShape(30);
 	bodyDef.position.Set(10, 400 / 30 + 1.8);
 	var physicsBody = this.physicsWorld.CreateBody(bodyDef);
 	var ghostBody = this.physicsWorld.CreateBody(bodyDef);

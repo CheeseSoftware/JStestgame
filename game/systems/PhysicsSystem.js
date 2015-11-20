@@ -1,7 +1,7 @@
 
 ECS.Systems.PhysicsSystem = CES.System.extend({
     update: function (dt) {
-        var entities = this.world.getEntities('physics', 'player');
+        var entities = this.world.getEntities('physics');
  
         entities.forEach(function (entity) {
 			var physics = entity.getComponent('physics');
