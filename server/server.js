@@ -103,8 +103,9 @@ io.on('connection', function(socket) {
 				y: data.y, 
 				vx: data.vx, 
 				vy: data.vy, 
-				rotation: data.rotation, 
-				playState: data.playState 
+				dx: data.dx, 
+				dy: data.dy,
+				rotation: data.rotation 
 			};
 		}
 		socket.broadcast.emit('playerupdate', {
@@ -113,8 +114,9 @@ io.on('connection', function(socket) {
 			y: data.y,
 			vx: data.vx,
 			vy: data.vy,
-			rotation: data.rotation,
-			playState: data.playState
+			dx: data.dx, 
+			dy: data.dy,
+			rotation: data.rotation
 		});
 	});
 	

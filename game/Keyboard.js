@@ -122,4 +122,27 @@ Keyboard.prototype.isDifferent = function(state) {
 	return false;
 }
 
+Keyboard.prototype.calculateDirection = function() {
+	var output = {};
+	var state = this.getPlayState();
+	if(state.left && state.right)
+		output.x = 0;
+	else if(state.left)
+		output.x = -1;
+	else if(state.right)
+		output.x = 1;
+	else
+		output.x = 0;
+		
+	if(state.up && state.down)
+		output.y = 0;
+	else if(state.up)
+		output.y = -1;
+	else if(state.down)
+		output.y = 1;
+	else
+		output.y = 0;
+	return output;
+}
+
 var keyboard = new Keyboard();

@@ -156,14 +156,16 @@ Game.prototype.run = function() {
 Game.prototype.sendUpdatePacket = function() {
 	var physics = this.player.getComponent('physics');
 	var player = this.player.getComponent('player');
+	var direction = keyboard.calculateDirection();
 	this.connection.send('playerupdate', { 
 		name: player.username,
 		x: physics.x,
 		y: physics.y,
 		vx: physics.vx,
 		vy: physics.vy,
-		rotation: physics.rotation,
-		playState: keyboard.getPlayState()
+		dx: direction.x,
+		dy: direction.y,
+		rotation: physics.rotation
 	});
 }
 
@@ -289,11 +291,10 @@ Game.prototype.initializeListeners = function() {
 			physics.gy = data.y;
 			physics.gvx = data.vx;
 			physics.gvy = data.vy;
-			
-			physics.time = new Date();
-			
+			physics.dx = data.dx;
+			physics.dy = data.dy;
 			physics.rotation = data.rotation;		
-			physics.playState = data.playState;
+			physics.time = new Date();
 		}
 		else
 			console.log("undefined");
