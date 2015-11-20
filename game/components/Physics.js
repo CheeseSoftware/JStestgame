@@ -9,12 +9,16 @@ ECS.Components.Physics = CES.Component.extend({
 		this.oldX = 0;
 		this.oldY = 0;
 		
+		this.dx = 0;
+		this.dy = 0;
+		
 		this.time = new Date();
 		
 		this.playState = {};
 		
 		this.speedLimit = 160;
 		this.speedDecreaseSpeed = 0.05;
+		this.moveSpeed = 5.0;
     }
 });
 

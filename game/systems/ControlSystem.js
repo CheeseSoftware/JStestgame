@@ -20,13 +20,14 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				
 			};
 			
-			if(isControlled) {
-				if(keyboard.isDifferent(player.oldKeyboardState)) {
-					game.sendUpdatePacket();
-					physics.playState = keyboard.getPlayState();
-				}		
-				player.oldKeyboardState = keyboard.getState();
-			}
+			if(keyboard.isDifferent(player.oldKeyboardState)) {
+				var direction = keyboard.calculateDirection();
+				physics.dx = direction.x;
+				physics.dy = direction.y;
+				game.sendUpdatePacket();
+				physics.playState = keyboard.getPlayState();
+			}		
+			player.oldKeyboardState = keyboard.getState();
 			
 			game.camera.target.x = physics.x;
 			game.camera.target.y = physics.y;	

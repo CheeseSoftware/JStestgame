@@ -9,33 +9,9 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			var drawable = entity.getComponent('drawable');
 			var isControlled = entity.hasComponent('controlled');
 			var state = physics.playState;
-			
-			var moveSpeed = 5.0;
-			
-			var desiredAngle = physics.desiredAngle || 0;
-			if(state.left && state.up)
-				desiredAngle = -0.75*Math.PI;
-			else if(state.left && state.down)
-				desiredAngle = -1.25*Math.PI;
-			else if(state.right && state.up)
-				desiredAngle = -0.25*Math.PI;
-			else if(state.right && state.down)
-				desiredAngle = 0.25*Math.PI;
-				
-			else if(state.left)
-				desiredAngle = Math.PI;
-			else if(state.right)
-				desiredAngle = 0;
-			else if(state.up)
-				desiredAngle = -0.5*Math.PI;
-			else if(state.down)
-				desiredAngle = 0.5*Math.PI;
-		
-			if(state.left ||
-				state.right ||
-				state.up ||
-				state.down) {
-						
+
+			if(physics.dx != 0 || physics.dy != 0) {
+				var desiredAngle = Math.atan2(physics.dy, physics.dx);
 				physics.rotateTo(physics, desiredAngle + Math.PI / 2, 0.05);
 				physics.desiredAngle = desiredAngle;
 					
@@ -45,8 +21,8 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				var normal = new b2Vec2(vx, vy);
 				normal.Normalize();
 				
-				var vx = normal.x * moveSpeed;
-				var vy = normal.y * moveSpeed;
+				var vx = normal.x * physics.moveSpeed;
+				var vy = normal.y * physics.moveSpeed;
 				
 				physics.vx += vx;
 				physics.vy += vy;	
