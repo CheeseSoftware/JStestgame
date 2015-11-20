@@ -25,7 +25,7 @@ RegeneratorServer.prototype.update = function(deltaTime) {
 	keys = Object.keys(this._collapsingTiles);
 
 	// Time for each tile to regenerate. (seconds)
-	regenerateTime = 10.0;
+	regenerateTime = 60.0;
 
 	// Calculate the amount of tiles to regenerate.
 	temp = keys.length * (deltaTime) / regenerateTime + this._wastedDeltaTime;
