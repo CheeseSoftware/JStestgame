@@ -1,10 +1,11 @@
 
 ECS.Components.Player = CES.Component.extend({
     name: 'player',
-    init: function (username, sprite, text) {
+    init: function (uuid, username, text) {
+		this.uuid = uuid;
         this.username = username;
-        this.sprite = sprite;
 		this.text = text;
+		this.lastDig = new Date();
     }
 });
  

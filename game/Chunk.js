@@ -20,6 +20,7 @@ Chunk = function(chunkManager, x, y, sizeX, sizeY) {
 }
 
 
+
 Chunk.prototype.getDensity = function(x, y) {
 	return this._density[x+y*this._sizeX];
 }
@@ -67,12 +68,18 @@ Object.defineProperties(Chunk.prototype, {
 	tileData: {
 		get: function()  {
 			return this._tileIds;
+		},
+		set: function(data)  {
+			this._tileIds = data;
 		}
 	},
 	
 	densityData: {
 		get: function()  {
 			return this._density;
+		},
+		set: function(data)  {
+			this._density = data;
 		}
 	},
 	

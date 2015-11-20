@@ -1,6 +1,12 @@
+
+
 Game = function() {
 	this.preload();
+}
+
+Game.prototype.load = function() {
 	
+	//TODO: Move esc code somewhere else
 	keyboard.keys.esc.press = function() {
 		var menu = document.getElementById('playMenu');
 		
@@ -11,30 +17,7 @@ Game = function() {
 			$("#playMenu").fadeOut(100);
 	};
 	
-	// Initialize window
-	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000}, true, false);
-	this.renderer.clearBeforeRender = false;
-	document.body.appendChild(this.renderer.view);
-	this.stage = new PIXI.Container();
-	this.camera = new Camera(this.stage);	
-	this.camera.zoom = 1.0;
-	
-	this.entityWorld = new CES.World();
-	
-	var gl = this.renderer.gl;
-	this._chunkManager = new ChunkManager();
-	this._chunkRenderer = new ChunkRenderer(gl, this._chunkManager, 32, 32, 32, 32);
-	
-	var floatTextures = gl.getExtension('OES_texture_float');
-	if (!floatTextures) {
-		alert('no floating point texture support');
-	}
-	
-	// Add more systems here!
-	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
-	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem());
-	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
-	
+	//TODO: Move input code somewhere else
 	this.mousex = null;
 	this.mousey = null;
 	document.addEventListener('mousemove', this.onMouseUpdate, false);
@@ -42,12 +25,42 @@ Game = function() {
 	
 	window.addEventListener('resize', this.resize.bind(this), false);
 	
-	var gravity = new b2Vec2(0, 0);
-	var doSleep = false;
-	this.physicsWorld = new b2World(gravity, doSleep); 
+	// Initialize window
+	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000}, true, false);
+	this.renderer.clearBeforeRender = false;
+	document.body.appendChild(this.renderer.view);
 	
-	// Contact listener begin: Temporarily disable player-to-player collisions
-	var playerContactListener = new Box2D.Dynamics.b2ContactListener;
+	// Initialize stage, camera, entityWorld
+	this.stage = new PIXI.Container();
+	
+	this.camera = new Camera(this.stage);	
+	this.camera.zoom = 1.0;
+	
+	// Initialize chunkManager and chunkRenderer
+	var gl = this.renderer.gl;
+	this.chunkManager = new ChunkManager();
+	this.chunkRenderer = new ChunkRenderer(gl, this.chunkManager, 32, 32, 32, 32);	
+	var floatTextures = gl.getExtension('OES_texture_float');
+	if (!floatTextures) {
+		alert('no floating point texture support');
+	}
+	
+	// Initialize entityWorld and add entity component systems
+	this.entityWorld = new CES.World();
+	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
+	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem(this.chunkManager));
+	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
+	this.entityWorld.addSystem(new ECS.Systems.AnimationSystem());
+	
+	// Initialize animationManager
+	this.animationManager = new AnimationManager();
+	this.animationManager.load(this.textureManager);
+	
+	// Initialize physicsWorld
+	this.physicsWorld = new b2World(new b2Vec2(0, 0), false); // Args: gravity, sleep
+	
+	//TODO: Fix and move playerContactListener
+	var playerContactListener = new Box2D.Dynamics.b2ContactListener;// Contact listener begin: Temporarily disable player-to-player collisions
 	playerContactListener.BeginContact = function (contact) {
 	  //console.log("begincontact");
 	}
@@ -62,15 +75,18 @@ Game = function() {
 		contact.SetEnabled(false);
 	}
 	this.physicsWorld.SetContactListener(playerContactListener);
-	// Contact listener end
 	
-	this.players = {};
 	this.lastUpdate = Date.now();
 	
-	this._intervalId = setInterval(function(){game.run()}, 0);
+	this.intervalId = setInterval(function(){game.run()}, 0);
 	
 	this.connection = new Connection(vars.ip, 3000);
 	this.initializeListeners();
+	
+	// Initialize client systems
+	this.entityClient = new EntityClient();
+	this.chunkClient = new ChunkClient(this.chunkManager, this.connection);
+	this.regeneratorClient = new RegeneratorClient(this.chunkManager, this.connection);
 }
 
 Game.prototype.onMouseUpdate = function (e) {
@@ -86,14 +102,25 @@ Game.prototype.resize = function() {
 }
 
 Game.prototype.preload = function() {
-	this.textures = {};
-	this.textures.gubbe = PIXI.Texture.fromImage('game/textures/gubbe.png');
-	this.textures.cheese = PIXI.Texture.fromImage('game/textures/cheese.png');
-	this.textures.worker = PIXI.Texture.fromImage('game/textures/worker.png');
-	this.textures.ground = PIXI.Texture.fromImage('game/textures/ground.png');
-	this.textures.block = PIXI.Texture.fromImage('game/textures/block.png');
-	this.textures.rock = PIXI.Texture.fromImage('game/textures/rock.png');
-	this.textures.largerock = PIXI.Texture.fromImage('game/textures/rock_large.png');
+	// Load textures and sound and heavy things. Progress shown on progressbar.
+	this.textureManager = new TextureManager();
+	var context = this;
+	
+	this.textureManager.onProgress(function(name, file, progress) {
+		$("#progressbar").css("width", progress + "%");
+		$("#progressbar").attr("aria-valuenow", progress);
+		$("#progressbar").html(progress + "% - " + file + ".png");
+	});
+	
+	this.textureManager.onComplete(function(textures) {
+		context.load(); // Continue loading the game
+		
+		window.setTimeout ( function() {
+			$("#progresscontainer").fadeOut();
+			$("#playMenu").show();
+		}, 800);
+	});
+	this.textureManager.load();
 }
 
 Game.prototype.run = function() {
@@ -108,8 +135,9 @@ Game.prototype.run = function() {
             this.physicsWorld.ClearForces();
 	
 	this.camera.update(dt);
-	this._chunkManager.update(this.camera);
 	
+	if(this.chunkClient)
+		this.chunkClient.update(this.camera);
 	
 	var gl = this.renderer.gl;
 	this.renderer.setRenderTarget(this.renderer.renderTarget);
@@ -118,7 +146,7 @@ Game.prototype.run = function() {
 	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
 	var viewMatrix = new PIXI.Matrix();
 	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
-	this._chunkRenderer.render(gl, this._chunkManager, projectionMatrix.clone().append(viewMatrix), this.camera);
+	this.chunkRenderer.render(gl, this.chunkManager, projectionMatrix.clone().append(viewMatrix), this.camera);
 
 	
 	this.renderer.render(this.camera);
@@ -126,79 +154,106 @@ Game.prototype.run = function() {
 };
 
 Game.prototype.sendUpdatePacket = function() {
-	var physics = this.player.getComponent('physics');
-	var player = this.player.getComponent('player');
-	this.connection.send('playerupdate', { 
-		name: player.username,
-		x: physics.x,
-		y: physics.y,
-		vx: physics.vx,
-		vy: physics.vy,
-		rotation: physics.rotation
+	var entities = this.entityWorld.getEntities('controlled', 'physics', 'player');
+	var context = this;
+	entities.forEach(function (entity) {
+		var physics = entity.getComponent('physics');
+		var player = entity.getComponent('player');
+		var direction = keyboard.calculateDirection();
+		context.connection.send('entityupdate', {
+			uuid: player.uuid, 
+			username: player.username,
+			x: physics.x,
+			y: physics.y,
+			vx: physics.vx,
+			vy: physics.vy,
+			dx: direction.x,
+			dy: direction.y,
+			rotation: physics.rotation
+		});
 	});
 }
 
-Game.prototype.spawnPlayer = function(name) {
-	var sprite = new PIXI.Sprite(this.textures.gubbe);
+Game.prototype.spawnPlayer = function(uuid, username) {
+	
+	var sprite = new PIXI.Sprite(this.textureManager.textures.feet);
 	sprite.anchor.x = 0.5;
 	sprite.anchor.y = 0.5;
-	sprite.position.x = 0.5;//Math.random() * this.tileMap.width * this.tileSize;
-	sprite.position.y = 0.5;//Math.random() * this.tileMap.height * this.tileSize;	
-	var text = new PIXI.Text(name, { fill: '#ffffff' });
+	sprite.position.x = 0.5;
+	sprite.position.y = 0.5;
 	
-	/*var circleDef = new b2CircleDef();
-	circleDef.density = 0.9;
-	circleDef.radius = sprite.width / 6;
-	circleDef.restitution = 0;
-	circleDef.friction = 0;
-	var bodyDef = new b2BodyDef();
-	bodyDef.AddShape(circleDef);
-	bodyDef.type=b2Body.b2_staticBody;
-	bodyDef.isSensor = true;
-	bodyDef.position.Set(100,100);
-	bodyDef.userData = { type: "player" };
-	var circleBody = this.physicsWorld.CreateBody(bodyDef);*/
+	var bodySprite = new PIXI.Sprite(this.textureManager.textures.dig);
+	bodySprite.anchor.x = 0.5;
+	bodySprite.anchor.y = 0.5;
+	bodySprite.position.x = 0.5;
+	bodySprite.position.y = 0.5;
 	
+	var bodyparts = {
+		"feet": {
+			"sprite": sprite
+		},
+		"body": {
+			"sprite": bodySprite
+		}
+	};
+	
+	var text = new PIXI.Text(username, { fill: '#ffffff' });
+	
+	// Initialize physics stuff
 	var fixDef = new b2FixtureDef;
 	fixDef.density = 1.0;
 	fixDef.friction = 0.5;
 	fixDef.restitution = 0.2;
-	
 	var bodyDef = new b2BodyDef;
 	bodyDef.type = b2Body.b2_dynamicBody;
-	
-	fixDef.shape = new b2CircleShape(sprite.width/6);
-	
+	fixDef.shape = new b2CircleShape(30);
 	bodyDef.position.Set(10, 400 / 30 + 1.8);
 	var physicsBody = this.physicsWorld.CreateBody(bodyDef);
+	var ghostBody = this.physicsWorld.CreateBody(bodyDef);
 	physicsBody.CreateFixture(fixDef);
+	ghostBody.CreateFixture(fixDef);
 	
-	var player = new CES.Entity();
-	player.addComponent(new ECS.Components.Player(name, sprite, text));
-	player.addComponent(new ECS.Components.Physics(physicsBody));
-	this.entityWorld.addEntity(player);
+	var entity = this.entityClient.createEntity(uuid);
+	entity.addComponent(new ECS.Components.Player(uuid, username, text));
+	entity.addComponent(new ECS.Components.Physics(physicsBody, ghostBody));
+	var drawable = new ECS.Components.Drawable(bodyparts, this.animationManager, 0, 0);
+	entity.addComponent(drawable);
+	
 	this.stage.addChild(sprite);
+	this.stage.addChild(bodySprite);
 	this.stage.addChild(text);
-	this.players[name] = player;
-	return player;
+	this.entityWorld.addEntity(entity);
+	return entity;
 }
 
 Game.prototype.spawnMainPlayer = function() {
 	this.connection.send('playerinit', { 
-		name: "player username that will be selected when accounts exist"
+		username: "player username that will be selected when accounts exist"
 	});
 }
 
-Game.prototype.despawnPlayer = function(name) {
-	var player = this.players[name];
-    var player = player.getComponent('player');
-	this.stage.removeChild(player.sprite);
-	this.stage.removeChild(player.text);
-	delete(this.players[name]);
+Game.prototype.despawnEntity = function(uuid) {
+	var entityId = this.entityClient.entityMap.getEntityId(uuid);
+	var entity = this.entityWorld.getEntity(entityId);
+	if(entity) {
+		var player = entity.getComponent('player');
+		if(player) {
+			this.stage.removeChild(player.text);
+		}
+		
+		var drawable = entity.getComponent('drawable');
+		if(drawable)
+			drawable.remove(this.stage);
+			
+		this.entityWorld.removeEntity(entity);
+		this.entityClient.entityMap.remove(uuid);
+	}
+	else
+		console.log("Could not despawn entity " + uuid);
 }
 
 Game.prototype.initializeListeners = function() {
-	this.connection.on('init', function(data, context) {	
+	this.connection.on('init', function(data, context) {
 		context.tileMap = { 
 			width: data.mapWidth,
 			height: data.mapHeight,
@@ -209,35 +264,6 @@ Game.prototype.initializeListeners = function() {
 		
 		context.camera.target.x = context.tileMap.width * context.tileSize - context.camera.viewport.width / 2;
 		context.camera.target.y = context.tileMap.height * context.tileSize - context.camera.viewport.height / 2;
-		
-		/*// Draw map ground
-		for(var x = 0; x < context.tileMap.width; ++x) {	
-			for(var y = 0; y < context.tileMap.height; ++y) {
-				if(x * context.tileSize % 1024 == 0 && y * context.tileSize % 1024 == 0) {
-					var sprite = new PIXI.Sprite(context.textures.ground);
-					sprite.position.x = x * context.tileSize;
-					sprite.position.y = y * context.tileSize;
-					context.stage.addChild(sprite);
-				}
-			}
-		}*/
-		
-		
-		//LAGGY CODE DONT USE
-		
-		// Draw map border
-		/*for(var x = -1024; x <= context.tileMap.width * context.tileSize; ++x) {	
-			for(var y = -1024; y <= context.tileMap.height * context.tileSize; ++y) {
-				if(x == -1024 || x == context.tileMap.width * context.tileSize || y == -1024 || y ==  context.tileMap.height * context.tileSize) {
-					if(x % 1024 == 0 && y % 1024 == 0) {
-						var sprite = new PIXI.Sprite(context.textures.block);
-						sprite.position.x = x;
-						sprite.position.y = y;
-						context.stage.addChild(sprite);
-					}
-				}
-			}
-		}*/
 	}, this);
 	
 	this.connection.on('error', console.error.bind(console));
@@ -247,64 +273,93 @@ Game.prototype.initializeListeners = function() {
 	});
 	
 	this.connection.on('playerjoin', function(data, context) {
-		console.log(data.name + " has connected.");
-		var player = context.spawnPlayer(data.name);
+		console.log(data.username + " has connected.");
+		var player = context.spawnPlayer(data.uuid, data.username);
+		
 		var physics = player.getComponent("physics");
 		physics.x = data.x;
 		physics.y = data.y;
+		physics.oldX = data.x;
+		physics.oldY = data.y;
+		physics.gx = data.x;
+		physics.gy = data.y;
 		physics.rotation = data.rotation;
-		physics.body.userData = { type: "mainPlayer" };
-		context.players[data.name] = player;
 	}, this);
 	
 	this.connection.on('playerinit', function(data, context) {
-		context.player = context.spawnPlayer(data.name);
-		//context.player.username = data.name;
-		context.player.addComponent(new ECS.Components.ControlledPlayer());
-	
-		var player = context.player.getComponent('player');
-		var physics = context.player.getComponent('physics');
+		var player = context.spawnPlayer(data.uuid, data.username);
+		player.addComponent(new ECS.Components.Controlled());
+		
+		var physics = player.getComponent('physics');
 		physics.x = data.x;
 		physics.y = data.y;
+		physics.oldX = data.x;
+		physics.oldY = data.y;
+		physics.gx = data.x;
+		physics.gy = data.y;
 		physics.rotation = data.rotation;
-		
-		keyboard.keys.space.press = function() {
-			//Dig
-			var physics = context.player.getComponent('physics');
-			var digRadius = 5;
-			var x = physics.x + 32.0*Math.sin(physics.rotation);
-			var y = physics.y - 32.0*Math.cos(physics.rotation);
-			context.connection.send("playerdig", { x: x, y: y, digRadius: digRadius });
-		};
-	}, this);
-	
-	this.connection.on('playerupdate', function(data, context) {
-		var player = context.players[data.name];
-		if(player != undefined) {
-			var physics = player.getComponent("physics");
-			physics.x = data.x;
-			physics.y = data.y;
-			physics.vx = data.vx;
-			physics.vy = data.vy;
-			physics.rotation = data.rotation;
-		}
-		else
-			console.log("undefined");
 	}, this);
 	
 	this.connection.on('playerleave', function(data, context) {
-		console.log(data.name + ' has disconnected.');
-		context.despawnPlayer(data.name);
+		console.log(data.username + ' has disconnected.');
+		context.despawnEntity(data.uuid);
 	}, this);
 	
-	this.connection.on('chatmessage', function(data) {
-		addChat(data.message);
-	});
+	this.connection.on('entityupdate', function(data, context) {
+		var entityId = context.entityClient.entityMap.getEntityId(data.uuid);
+		var entity = context.entityWorld.getEntity(entityId);
+		
+		if(entity != undefined) {
+			var physics = entity.getComponent("physics");
+			physics.gx = data.x;
+			physics.gy = data.y;
+			physics.gvx = data.vx;
+			physics.gvy = data.vy;
+			physics.dx = data.dx;
+			physics.dy = data.dy;
+			physics.rotation = data.rotation;		
+			physics.time = new Date();
+		}
+		else
+			console.log("entity is undefined in 'entityupdate' Game.js");
+	}, this);
 	
 	this.connection.on('dig', function(data, context) {
+		var uuid = data.uuid;
 		var x = data.x;
 		var y = data.y;
 		var digRadius = data.digRadius;
-		context._chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, 1.5);
+		context.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, digRadius);
+		
+		if(data.uuid) {
+			var entityId = context.entityClient.entityMap.getEntityId(uuid);
+			var entity = context.entityWorld.getEntity(entityId);
+			if(!entity.getComponent("controlled") && entity.getComponent("drawable"))
+				entity.getComponent("drawable").animate("body", "dig", 240, true);
+		}
 	}, this);
+	
+	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Register and login below >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+	
+	this.connection.on('registerresponse', function(data) {
+		$('#registrationResult').html(data.response);
+		if(data.success == true) {
+			var d = new Date();
+			d.setTime(d.getTime() + (14*24*60*60*1000));
+			var expires = "expires="+d.toUTCString();
+			document.cookie="username=" + $('#registerUsername').val() + "; " + expires;
+			document.cookie="password=" + $('#registerPassword').val() + "; " + expires;
+		}
+	});
+	
+	this.connection.on('loginresponse', function(data) {
+		$('#loginResult').html(data.response);
+		if(data.success == true) {
+			var d = new Date();
+			d.setTime(d.getTime() + (14*24*60*60*1000));
+			var expires = "expires="+d.toUTCString();
+			document.cookie="username=" + $('#loginUsername').val() + "; " + expires;
+			document.cookie="password=" + $('#loginPassword').val() + "; " + expires;
+		}
+	});
 }

@@ -281,7 +281,7 @@ ChunkRenderer.prototype.onChunkChange2 = function(gl, x1, y1, x2, y2, chunk1, ch
 	if (!chunk1 || !chunk2)
 		return;
 
-	console.log("onChunkCreate event! x:" + x1 + " x2:" + x2 + " y:" + y1 + " y2:" + y2);
+	//console.log("onChunkCreate event! x:" + x1 + " x2:" + x2 + " y:" + y1 + " y2:" + y2);
 	// TODO: ChunkRenderer.prototype.onChunkCreate
 	
 	// Calculate intersecting rectangle.
@@ -368,7 +368,7 @@ ChunkRenderer.prototype.loadTexture = function(gl) {
  *
  */
 ChunkRenderer.prototype.onChunkChange = function(x, y, chunk) {
-	console.log("onChunkChange event! x:" + x + " y:" + y);
+	//console.log("onChunkChange event! x:" + x + " y:" + y);
 	var gl = this._gl;
 	
 	var l = function(that, gl, ex, ey, x2, y2, eChunk) {

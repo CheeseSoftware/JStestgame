@@ -10,7 +10,7 @@ ChunkManager = function(gl) {
 
 }
 // Inherits observable
-ChunkManager.prototype = new Observable(["onChunkChange"]);
+ChunkManager.prototype = new Observable(["onChunkChange", "onDensityChange"]);
 ChunkManager.prototype.constructor = ChunkManager;    
 
 
@@ -32,6 +32,7 @@ ChunkManager.prototype.fillCircle = function(xPos, yPos, radius, density) {
 			
 			var oldDensity = this.getDensity(x, y);
 			var tileId = this.getTileId(x, y);
+			
 			var tile = this._tileRegister.getById(tileId);
 				
 			var fillStrength = Math.max(Math.min(radius-dis, 1.0), 0.0)/tile.hardness;
@@ -41,33 +42,6 @@ ChunkManager.prototype.fillCircle = function(xPos, yPos, radius, density) {
 	}
 	this._isDensityChanged = true;
 }
-
-
-ChunkManager.prototype.update = function(camera) {
-
-	var x1 = Math.floor(camera.pos.x/32.0/30.0)-2;
-	var y1 = Math.floor(camera.pos.y/32.0/30.0)-2;
-	var x2 = Math.ceil((camera.pos.x+camera.width)/32.0/30.0)+2;
-	var y2 = Math.ceil((camera.pos.y+camera.width)/32.0/30.0)+2;
-	
-	// Create/Load chunks:
-	for (var y = y1; y <= y2; ++y) {
-		for (var x = x1; x <= x2; ++x) {
-			var chunk = this.getChunk(x, y);
-			if (chunk)
-				continue;
-			
-			var chunkPosString = x + "," + y;
-			
-			// Create Chunk
-			var chunk = this.createChunk(x, y);
-		}
-	}
-	
-}
-
-
-
 
 ChunkManager.prototype.getDensity = function(x, y) {
 	var localX = x%this._chunkSize;
@@ -101,6 +75,7 @@ ChunkManager.prototype.setDensity = function(x, y, value, createChunk) {
 	var localY = y%this._chunkSize;
 	var chunkX = (x-localX)/this._chunkSize;
 	var chunkY = (y-localY)/this._chunkSize;
+	var chunk = null;
 	
 	// Fix indexing of negative values:
 	if (x < 0) {
@@ -118,12 +93,16 @@ ChunkManager.prototype.setDensity = function(x, y, value, createChunk) {
 		if (!createChunk)
 			return;
 	
-		var chunk = this.createChunk(chunkX, chunkY);
-		chunk.setDensity(localX, localY, value);
+		chunk = this.createChunk(chunkX, chunkY);
 	}
 	else {
-		this._chunks[chunkPosString].setDensity(localX, localY, value);
+		chunk = this._chunks[chunkPosString]
 	}
+
+	chunk.setDensity(localX, localY, value);
+
+	this.on("onChunkChange", [chunkX, chunkY, chunk]);
+	this.on("onDensityChange", [x, y, value]);
 }
 
 ChunkManager.prototype.getTileId = function(x, y) {
@@ -158,6 +137,7 @@ ChunkManager.prototype.setTileId = function(x, y, value, createChunk) {
 	var localY = y%this._chunkSize;
 	var chunkX = (x-localX)/this._chunkSize;
 	var chunkY = (y-localY)/this._chunkSize;
+	var chunk = null;
 	
 	// Fix indexing of negative values:
 	if (x < 0) {
@@ -175,12 +155,15 @@ ChunkManager.prototype.setTileId = function(x, y, value, createChunk) {
 		if (!createChunk)
 			return;
 	
-		var chunk = this.createChunk(chunkX, chunkY);
-		chunk.setTileId(localX, localY, value);
+		chunk = this.createChunk(chunkX, chunkY);
 	}
 	else {
-		this._chunks[chunkPosString].setTileId(localX, localY, value);
+		chunk = this._chunks[chunkPosString];
 	}
+	
+	chunk.setTileId(localX, localY, value);
+
+	this.on("onChunkChange", [chunkX, chunkY, chunk]);
 }
 
 ChunkManager.prototype.getChunk = function(chunkX, chunkY) {
@@ -189,15 +172,21 @@ ChunkManager.prototype.getChunk = function(chunkX, chunkY) {
 }
 
 
-ChunkManager.prototype.createChunk = function(chunkX, chunkY) {
+ChunkManager.prototype.createChunk = function(chunkX, chunkY, tileData, densityData, force) {
 	var chunkPosString = chunkX + "," + chunkY;
 
-	if (this._chunks[chunkPosString])
+	if (!force && this._chunks[chunkPosString])
 		return null;
 
-	var chunk = new Chunk(this, chunkX, chunkY, this._chunkSize, this._chunkSize);
+	var chunk = new Chunk(this, chunkX, chunkY, this._chunkSize, this._chunkSize, tileData, densityData);
 	
 	this._generator.generate(chunk);
+	
+	if(tileData)
+		chunk.tileData = tileData;
+		
+	if(densityData)
+		chunk.densityData = densityData;
 	
 	this._chunks[chunkPosString] = chunk;
 	
@@ -242,18 +231,18 @@ ChunkManager.prototype.calcNormal = function(x, y) {
 	var c = -this.calcDensity(x-epsilon, y-epsilon);
 	var d = -this.calcDensity(x+epsilon, y-epsilon);
 	
-	var f = vec2.fromValues(+a, +a);
-	var g = vec2.fromValues(-b, +b);
-	var h = vec2.fromValues(-c, -c);
-	var i = vec2.fromValues(+d, -d);
+	var f = v2.create(+a, +a);
+	var g = v2.create(-b, +b);
+	var h = v2.create(-c, -c);
+	var i = v2.create(+d, -d);
 	
-	var vec = vec2.create();
-	vec2.add(vec, vec, f);
-	vec2.add(vec, vec, g);
-	vec2.add(vec, vec, h);
-	vec2.add(vec, vec, i);
-	if (vec2.sqrDist(vec, vec2.create()) > 0.0)
-		vec2.normalize(vec, vec);
+	var vec = v2.create(0, 0);
+	v2.add(vec, f, vec);
+	v2.add(vec, g, vec);
+	v2.add(vec, h, vec);
+	v2.add(vec, i, vec);
+	if (v2.lengthSquared(vec) > 0.0)
+		v2.normalize(vec, vec);
 	
 	return vec;
 }
