@@ -182,58 +182,6 @@ Game.prototype.sendUpdatePacket = function() {
 	});
 }
 
-Game.prototype.spawnPlayer = function(uuid, username) {
-	
-	var sprite = new PIXI.Sprite(this.textureManager.textures.feet);
-	sprite.anchor.x = 0.5;
-	sprite.anchor.y = 0.5;
-	sprite.position.x = 0.5;
-	sprite.position.y = 0.5;
-	
-	var bodySprite = new PIXI.Sprite(this.textureManager.textures.dig);
-	bodySprite.anchor.x = 0.5;
-	bodySprite.anchor.y = 0.5;
-	bodySprite.position.x = 0.5;
-	bodySprite.position.y = 0.5;
-	
-	var bodyparts = {
-		"feet": {
-			"sprite": sprite
-		},
-		"body": {
-			"sprite": bodySprite
-		}
-	};
-	
-	var text = new PIXI.Text(username, { fill: '#ffffff' });
-	
-	// Initialize physics stuff
-	var fixDef = new b2FixtureDef;
-	fixDef.density = 1.0;
-	fixDef.friction = 0.5;
-	fixDef.restitution = 0.2;
-	var bodyDef = new b2BodyDef;
-	bodyDef.type = b2Body.b2_dynamicBody;
-	fixDef.shape = new b2CircleShape(30);
-	bodyDef.position.Set(10, 400 / 30 + 1.8);
-	var physicsBody = this.physicsWorld.CreateBody(bodyDef);
-	var ghostBody = this.physicsWorld.CreateBody(bodyDef);
-	physicsBody.CreateFixture(fixDef);
-	ghostBody.CreateFixture(fixDef);
-	
-	var entity = this.entityClient.createEntity(uuid);
-	entity.addComponent(new ECS.Components.Player(uuid, username, text));
-	entity.addComponent(new ECS.Components.Physics(physicsBody, ghostBody));
-	var drawable = new ECS.Components.Drawable(bodyparts, this.animationManager, 0, 0);
-	entity.addComponent(drawable);
-	
-	this.stage.addChild(sprite);
-	this.stage.addChild(bodySprite);
-	this.stage.addChild(text);
-	this.entityWorld.addEntity(entity);
-	return entity;
-}
-
 Game.prototype.spawnMainPlayer = function() {
 	this.connection.send('playerinit', { 
 		username: "player username that will be selected when accounts exist"
@@ -282,7 +230,7 @@ Game.prototype.initializeListeners = function() {
 	
 	this.connection.on('playerjoin', function(data, context) {
 		console.log(data.username + " has connected.");
-		var player = context.spawnPlayer(data.uuid, data.username);
+		var player = entityTemplates.player(data.username, data.uuid);
 		
 		var physics = player.getComponent("physics");
 		physics.x = data.x;
@@ -295,7 +243,7 @@ Game.prototype.initializeListeners = function() {
 	}, this);
 	
 	this.connection.on('playerinit', function(data, context) {
-		var player = context.spawnPlayer(data.uuid, data.username);
+		var player = entityTemplates.player(data.username, data.uuid);
 		player.addComponent(new ECS.Components.Controlled());
 		
 		var physics = player.getComponent('physics');
