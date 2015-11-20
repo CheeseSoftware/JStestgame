@@ -74,10 +74,6 @@ entityWorld.addSystem(terrainPhysicsSystem);
 
 // Initialize entityServer
 entityServer = new EntityServer();
-for(var i = 0; i < 10; i++) {
-	var uuid = entityServer.generateUUID(); 
-	console.log(uuid);
-}
 
 var http = require('http'),
     fs = require('fs');
