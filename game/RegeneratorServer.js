@@ -2,7 +2,6 @@ RegeneratorServer = function(chunkManager, io) {
 
 	this._chunkManager = chunkManager;
 	this._io = io;
-	this._socket = null;
 	this._collapsingTiles = {};
 	this._tilesCount = 0;
 
@@ -18,12 +17,6 @@ RegeneratorServer = function(chunkManager, io) {
 	chunkManager.subscribe(this);
 
 
-	var that = this;
-	io.on('connection', function(socket) {
-		that._socket = socket;
-	});
-
-
 	return this;
 }
 
@@ -32,7 +25,7 @@ RegeneratorServer.prototype.update = function(deltaTime) {
 	keys = Object.keys(this._collapsingTiles);
 
 	// Time for each tile to regenerate. (seconds)
-	regenerateTime = 2.0;
+	regenerateTime = 100.0;
 
 	// Calculate the amount of tiles to regenerate.
 	temp = keys.length * (deltaTime) / regenerateTime + this._wastedDeltaTime;
@@ -53,8 +46,6 @@ RegeneratorServer.prototype.update = function(deltaTime) {
 		newDensity = Math.min(density+this._regenerateAmount, 255);
 		this._chunkManager.setDensity(tilePos.x, tilePos.y, newDensity);
 		this._regeneratedTiles.push(tilePos);
-		console.log("Tile regenerated!");
-		console.log("RegeneratedTiles size: " + this._regeneratedTiles.length);
 
 
 		if (newDensity == 255) {
@@ -75,17 +66,10 @@ RegeneratorServer.prototype.update = function(deltaTime) {
 	if (this._socket != null) {//((Date() - this._lastSync) >= 0.5 && this._socket != null) {
 		this._lastSync = Date();
 
-		this._socket.broadcast.emit("regenerate", {regenerateAmount : this._regenerateAmount, regeneratedTiles : this._regeneratedTiles});
-		
-
-		console.log("Packet sent with size: " + this._regeneratedTiles.length);
-
+		this._io.sockets.emit("regenerate", {regenerateAmount : this._regenerateAmount, regeneratedTiles : this._regeneratedTiles});
 
 		this._regeneratedTiles = [];
 	}
-
-	if (this._socket == null)
-		console.log("Error: Socket is null!!!");
 
 }
 

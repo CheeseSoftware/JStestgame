@@ -212,11 +212,11 @@ console.log("Listening on port 3000");
 
 run = function() {
 	var now = Date.now();
+	// TODO: Deltatime calculation fails, fix it!
     var dt = 0.1;//now - this.lastUpdate;
 	this.lastUpdate = Date.now()
 
 	_regeneratorServer.update(dt);
-	console.log("Deltatime:" + dt);
 }
 // Run game loop:
 var intervalId = setInterval(run, 100);
