@@ -79,6 +79,8 @@
 	,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
 	;
 	
+	var isServer = false;
+	
 	var game = new Game();
 	
 	function tryRegister(username, email, password) {		

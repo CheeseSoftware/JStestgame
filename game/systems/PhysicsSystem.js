@@ -1,7 +1,7 @@
 
 ECS.Systems.PhysicsSystem = CES.System.extend({
     update: function (dt) {
-        var entities = this.world.getEntities('physics', 'player');
+        var entities = this.world.getEntities('physics');
  
         entities.forEach(function (entity) {
 			var physics = entity.getComponent('physics');
@@ -59,6 +59,10 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				if(disWalked > 0)
 					drawable.animate("feet", "feet", disWalked, false);
 			}
+			
+			/*if(isServer) {
+				console.log("x" + physics.x + " y" + physics.y);
+			}*/
 			
 			physics.oldX = physics.x;
 			physics.oldY = physics.y;

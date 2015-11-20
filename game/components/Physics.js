@@ -4,7 +4,6 @@ ECS.Components.Physics = CES.Component.extend({
 	init: function (body, ghostBody) {
 		this.body = body;
 		this.ghostBody = ghostBody;
-		
 		// oldX and oldY used for feet animation
 		this.oldX = 0;
 		this.oldY = 0;
@@ -19,6 +18,8 @@ ECS.Components.Physics = CES.Component.extend({
 		this.speedLimit = 160;
 		this.speedDecreaseSpeed = 0.05;
 		this.moveSpeed = 5.0;
+		
+		this.rotation = 0; // Prevent nasty things
     }
 });
 

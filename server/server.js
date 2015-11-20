@@ -3,17 +3,22 @@ fs = require('fs');
 
 var include = function( lib ) {
 	data = fs.readFileSync("../" + lib, 'utf8');
-
 	eval(data);
 }
 
+//include("lib/Box2D.js");	<- evil library
+
 // Libraries
-//include("lib/Box2D.js");
 var CES = require('ces');
+var crypto = require('crypto');
+var Box2D = require('box2dweb-commonjs').Box2D;
 include("lib/perlin.js");
+include("lib/gl-matrix.js");
 
 // Core
 include("game/Observable.js");
+include("game/EntityMap.js");
+include("game/vec2.js");
 
 // Tiles
 include("game/TileType.js");
@@ -26,11 +31,50 @@ include("game/ChunkManager.js");
 include("game/ChunkServer.js");
 include("game/RegeneratorServer.js");
 
-// Initialize entityWorld
-entityWorld = new CES.World();
+// Entity systems and components
+var ECS = {
+	Components: {},
+	Systems: {}
+};	
+include("game/systems/PhysicsSystem.js");
+include("game/systems/TerrainPhysicsSystem.js");
+include("game/components/Physics.js");
+
+include("game/EntityServer.js");
+
+// Initialize physics
+var   b2Vec2 = Box2D.Common.Math.b2Vec2
+,  b2AABB = Box2D.Collision.b2AABB
+,	b2BodyDef = Box2D.Dynamics.b2BodyDef
+,	b2Body = Box2D.Dynamics.b2Body
+,	b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+,	b2Fixture = Box2D.Dynamics.b2Fixture
+,	b2World = Box2D.Dynamics.b2World
+,	b2MassData = Box2D.Collision.Shapes.b2MassData
+,	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+,	b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
+;
+
+
+physicsWorld = new b2World(new b2Vec2(0, 0), false)
 
 // Initialize chunkManager
 _chunkManager = new ChunkManager();
+
+// Initialize entityWorld
+entityWorld = new CES.World();
+entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
+var terrainPhysicsSystem = new ECS.Systems.TerrainPhysicsSystem(_chunkManager);
+entityWorld.addSystem(terrainPhysicsSystem);
+
+// Initialize entityServer
+entityServer = new EntityServer();
+for(var i = 0; i < 10; i++) {
+	var uuid = entityServer.generateUUID(); 
+	console.log(uuid);
+}
 
 var http = require('http'),
     fs = require('fs');
@@ -39,6 +83,8 @@ var app = http.createServer(function(req, res) {
     res.end();
 });
 var io = require('socket.io').listen(app);
+var isServer = true;
+
 // Initialize server systems
 _chunkServer = new ChunkServer(_chunkManager, io);
 _regeneratorServer = new RegeneratorServer(_chunkManager, io)
@@ -50,6 +96,11 @@ var mapData = {
 	height: 256,
 	tileSize: 64
 };
+
+// Load dem constants
+var constants = {
+	playerFatness: 30
+}
 
 var mongo = require('mongodb'),
   Server = mongo.Server,
@@ -73,15 +124,17 @@ io.on('connection', function(socket) {
 	// Send existing players to the new player
 	Object.keys(players).forEach(function (key) { 
 		var player = players[key];
-		socket.emit('playerjoin', {
-			name: player.name,
-			x: player.x,
-			y: player.y,
-			vx: player.vx,
-			vy: player.vy,
-			rotation: player.rotation,
-			playState: player.playState
-		});
+		if(player.entity) {
+			var physics = player.entity.getComponent('physics');
+			socket.emit('playerjoin', {
+				name: player.name,
+				x: physics.x,
+				y: physics.y,
+				vx: physics.vx,
+				vy: physics.vy,
+				rotation: physics.rotation
+			});
+		}
 	});
 	
 	socket.on('error', console.error.bind(console));
@@ -95,8 +148,8 @@ io.on('connection', function(socket) {
     });
 	
 	socket.on('playerupdate', function(data) {
-		//console.log("Received playerupdate " + data.name);
-		if(players[socket.id] != undefined) {
+		
+		/*if(players[socket.id] != undefined) {
 			players[socket.id] = { 
 				name: data.name, 
 				x: data.x, 
@@ -107,7 +160,17 @@ io.on('connection', function(socket) {
 				dy: data.dy,
 				rotation: data.rotation 
 			};
-		}
+		}*/
+		
+		var physics = players[socket.id].entity.getComponent('physics');
+		physics.x = data.x;
+		physics.y = data.y;
+		physics.vx = data.vx;
+		physics.vy = data.vy;
+		physics.dx = data.dx;
+		physics.dy = data.dy;
+		physics.rotation = data.rotation;
+		
 		socket.broadcast.emit('playerupdate', {
 			name: data.name,
 			x: data.x,
@@ -123,21 +186,44 @@ io.on('connection', function(socket) {
 	socket.on('playerinit', function(data) {
 		data.name = "player" + Math.round(Math.random() * 65536);
 		console.log(data.name + " has connected.");
-		players[socket.id] = { name: data.name, x: 128, y: 128, rotation: 0 };
+		players[socket.id] = { name: data.name };
+		
+		// Initialize physics stuff
+		var fixDef = new b2FixtureDef;
+		fixDef.density = 1.0;
+		fixDef.friction = 0.5;
+		fixDef.restitution = 0.2;
+		var bodyDef = new b2BodyDef;
+		bodyDef.type = b2Body.b2_dynamicBody;
+		fixDef.shape = new b2CircleShape(constants.playerFatness);
+		bodyDef.position.Set(10, 400 / 30 + 1.8);
+		var physicsBody = physicsWorld.CreateBody(bodyDef);
+		var ghostBody = physicsWorld.CreateBody(bodyDef);
+		physicsBody.CreateFixture(fixDef);
+		ghostBody.CreateFixture(fixDef);
+		
+		var entity = entityServer.createEntity();
+		var physics = new ECS.Components.Physics(physicsBody, ghostBody);
+		physics.x = 128;
+		physics.y = 128;
+		entity.addComponent(physics);
+		entityWorld.addEntity(entity);
+		players[socket.id].entity = entity;
+		
 		socket.emit('playerinit', {
+			uuid: entity.uuid,
 			name: data.name,
-			x: players[socket.id].x,
-			y: players[socket.id].y,
-			rotation: players[socket.id].rotation
+			x: physics.x,
+			y: physics.y,
+			rotation: physics.rotation
 		});
 		
-		
 		socket.broadcast.emit('playerjoin', {
+			uuid: entity.uuid,
 			name: data.name,
-			x: players[socket.id].x,
-			y: players[socket.id].y,
-			rotation: players[socket.id].rotation,		
-			playState: { up: false, down: false, left: false, right: false, dig: false }
+			x: physics.x,
+			y: physics.y,
+			rotation: physics.rotation
 		});
 	});
 	
@@ -147,6 +233,7 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('playerdig', function(data) {
+		//console.log("x " + data.x + " y" + data.y);
 		_chunkManager.fillCircle(parseFloat(data.x)/32.0, parseFloat(data.y)/32.0, data.digRadius);
 		io.sockets.emit('dig', data);
 	});
@@ -219,6 +306,10 @@ run = function() {
 	this.lastUpdate = Date.now()
 
 	entityWorld.update(dt);
+	
+	physicsWorld.Step(1 / 60.0, 10, 10);
+	physicsWorld.DrawDebugData();
+	
 	_regeneratorServer.update(dt);
 }
 // Run game loop:
