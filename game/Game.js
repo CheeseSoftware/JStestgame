@@ -58,7 +58,7 @@ Game.prototype.load = function() {
 	this.physicsWorld = new b2World(new b2Vec2(0, 0), false); // Args: gravity, sleep
 	
 	//TODO: Fix and move playerContactListener
-	/*var playerContactListener = new Box2D.Dynamics.b2ContactListener;// Contact listener begin: Temporarily disable player-to-player collisions
+	var playerContactListener = new Box2D.Dynamics.b2ContactListener;// Contact listener begin: Temporarily disable player-to-player collisions
 	playerContactListener.BeginContact = function (contact) {
 	  //console.log("begincontact");
 	}
@@ -72,7 +72,7 @@ Game.prototype.load = function() {
 		//console.log("PreSolve");
 		contact.SetEnabled(false);
 	}
-	this.physicsWorld.SetContactListener(playerContactListener);*/
+	this.physicsWorld.SetContactListener(playerContactListener);
 	
 	
 	
@@ -180,23 +180,23 @@ Game.prototype.spawnPlayer = function(name) {
 	bodySprite.position.y = 0.5;
 	var text = new PIXI.Text(name, { fill: '#ffffff' });
 	
+	// Initialize physics stuff
 	var fixDef = new b2FixtureDef;
 	fixDef.density = 1.0;
 	fixDef.friction = 0.5;
 	fixDef.restitution = 0.2;
-	
 	var bodyDef = new b2BodyDef;
 	bodyDef.type = b2Body.b2_dynamicBody;
-	
 	fixDef.shape = new b2CircleShape(sprite.width/6);
-	
 	bodyDef.position.Set(10, 400 / 30 + 1.8);
 	var physicsBody = this.physicsWorld.CreateBody(bodyDef);
+	var ghostBody = this.physicsWorld.CreateBody(bodyDef);
 	physicsBody.CreateFixture(fixDef);
+	ghostBody.CreateFixture(fixDef);
 	
 	var player = new CES.Entity();
 	player.addComponent(new ECS.Components.Player(name, sprite, text));
-	player.addComponent(new ECS.Components.Physics(physicsBody));
+	player.addComponent(new ECS.Components.Physics(physicsBody, ghostBody));
 	var bodyparts = {
 		"feet": {
 			"sprite": sprite
@@ -213,6 +213,7 @@ Game.prototype.spawnPlayer = function(name) {
 	this.stage.addChild(bodySprite);
 	this.stage.addChild(text);
 	this.players[name] = player;
+	
 	return player;
 }
 
@@ -255,23 +256,26 @@ Game.prototype.initializeListeners = function() {
 		console.log(data.name + " has connected.");
 		var player = context.spawnPlayer(data.name);
 		var physics = player.getComponent("physics");
+		physics.gx = data.x;
+		physics.gy = data.y;
 		physics.x = data.x;
 		physics.y = data.y;
 		physics.rotation = data.rotation;
 		physics.playState = data.playState;
-		physics.body.userData = { type: "mainPlayer" };
+		//physics.body.userData = { type: "mainPlayer" };
 		context.players[data.name] = player;
 	}, this);
 	
 	this.connection.on('playerinit', function(data, context) {
 		context.player = context.spawnPlayer(data.name);
-		//context.player.username = data.name;
-		context.player.addComponent(new ECS.Components.ControlledPlayer());
+		context.player.addComponent(new ECS.Components.Controlled());
 	
 		var player = context.player.getComponent('player');
 		var physics = context.player.getComponent('physics');
 		physics.x = data.x;
 		physics.y = data.y;
+		physics.gx = data.x;
+		physics.gy = data.y;
 		physics.rotation = data.rotation;
 		physics.playState = keyboard.getPlayState();
 	}, this);
@@ -280,13 +284,16 @@ Game.prototype.initializeListeners = function() {
 		var player = context.players[data.name];
 		if(player != undefined) {
 			var physics = player.getComponent("physics");
-			physics.x = data.x;
-			physics.y = data.y;
-			physics.vx = data.vx;
-			physics.vy = data.vy;
-			physics.rotation = data.rotation;
-			if(!player.hasComponent("controlledplayer"))
-				physics.playState = data.playState;
+
+			physics.gx = data.x;
+			physics.gy = data.y;
+			physics.gvx = data.vx;
+			physics.gvy = data.vy;
+			
+			physics.time = new Date();
+			
+			physics.rotation = data.rotation;		
+			physics.playState = data.playState;
 		}
 		else
 			console.log("undefined");
@@ -306,7 +313,7 @@ Game.prototype.initializeListeners = function() {
 		var y = data.y;
 		var digRadius = data.digRadius;
 		context.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, digRadius);
-		if(!context.players[data.username].getComponent("controlledplayer"))
+		if(!context.players[data.username].getComponent("controlled"))
 			context.players[data.username].getComponent("drawable").animate("body", "dig", 240, true);
 	}, this);
 	

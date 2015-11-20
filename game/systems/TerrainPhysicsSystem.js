@@ -4,15 +4,11 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
         var entities = this.world.getEntities('physics', 'player');
 		
 		entities.forEach(function (entity) {
-			physics = entity.getComponent('physics');
-            player = entity.getComponent('player');
-			// Prevent random rotation
-			physics.angularVelocity = 0;
+			var physics = entity.getComponent('physics');
+            var player = entity.getComponent('player');
+			var isControlled = entity.getComponent('controlled');
 			
-			var oldX = physics.oldX;
-			var oldY = physics.oldY;
-
-					
+			// Simulate terrain physics for PLAYERS
 			var density = game.chunkManager.calcDensity(physics.x/32.0-0.5, physics.y/32.0-0.5);
 			var normal = game.chunkManager.calcNormal(physics.x/32.0-0.5, physics.y/32.0-0.5);
 			
@@ -20,12 +16,15 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 				physics.x += 0.05*normal[0]*(density-1);
 				physics.y += 0.05*normal[1]*(density-1);
 			}
+			
+			// Simulate terrain physics for GHOSTS
+			var density = game.chunkManager.calcDensity(physics.gx/32.0-0.5, physics.gy/32.0-0.5);
+			var normal = game.chunkManager.calcNormal(physics.gx/32.0-0.5, physics.gy/32.0-0.5);
+			
+			if (density >= 1.0) {
+				physics.gx += 0.05*normal[0]*(density-1);
+				physics.gy += 0.05*normal[1]*(density-1);
+			}
         });
     }
 });
-
-/*checkCollision = function(x1, y1, r1, x2, y2, r2) {
-	if(Math.sqrt(Math.pow(y2-y1, 2) + Math.pow(x2-x1, 2)) < r1 + r2)
-		return true;
-	return false;
-}*/
