@@ -186,9 +186,7 @@ Game.prototype.sendUpdatePacket = function() {
 }
 
 Game.prototype.spawnMainPlayer = function() {
-	this.connection.send('playerinit', { 
-		username: "player username that will be selected when accounts exist"
-	});
+	this.connection.send('playerinit', { });
 }
 
 Game.prototype.despawnEntity = function(uuid) {
@@ -229,6 +227,11 @@ Game.prototype.initializeListeners = function() {
 	
 	this.connection.on('message', function(data) {
 		console.log(data);
+	});
+	
+	this.connection.on('disconnect', function(data){
+		location.reload();
+		console.log("Disconnected from server, reloaded page.");
 	});
 	
 	this.connection.on('playerjoin', function(data, context) {
@@ -289,13 +292,18 @@ Game.prototype.initializeListeners = function() {
 		
 		if(entity != undefined) {
 			var player = entity.getComponent("player");
+			var physics = entity.getComponent("physics");
 			var drawable = entity.getComponent("drawable");
 			if(player) {
 				player.isDigging = data.isDigging;
-				if(data.isDigging)
+				if(data.isDigging) {
 					drawable.animate("body", "dig", 400, false);
-				else if(drawable.bodyparts.body.animating)
+					physics.moveSpeed = constants.digMoveSpeed;
+				}
+				else if(drawable.bodyparts.body.animating) {
 					drawable.animate("body", "dig", 400, true);
+					physics.moveSpeed = constants.moveSpeed;
+				}
 			}
 			else
 				console.log("playerupdate: entity is not a player");

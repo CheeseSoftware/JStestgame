@@ -8,7 +8,7 @@ var simple_include = function( lib ) {
 }
 
 // Include common.js with the include system.
-simple_include("game/common.js");
+simple_include("game/Common.js");
 
 // Update the game files used by the http-server.
 simple_include("server/UpdateGame.js");
@@ -185,9 +185,9 @@ ServerInstance.prototype.load = function() {
 		
 		socket.on('playerinit', function(data) {
 			var uuid = generateUUID(); // TODO: load uuid from database
-			var entity = entityTemplates.player(data.username, uuid);
-			data.username = uuid; //TODO: load username from database
-			this.players[socket.id] = { username: data.username , uuid: uuid};
+			var username = uuid; //TODO: load username from database
+			var entity = entityTemplates.player(username, uuid);
+			this.players[socket.id] = { username: username , uuid: uuid};
 			
 			var physics = entity.getComponent('physics');
 			physics.x = 128;
@@ -201,7 +201,7 @@ ServerInstance.prototype.load = function() {
 	
 			socket.emit('playerinit', {
 				uuid: uuid,
-				username: data.username,
+				username: username,
 				x: physics.x,
 				y: physics.y,
 				rotation: physics.rotation
@@ -209,7 +209,7 @@ ServerInstance.prototype.load = function() {
 			
 			socket.broadcast.emit('playerjoin', {
 				uuid: uuid,
-				username: data.username,
+				username: username,
 				x: physics.x,
 				y: physics.y,
 				rotation: physics.rotation
@@ -256,6 +256,6 @@ ServerInstance.prototype.load = function() {
 		
 		this.regeneratorServer.update(dt);
 	}.bind(this);
-	var intervalId = setInterval(this.run, 0.0);
+	var intervalId = setInterval(this.run, 100);
 }
 GLOBAL.server = new ServerInstance();
