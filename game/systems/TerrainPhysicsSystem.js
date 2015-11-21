@@ -4,67 +4,76 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 	},
     update: function (dt) {
         var entities = this.world.getEntities('physics');
-		
-		//return;
-		// DO NOT REMOVE THIS RETURN UNTIL YOU HAVE FIXED "vec2" ON SERVER
-		
+
 		entities.forEach(function (entity) {
 			var physics = entity.getComponent('physics');
 			var isControlled = entity.getComponent('controlled');
 			
-			var pos = v2.create(physics.x, physics.y);
-			var normal = v2.create(0.0, 0.0);
-			var distance = 4.0;
-
-
-			for (angle = 0; angle < 360; angle+=18) {
-				var dir = v2.create(Math.cos(angle*3.14/180), Math.sin(angle*3.14/180));
-				var rayDis = Math.max(raymarch(pos, dir, 8), -1.0);
-				
-				if (rayDis >= distance)
-					continue;
-
-				distance = rayDis;
-
-				var pushStrengthTemp = Math.max(1.0 - rayDis, 0.0);
-				v2.multiply(pushStrengthTemp, dir, normal);
-			}
-
-			if (v2.length(normal) <= 0.0)
-				return;
-
-			if (distance <= -1.0)
-				return;
-
-			v2.normalize(normal, normal);
-
-			var pushStrength = Math.max(1.0 - distance, -1.0);
-
-			if (pushStrength <= 0.0)
-				return;
-
-			physics.x += -normal[0]*pushStrength*pushStrength*32.0/4.0;
-			physics.y += -normal[1]*pushStrength*pushStrength*32.0/4.0;
-
-			var normalForce = v2.clone(normal);
-			var velocity = v2.create(physics.vx, physics.vy);
-			var dot = Math.max(v2.dot(normal, velocity), 0.0)
-			v2.multiply(-dot, normalForce, normalForce);
-			physics.vx += normalForce[0];
-			physics.vy += normalForce[1];
-			var velocityDir = v2.create(physics.vx, physics.vy);
-			if (v2.length(velocityDir) > 0.0) {
-				v2.normalize(velocityDir, velocityDir);
-				var frictionConstant = 0.03125;
-				var frictionStrength =(1.0-Math.pow(1.0-frictionConstant, dt))*v2.length(normalForce);
-				physics.vx -= v2.clampF(velocityDir[0]*frictionStrength, 0.0, physics.vx);
-				physics.vy -= v2.clampF(velocityDir[1]*frictionStrength, 0.0, physics.vy);
-			}
-        });
+			var input = { x:physics.x, y:physics.y, vx:physics.vx, vy:physics.vy };
+			var values = this.simulate(dt, input);
+			physics.x = values.x; physics.y = values.y; physics.vx = values.vx; physics.vy = values.vy;
+			 
+			input = { x:physics.gx, y:physics.gy, vx:physics.gvx, vy:physics.gvy };
+			values = this.simulate(dt, input);
+			physics.gx = values.x; physics.gy = values.y; physics.gvx = values.vx; physics.gvy = values.vy;
+        }.bind(this));
     }
 
 
 });
+
+
+ECS.Systems.TerrainPhysicsSystem.prototype.simulate = function(dt, values) {
+	var pos = v2.create(values.x, values.y);
+	var normal = v2.create(0.0, 0.0);
+	var distance = 4.0;
+
+
+	for (angle = 0; angle < 360; angle+=18) {
+		var dir = v2.create(Math.cos(angle*3.14/180), Math.sin(angle*3.14/180));
+		var rayDis = Math.max(this.raymarch(pos, dir, 8), -1.0);
+		
+		if (rayDis >= distance)
+			continue;
+
+		distance = rayDis;
+
+		var pushStrengthTemp = Math.max(1.0 - rayDis, 0.0);
+		v2.multiply(pushStrengthTemp, dir, normal);
+	}
+
+	if (v2.length(normal) <= 0.0)
+		return values;
+
+	if (distance <= -1.0)
+		return values;
+
+	v2.normalize(normal, normal);
+
+	var pushStrength = Math.max(1.0 - distance, -1.0);
+
+	if (pushStrength <= 0.0)
+		return values;
+
+	values.x += -normal[0]*pushStrength*pushStrength*32.0/4.0;
+	values.y += -normal[1]*pushStrength*pushStrength*32.0/4.0;
+
+	var normalForce = v2.clone(normal);
+	var velocity = v2.create(values.vx, values.vy);
+	var dot = Math.max(v2.dot(normal, velocity), 0.0)
+	v2.multiply(-dot, normalForce, normalForce);
+	values.vx += normalForce[0];
+	values.vy += normalForce[1];
+	var velocityDir = v2.create(values.vx, values.vy);
+	if (v2.length(velocityDir) > 0.0) {
+		v2.normalize(velocityDir, velocityDir);
+		var frictionConstant = 0.03125;
+		var frictionStrength =(1.0-Math.pow(1.0-frictionConstant, dt))*v2.length(normalForce);
+		values.vx -= v2.clampF(velocityDir[0]*frictionStrength, 0.0, values.vx);
+		values.vy -= v2.clampF(velocityDir[1]*frictionStrength, 0.0, values.vy);
+	}
+	return values;
+}
 
 
 /* return: float rayDis;
@@ -73,14 +82,14 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
  * dir: float[2]
  * numIterations: int
  */
-raymarch = function(pos, dir, numIterations) {
+ECS.Systems.TerrainPhysicsSystem.prototype.raymarch = function(pos, dir, numIterations) {
 
 	var rayDis = 0.0;
 	var rayPos = v2.clone(pos);
 	var rayDeltaPos = v2.create(0.0, 0.0);
 
 	for(i = 0; i < numIterations; ++i) {
-		var dis = map(rayPos);
+		var dis = this.map(rayPos);
 		rayDis += 0.5*dis
 
 		v2.multiply(rayDis, dir, rayDeltaPos);
@@ -94,7 +103,7 @@ raymarch = function(pos, dir, numIterations) {
  *
  * pos: float[2]
  */
-map = function(pos) {
+ECS.Systems.TerrainPhysicsSystem.prototype.map = function(pos) {
 	var floatDensity = ECS.Systems.TerrainPhysicsSystem.chunkManager.calcDensity(pos[0]/32.0-0.5, pos[1]/32.0-0.5)/255.0;
 
 	var distance = 0.5-floatDensity;
