@@ -11,6 +11,10 @@ var simple_include = function( lib ) {
 // Include common.js with the include system.
 simple_include("game/common.js");
 
+// Update the game files used by the http-server.
+simple_include("server/UpdateGame.js");
+updateGame();
+
 //include("lib/Box2D.js");	<- evil library
 
 // Libraries
@@ -66,6 +70,9 @@ include("game/components/Physics.js");
 
 include("game/EntityServer.js");
 
+
+
+
 ServerInstance = function() {
 	this.load();
 }
@@ -91,6 +98,7 @@ ServerInstance.prototype.load = function() {
 	var app = http.createServer(function(req, res) {
 		res.end();
 	});
+
 	var io = require('socket.io').listen(app);
 	
 	// Initialize server systems
