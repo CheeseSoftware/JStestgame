@@ -109,10 +109,11 @@ ServerInstance.prototype.load = function() {
 	var mapData = {
 		width: 256,
 		height: 256,
+		tileSize: 16
 	};
 	
 	this.io.on('connection', function(socket) {
-		socket.emit('init', { mapWidth: mapData.width, mapHeight: mapData.height });
+		socket.emit('init', { mapWidth: mapData.width, mapHeight: mapData.height, tileSize: mapData.tileSize });
 		this.io.sockets.emit('message', "A client has joined with IP " + socket.request.connection.remoteAddress);
 	
 		// Send existing players to the new player
@@ -184,6 +185,12 @@ ServerInstance.prototype.load = function() {
 		}.bind(this));
 		
 		socket.on('playerinit', function(data) {
+			if(this.players[socket.id]) {
+				// This player is already playing...
+				socket.disconnect();
+				return;
+			}
+			
 			var uuid = generateUUID(); // TODO: load uuid from database
 			var username = uuid; //TODO: load username from database
 			var entity = entityTemplates.player(username, uuid);
@@ -215,7 +222,7 @@ ServerInstance.prototype.load = function() {
 				rotation: physics.rotation
 			});
 			
-			console.log(data.username + " has connected.");
+			console.log(username + " has connected.");
 		}.bind(this));
 		
 		socket.on('dig', function(data) {

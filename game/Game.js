@@ -222,8 +222,8 @@ Game.prototype.initializeListeners = function() {
 		
 		context.tileSize = data.tileSize;
 		
-		context.camera.target.x = context.tileMap.width * context.tileSize - context.camera.viewport.width / 2;
-		context.camera.target.y = context.tileMap.height * context.tileSize - context.camera.viewport.height / 2;
+		context.camera.target.x = 128;
+		context.camera.target.y = 128;
 	}, this);
 	
 	this.connection.on('error', console.error.bind(console));
