@@ -36,8 +36,11 @@ include("lib/perlin.js");
 include("lib/gl-matrix.js");
 
 // Core
-include("game/Constants.js");
 include("game/core/Observable.js");
+include("game/core/v2.js");
+
+
+include("game/Constants.js");
 include("game/EntityMap.js");
 include("game/EntityTemplates.js");
 
