@@ -55,3 +55,13 @@ v2.lengthSquared = function(a) {
 v2.dot = function(a, b) {
 	return a[0]*b[0] + a[1]*b[1];
 }
+
+v2.clampF = function(a, min, max) {
+	if (min <= max) {
+		return Math.max(Math.min(a, max), min);
+	}
+	else {
+		return Math.max(Math.min(a, min), max);
+	}
+	
+}

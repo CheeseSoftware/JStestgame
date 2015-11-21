@@ -1,6 +1,3 @@
-include("game/core/v2.js");
-
-
 ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 	init: function(chunkManager) {
 		ECS.Systems.TerrainPhysicsSystem.chunkManager = chunkManager;
@@ -15,12 +12,8 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 			var physics = entity.getComponent('physics');
 			var isControlled = entity.getComponent('controlled');
 			
-			// Simulate terrain physics for PLAYERS
-			var density = ECS.Systems.TerrainPhysicsSystem.chunkManager.calcDensity(physics.x/32.0-0.5, physics.y/32.0-0.5);
-			var normal = ECS.Systems.TerrainPhysicsSystem.chunkManager.calcNormal(physics.x/32.0-0.5, physics.y/32.0-0.5);
-
 			var pos = v2.create(physics.x, physics.y);
-			var normal2 = v2.create(normal.x, normal.y);
+			var normal = v2.create(0.0, 0.0);
 			var distance = 4.0;
 
 
@@ -34,70 +27,39 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 				distance = rayDis;
 
 				var pushStrengthTemp = Math.max(1.0 - rayDis, 0.0);
-				v2.multiply(pushStrengthTemp, dir, normal2);
+				v2.multiply(pushStrengthTemp, dir, normal);
 			}
 
-			if (v2.length(normal2) <= 0.0)
+			if (v2.length(normal) <= 0.0)
 				return;
 
 			if (distance <= -1.0)
 				return;
 
-			v2.normalize(normal2, normal2);
-			normal.x = normal2[0];
-			normal.y = normal2[1];
+			v2.normalize(normal, normal);
 
 			var pushStrength = Math.max(1.0 - distance, -1.0);
 
 			if (pushStrength <= 0.0)
 				return;
 
-			physics.x += -normal.x*pushStrength*pushStrength*32.0/4.0;
-			physics.y += -normal.y*pushStrength*pushStrength*32.0/4.0;
+			physics.x += -normal[0]*pushStrength*pushStrength*32.0/4.0;
+			physics.y += -normal[1]*pushStrength*pushStrength*32.0/4.0;
 
-
-
-
-			// Simulate terrain physics for PLAYERS
-			var density = ECS.Systems.TerrainPhysicsSystem.chunkManager.calcDensity(physics.gx/32.0-0.5, physics.gy/32.0-0.5);
-			var normal = ECS.Systems.TerrainPhysicsSystem.chunkManager.calcNormal(physics.gx/32.0-0.5, physics.gy/32.0-0.5);
-			
-
-			var pos = v2.create(physics.gx, physics.gy);
-			var normal2 = v2.create(normal.x, normal.y);
-			var distance = 4.0;
-
-
-			for (angle = 0; angle < 360; angle+=18) {
-				var dir = v2.create(Math.cos(angle*3.14/180), Math.sin(angle*3.14/180));
-				var rayDis = Math.max(raymarch(pos, dir, 8), -1.0);
-				
-				if (rayDis >= distance)
-					continue;
-
-				distance = rayDis;
-
-				var pushStrengthTemp = Math.max(1.0 - rayDis, 0.0);
-				v2.multiply(pushStrengthTemp, dir, normal2);
+			var normalForce = v2.clone(normal);
+			var velocity = v2.create(physics.vx, physics.vy);
+			var dot = Math.max(v2.dot(normal, velocity), 0.0)
+			v2.multiply(-dot, normalForce, normalForce);
+			physics.vx += normalForce[0];
+			physics.vy += normalForce[1];
+			var velocityDir = v2.create(physics.vx, physics.vy);
+			if (v2.length(velocityDir) > 0.0) {
+				v2.normalize(velocityDir, velocityDir);
+				var frictionConstant = 0.03125;
+				var frictionStrength =(1.0-Math.pow(1.0-frictionConstant, dt))*v2.length(normalForce);
+				physics.vx -= v2.clampF(velocityDir[0]*frictionStrength, 0.0, physics.vx);
+				physics.vy -= v2.clampF(velocityDir[1]*frictionStrength, 0.0, physics.vy);
 			}
-
-			if (v2.length(normal2) <= 0.0)
-				return;
-
-			if (distance <= -1.0)
-				return;
-
-			v2.normalize(normal2, normal2);
-			normal.x = normal2[0];
-			normal.y = normal2[1];
-
-			var pushStrength = Math.max(1.0 - distance, -1.0);
-
-			if (pushStrength <= 0.0)
-				return;
-
-			physics.gx += -normal.x*pushStrength*pushStrength*32.0/4.0;
-			physics.gy += -normal.y*pushStrength*pushStrength*32.0/4.0;
         });
     }
 

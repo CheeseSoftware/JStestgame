@@ -33,6 +33,7 @@
 <script src="lib/bootstrap.min.js"></script> <!-- For progressbar -->
 
 <!-- classes -->
+<script src="game/core/v2.js"/></script>
 <script src="game/Constants.js"></script>
 <script src="game/EntityTemplates.js"></script>
 <script src="game/EntityMap.js"></script>
@@ -57,7 +58,6 @@
 <script src="game/Shader.js"/></script>
 <script src="game/ShaderProgram.js"/></script>
 <script src="game/core/Observable.js"/></script>
-<!--<script src="game/core/v2.js"/></script>-->
 
 <!-- Chunk system -->
 <script src="game/TileType.js"></script>
