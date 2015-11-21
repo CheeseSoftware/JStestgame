@@ -169,7 +169,7 @@ Game.prototype.sendUpdatePacket = function() {
 		var player = entity.getComponent('player');
 		var direction = keyboard.calculateDirection();
 		context.connection.send('entityupdate', {
-			uuid: player.uuid, 
+			uuid: entity.uuid, 
 			username: player.username,
 			x: physics.x,
 			y: physics.y,

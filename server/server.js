@@ -1,73 +1,73 @@
 
 isServer = true;
 
-Server = function() {
-		fs = require('fs');
+fs = require('fs');
 	
-	var simple_include = function( lib ) {
-		data = fs.readFileSync("../" + lib, 'utf8');
-		eval(data);
-	}
-	
-	// Include common.js with the include system.
-	simple_include("game/common.js");
-	
-	//include("lib/Box2D.js");	<- evil library
-	
-	// Libraries
-	CES = require('ces');
-	crypto = require('crypto');
-	
-	Box2D = require('box2dweb-commonjs').Box2D;
-	b2Vec2 = Box2D.Common.Math.b2Vec2
-	,  b2AABB = Box2D.Collision.b2AABB
-	,	b2BodyDef = Box2D.Dynamics.b2BodyDef
-	,	b2Body = Box2D.Dynamics.b2Body
-	,	b2FixtureDef = Box2D.Dynamics.b2FixtureDef
-	,	b2Fixture = Box2D.Dynamics.b2Fixture
-	,	b2World = Box2D.Dynamics.b2World
-	,	b2MassData = Box2D.Collision.Shapes.b2MassData
-	,	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
-	,	b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-	,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
-	,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
-	;
-	
-	include("lib/perlin.js");
-	include("lib/gl-matrix.js");
-	
-	// Core
-	include("game/Constants.js");
-	include("game/core/Observable.js");
-	include("game/EntityMap.js");
-	include("game/EntityTemplates.js");
-	
-	// Tiles
-	include("game/TileType.js");
-	include("game/TileRegister.js");
-	
-	// Chunks, World
-	include("game/Chunk.js");
-	include("game/Generator.js");
-	include("game/ChunkManager.js");
-	include("game/ChunkServer.js");
-	include("game/RegeneratorServer.js");
-	
-	// Entity systems and components
-	ECS = {
-		Components: {},
-		Systems: {}
-	};	
-	include("game/systems/PhysicsSystem.js");
-	include("game/systems/TerrainPhysicsSystem.js");
-	include("game/components/Physics.js");
-	
-	include("game/EntityServer.js");
-	
+var simple_include = function( lib ) {
+	data = fs.readFileSync("../" + lib, 'utf8');
+	eval(data);
+}
+
+// Include common.js with the include system.
+simple_include("game/common.js");
+
+//include("lib/Box2D.js");	<- evil library
+
+// Libraries
+CES = require('ces');
+crypto = require('crypto');
+
+Box2D = require('box2dweb-commonjs').Box2D;
+b2Vec2 = Box2D.Common.Math.b2Vec2
+,  b2AABB = Box2D.Collision.b2AABB
+,	b2BodyDef = Box2D.Dynamics.b2BodyDef
+,	b2Body = Box2D.Dynamics.b2Body
+,	b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+,	b2Fixture = Box2D.Dynamics.b2Fixture
+,	b2World = Box2D.Dynamics.b2World
+,	b2MassData = Box2D.Collision.Shapes.b2MassData
+,	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+,	b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
+;
+
+include("lib/perlin.js");
+include("lib/gl-matrix.js");
+
+// Core
+include("game/Constants.js");
+include("game/core/Observable.js");
+include("game/EntityMap.js");
+include("game/EntityTemplates.js");
+
+// Tiles
+include("game/TileType.js");
+include("game/TileRegister.js");
+
+// Chunks, World
+include("game/Chunk.js");
+include("game/Generator.js");
+include("game/ChunkManager.js");
+include("game/ChunkServer.js");
+include("game/RegeneratorServer.js");
+
+// Entity systems and components
+ECS = {
+	Components: {},
+	Systems: {}
+};	
+include("game/systems/PhysicsSystem.js");
+include("game/systems/TerrainPhysicsSystem.js");
+include("game/components/Physics.js");
+
+include("game/EntityServer.js");
+
+ServerInstance = function() {
 	this.load();
 }
 
-Server.prototype.load = function() {
+ServerInstance.prototype.load = function() {
 	this.physicsWorld = new b2World(new b2Vec2(0, 0), false);
 	
 	// Initialize chunkManager
@@ -80,7 +80,7 @@ Server.prototype.load = function() {
 	this.entityWorld.addSystem(terrainPhysicsSystem);
 	
 	// Initialize entityServer
-	entityServer = new EntityServer();
+	this.entityServer = new EntityServer();
 	
 	var http = require('http'),
 		fs = require('fs');
@@ -159,11 +159,11 @@ Server.prototype.load = function() {
 					username: players[socket.id].username,		
 				});
 				
-				entityWorld.removeEntity(players[socket.id].entity);
-				entityServer.entityMap.remove(players[socket.id].entity.uuid);
+				this.entityWorld.removeEntity(players[socket.id].entity);
+				this.entityServer.entityMap.remove(players[socket.id].entity.uuid);
 				delete players[socket.id];
 			}
-		});
+		}.bind(this));
 		
 		socket.on('entityupdate', function(data) {
 			var physics = players[socket.id].entity.getComponent('physics');
@@ -340,7 +340,7 @@ Server.prototype.load = function() {
 				}
 			});
 		});
-	});
+	}.bind(this));
 	
 	app.listen(3000);
 	console.log("Listening on port 3000");
@@ -361,4 +361,4 @@ Server.prototype.load = function() {
 	}
 	var intervalId = setInterval(this.run, 0);
 }
-server = new Server();
+GLOBAL.server = new ServerInstance();

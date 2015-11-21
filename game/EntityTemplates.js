@@ -25,14 +25,10 @@ entityTemplates.player = function(username, uuid) {
 		var sprite = new PIXI.Sprite(game.textureManager.textures.feet);
 		sprite.anchor.x = 0.5;
 		sprite.anchor.y = 0.5;
-		sprite.position.x = 0.5;
-		sprite.position.y = 0.5;
 		
 		var bodySprite = new PIXI.Sprite(game.textureManager.textures.dig);
 		bodySprite.anchor.x = 0.5;
 		bodySprite.anchor.y = 0.5;
-		bodySprite.position.x = 0.5;
-		bodySprite.position.y = 0.5;
 		
 		var bodyparts = {
 			"feet": {
@@ -45,7 +41,7 @@ entityTemplates.player = function(username, uuid) {
 		
 		var text = new PIXI.Text(username, { fill: '#ffffff' });
 		
-		entity.addComponent(new ECS.Components.Player(uuid, username, text));
+		entity.addComponent(new ECS.Components.Player(username, text));
 		var drawable = new ECS.Components.Drawable(bodyparts, game.animationManager, 0, 0);
 		entity.addComponent(drawable);
 		
@@ -64,7 +60,7 @@ entityTemplates.player = function(username, uuid) {
 
 entityTemplates.createEntity = function(uuid) {
 	if(isServer)
-		return entityServer.createEntity();
+		return server.entityServer.createEntity();
 	else
 		return game.entityClient.createEntity(uuid);
 }

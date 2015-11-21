@@ -1,8 +1,7 @@
 
 ECS.Components.Player = CES.Component.extend({
     name: 'player',
-    init: function (uuid, username, text) {
-		this.uuid = uuid;
+    init: function (username, text) {
         this.username = username;
 		this.text = text;
 		this.lastDig = new Date();
