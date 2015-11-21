@@ -4,18 +4,7 @@
 <link rel="stylesheet" href="lib/bootstrap.min.css">
 </head>
 
-<script src="lib/Box2D.js"></script>
-<script src="lib/ces-browser.js"></script>
-<script src="lib/pixi.js"></script>
-<script src="lib/socket.io-1.3.5.js"></script>
-<script src="lib/gl-matrix.js"></script>
-<script src="lib/perlin.js"></script>
-<script src="lib/jquery-2.1.x.js"></script>
-<script src="lib/bootstrap.min.js"></script> <!-- For progressbar -->
-
-<script src="temp/DigMiner.js"></script>
-
-<script>
+<script type="application/javascript">
 	window.vars = { 
 		<?php
 			$ip = (isset($_GET["ip"]) ? '"' . $_GET["ip"] . '"' : '"107.6.140.41"');
@@ -31,7 +20,20 @@
 	};		
 
 	var isServer = false;
+</script>
 
+<script src="lib/Box2D.js"></script>
+<script src="lib/ces-browser.js"></script>
+<script src="lib/pixi.js"></script>
+<script src="lib/socket.io-1.3.5.js"></script>
+<script src="lib/gl-matrix.js"></script>
+<script src="lib/perlin.js"></script>
+<script src="lib/jquery-2.1.x.js"></script>
+<script src="lib/bootstrap.min.js"></script> <!-- For progressbar -->
+
+<script src="temp/DigMiner.js"></script>
+
+<script>
 	var   b2Vec2 = Box2D.Common.Math.b2Vec2
 	,  b2AABB = Box2D.Collision.b2AABB
 	,	b2BodyDef = Box2D.Dynamics.b2BodyDef
