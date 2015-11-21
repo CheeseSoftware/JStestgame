@@ -60,6 +60,9 @@ Game.prototype.load = function() {
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
 	this.entityWorld.addSystem(new ECS.Systems.AnimationSystem());
 	
+	// Initialize BattleManagger
+	this.battleManagger = new BattleManager(this.entityWorld);
+
 	// Initialize animationManager
 	this.animationManager = new AnimationManager();
 	this.animationManager.load(this.textureManager);
@@ -318,6 +321,13 @@ Game.prototype.initializeListeners = function() {
 		var y = data.y;
 		var digRadius = data.digRadius;
 		context.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, digRadius);
+
+
+		// Temporary Battle code
+		var entityId = context.entityClient.entityMap.getEntityId(uuid);
+ 		var entity = context.entityWorld.getEntity(entityId);
+
+		context.battleManagger.hit(entity, [x, y], 8.0, 20.0);
 	}, this);
 	
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Register and login below >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
