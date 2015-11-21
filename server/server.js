@@ -1,4 +1,3 @@
-
 isServer = true;
 
 fs = require('fs');
@@ -60,11 +59,14 @@ ECS = {
 	Components: {},
 	Systems: {}
 };	
+
 include("game/systems/PhysicsSystem.js");
 include("game/systems/TerrainPhysicsSystem.js");
 include("game/components/Physics.js");
 
 include("game/EntityServer.js");
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Server begin >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 ServerInstance = function() {
 	this.load();
@@ -110,9 +112,9 @@ ServerInstance.prototype.load = function() {
 	  Db = mongo.Db;
 	
 	var server = new Server('localhost', 27017, {auto_reconnect: true});
-	var db = new Db('digminer', server);
+	this.db = new Db('digminer', server);
 	
-	db.open(function(err, db) {
+	this.db.open(function(err, db) {
 		if(!err) {
 			console.log("We are connected");
 		}
@@ -237,119 +239,9 @@ ServerInstance.prototype.load = function() {
 			io.sockets.emit('dig', data);
 		});
 		
-		/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Register and login below >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+		require("../game/RegisterHandler.js")(socket, this);
+		require("../game/LoginHandler.js")(socket, this);
 		
-		socket.on('register', function(data) {
-			//TODO: verify data
-			
-			if(!data.username || !validateUsername(data.username)) {
-				socket.emit('registerresponse', { success: false, response:"Username is invalid. It has to be between 3-20 normal characters."});
-				return;
-			}
-			
-			if(!data.email || !validateEmail(data.email)) {
-				socket.emit('registerresponse', { success: false, response:"Email is invalid."});
-				return;
-			}
-			
-			if(!data.password) {
-				socket.emit('registerresponse', { success: false, response:"Password is empty."});
-				return;
-			}
-			
-			db.collection('users', function(err, collectionref) { 
-				if(err)
-					console.log(err);			
-				collectionref.findOne({"username":data.username}, function(err, doc) {
-					if(err)
-						console.log(err);
-					if(doc) {
-						socket.emit('registerresponse', { success: false, response:"A user already exists with username \"" + data.username + "\""});
-					}
-					else {
-						collectionref.findOne({"email":data.email}, function(err, doc) {
-						if(err)
-							console.log(err);
-						if(doc) {
-							socket.emit('registerresponse', { success: false, response:"A user already exists with email \"" + data.email + "\""});
-							return;
-						}
-						else {
-							var doc = {"username":data.username, "email":data.email, "password":data.password};
-							collectionref.insert(doc, function (err, result) {
-								if(err)
-									console.log(err);
-								else
-									socket.emit('registerresponse', { success: true, response:"User has been created."});
-							});
-						}
-					});
-					}
-				});
-			});
-		});
-		
-		socket.on('login', function(data) {
-			//TODO: verify data
-			
-			if(!data.username) {
-				socket.emit('registerresponse', { success: false, response:"Username/email is empty."});
-				return;
-			}
-			
-			if(!data.password) {
-				socket.emit('registerresponse', { success: false, response:"Password is empty."});
-				return;
-			}
-			
-			db.collection('users', function(err, collectionref) { 
-				if(err)
-					console.log(err);
-					
-				var user;
-					
-				if(validateEmail(data.username)) {
-					//username is email
-					collectionref.findOne({"email:":data.username}, function(err, doc) {
-						if(err)
-							console.log(err);
-						if(doc) {
-							user = doc;
-						}
-						else {
-							socket.emit('registerresponse', { success: false, response:"User with specified email does not exist."});
-							return;
-						}
-					});
-				} else if(validateUsername(data.username)) {
-					//username is email
-					collectionref.findOne({"username:":data.username}, function(err, doc) {
-						if(err)
-							console.log(err);
-						if(doc) {
-							user = doc;
-						}
-						else {
-							socket.emit('registerresponse', { success: false, response:"User with specified username does not exist."});
-							return;
-						}
-					});
-				}
-				
-				if(user) {
-					// User with email found, check password match
-					if(doc["password"] == data.password) {
-						//TODO: LOGIN
-						socket.emit('registerresponse', { success: true, response:"You have been logged in."});
-						return;
-					}
-				}
-				else {
-					socket.emit('registerresponse', { success: false, response:"Invalid username/email."});
-					return;
-				}
-			});
-		});
 	}.bind(this));
 	
 	app.listen(3000);
