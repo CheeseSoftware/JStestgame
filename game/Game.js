@@ -95,7 +95,7 @@ Game.prototype.load = function() {
 	this.initializeListeners();
 	
 	// Initialize client systems
-	this.entityClient = new EntityClient();
+	this.entityClient = new EntityClient(this.entityWorld);
 	this.chunkClient = new ChunkClient(this.chunkManager, this.connection);
 	this.regeneratorClient = new RegeneratorClient(this.chunkManager, this.connection);
 }
@@ -193,8 +193,8 @@ Game.prototype.spawnMainPlayer = function() {
 }
 
 Game.prototype.despawnEntity = function(uuid) {
-	var entityId = this.entityClient.entityMap.getEntityId(uuid);
-	var entity = this.entityWorld.getEntity(entityId);
+	var entity = this.entityClient.getEntity(uuid);
+
 	if(entity) {
 		var player = entity.getComponent('player');
 		if(player) {
@@ -205,8 +205,7 @@ Game.prototype.despawnEntity = function(uuid) {
 		if(drawable)
 			drawable.remove(this.stage);
 			
-		this.entityWorld.removeEntity(entity);
-		this.entityClient.entityMap.remove(uuid);
+		this.entityClient.removeEntity(uuid);
 	}
 	else
 		console.log("Could not despawn entity " + uuid);
@@ -214,17 +213,26 @@ Game.prototype.despawnEntity = function(uuid) {
 
 Game.prototype.initializeListeners = function() {
 	this.connection.on('init', function(data, context) {
+		
 		context.tileMap = { 
 			width: data.mapWidth,
 			height: data.mapHeight,
-			tiles: []
 		};
 		
 		context.tileSize = data.tileSize;
 		
-		context.camera.target.x = 128;
-		context.camera.target.y = 128;
-	}, this);
+		var uuid = data.follow;
+		if(uuid) {
+			var entity = this.entityClient.getEntity(uuid);
+			var physics = entity.getComponent("physics");
+			this.camera.target = physics;
+		}
+		else {
+			this.camera.target = data.target;
+		}
+		
+		
+	}.bind(this), this);
 	
 	this.connection.on('error', console.error.bind(console));
 	
@@ -263,7 +271,9 @@ Game.prototype.initializeListeners = function() {
 		physics.gx = data.x;
 		physics.gy = data.y;
 		physics.rotation = data.rotation;
-	}, this);
+		
+		this.camera.target = physics;
+	}.bind(this), this);
 	
 	this.connection.on('playerleave', function(data, context) {
 		console.log(data.username + ' has disconnected.');
@@ -271,8 +281,7 @@ Game.prototype.initializeListeners = function() {
 	}, this);
 	
 	this.connection.on('entityupdate', function(data, context) {
-		var entityId = context.entityClient.entityMap.getEntityId(data.uuid);
-		var entity = context.entityWorld.getEntity(entityId);
+		var entity = this.entityClient.getEntity(data.uuid);
 		
 		if(entity != undefined) {
 			var physics = entity.getComponent("physics");
@@ -287,11 +296,10 @@ Game.prototype.initializeListeners = function() {
 		}
 		else
 			console.log("entity is undefined in 'entityupdate' Game.js");
-	}, this);
+	}.bind(this), this);
 	
 	this.connection.on('playerupdate', function(data, context) {
-		var entityId = context.entityClient.entityMap.getEntityId(data.uuid);
-		var entity = context.entityWorld.getEntity(entityId);
+		var entity = this.entityClient.getEntity(data.uuid);
 		
 		if(entity != undefined) {
 			var player = entity.getComponent("player");
@@ -313,7 +321,7 @@ Game.prototype.initializeListeners = function() {
 		}
 		else
 			console.log("entity is undefined in 'playerupdate' Game.js");
-	}, this);
+	}.bind(this), this);
 	
 	this.connection.on('dig', function(data, context) {
 		var uuid = data.uuid;

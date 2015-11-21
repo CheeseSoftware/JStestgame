@@ -31,9 +31,6 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			}		
 			player.oldKeyboardState = keyboard.getState();
 			
-			game.camera.target.x = physics.x;
-			game.camera.target.y = physics.y;	
-			
         });
     }
 });

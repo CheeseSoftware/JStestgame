@@ -33,7 +33,6 @@ EntityServer.prototype.removeEntity = function(uuid) {
 	}
 	else
 		console.log("EntityServer removeEntity: entityId undefined.");
-	return undefined;
 }
 
 

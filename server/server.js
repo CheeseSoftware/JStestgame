@@ -113,11 +113,9 @@ ServerInstance.prototype.load = function() {
 	};
 	
 	this.io.on('connection', function(socket) {
-		socket.emit('init', { mapWidth: mapData.width, mapHeight: mapData.height, tileSize: mapData.tileSize });
-		this.io.sockets.emit('message', "A client has joined with IP " + socket.request.connection.remoteAddress);
-	
 		// Send existing players to the new player
-		Object.keys(this.players).forEach(function (key) { 
+		var keys = Object.keys(this.players);
+		keys.forEach(function (key) { 
 			var player = this.players[key];
 			var entity = this.entityServer.getEntity(player.uuid);
 			if(entity) {
@@ -133,6 +131,25 @@ ServerInstance.prototype.load = function() {
 				});
 			}
 		}.bind(this));
+		
+		// Send init and camera target
+		var playerToFollow;
+		if(keys.length > 0)
+			playerToFollow = this.players[keys[Math.floor(Math.random() * keys.length)]];
+		
+		var init = { 
+			mapWidth: mapData.width, 
+			mapHeight: mapData.height, 
+			tileSize: mapData.tileSize 
+		};
+		
+		if(playerToFollow)
+			init.follow = playerToFollow.uuid;
+		else
+			init.target = { x:128, y:128 };
+		
+		socket.emit('init', init);
+		this.io.sockets.emit('message', "A client has joined with IP " + socket.request.connection.remoteAddress);
 		
 		socket.on('error', console.error.bind(console));
 		
@@ -194,7 +211,7 @@ ServerInstance.prototype.load = function() {
 			var uuid = generateUUID(); // TODO: load uuid from database
 			var username = uuid; //TODO: load username from database
 			var entity = entityTemplates.player(username, uuid);
-			this.players[socket.id] = { username: username , uuid: uuid};
+			this.players[socket.id] = { username: username, uuid: uuid, spawned: true};
 			
 			var physics = entity.getComponent('physics');
 			physics.x = 128;
