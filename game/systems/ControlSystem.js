@@ -10,9 +10,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			var isControlled = entity.getComponent('controlled');
 			
 			if(keyboard.keys.space.isDown && (new Date() - player.lastDig > 400)) {
-				//Dig
 				player.lastDig = new Date();
-				player.isDigging = true;
 				var digRadius = 1.5;
 				var x = physics.x + 32.0*Math.sin(physics.rotation);
 				var y = physics.y - 32.0*Math.cos(physics.rotation);
@@ -22,8 +20,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 					y: y,
 					digRadius: digRadius
 				});
-			} else if(!keyboard.keys.space.isDown)
-				player.isDigging = false;
+			}
 			
 			if(keyboard.isDifferent(player.oldKeyboardState)) {
 				var direction = keyboard.calculateDirection();
