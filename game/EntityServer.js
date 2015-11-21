@@ -1,21 +1,39 @@
 
-EntityServer = function() {
-	this.entityMap = new EntityMap();
+EntityServer = function(entityWorld) {
+	this._entityWorld = entityWorld;
+	this._entityMap = new EntityMap();
 }
 
-EntityServer.prototype.generateUUID = function() {
-	return ('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-		var r = crypto.randomBytes(1)[0]%16|0, v = c == 'x' ? r : (r&0x3|0x8);
-		return v.toString(16);
-	}));
-}
-
-EntityServer.prototype.createEntity = function() {
-	var uuid = this.generateUUID();
+EntityServer.prototype.createEntity = function(uuid) {
+	if(!uuid)
+		uuid = generateUUID();
 	var entity = new CES.Entity();
 	entity.uuid = uuid;
-	this.entityMap.map(uuid, entity.id);
+	this._entityMap.map(uuid, entity.id);
 	console.log("Mapped entity. entityId:" + entity.id + " UUID:" + uuid);
 	return entity;
 }
+
+EntityServer.prototype.getEntity = function(uuid) {
+	var entityId = this._entityMap.getEntityId(uuid);
+	if(entityId != undefined) {
+		return this._entityWorld.getEntity(entityId);
+	}
+	else
+		console.log("EntityServer getEntity: entityId undefined.");
+	return undefined;
+}
+
+EntityServer.prototype.removeEntity = function(uuid) {
+	var entityId = this._entityMap.getEntityId(uuid);
+	if(entityId != undefined) {
+		var entity = this._entityWorld.getEntity(entityId);
+		this._entityWorld.removeEntity(entity);
+		this._entityMap.remove(uuid);
+	}
+	else
+		console.log("EntityServer removeEntity: entityId undefined.");
+	return undefined;
+}
+
 

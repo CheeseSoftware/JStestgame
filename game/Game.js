@@ -169,7 +169,7 @@ Game.prototype.sendUpdatePacket = function() {
 		var physics = entity.getComponent('physics');
 		var player = entity.getComponent('player');
 		var direction = keyboard.calculateDirection();
-		context.connection.send('entityupdate', {
+		context.connection.send('update', {
 			uuid: entity.uuid, 
 			username: player.username,
 			x: physics.x,
@@ -178,10 +178,8 @@ Game.prototype.sendUpdatePacket = function() {
 			vy: physics.vy,
 			dx: direction.x,
 			dy: direction.y,
-			rotation: physics.rotation
-		});
-		context.connection.send('playerupdate', {
-			uuid: entity.uuid, 
+			rotation: physics.rotation,
+			
 			isDigging: keyboard.getPlayState().dig
 		});
 	});

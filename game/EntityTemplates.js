@@ -60,7 +60,7 @@ entityTemplates.player = function(username, uuid) {
 
 entityTemplates.createEntity = function(uuid) {
 	if(isServer)
-		return server.entityServer.createEntity();
+		return server.entityServer.createEntity(uuid);
 	else
 		return game.entityClient.createEntity(uuid);
 }

@@ -20,5 +20,5 @@ EntityMap.prototype.getUUID = function(entityId) {
 EntityMap.prototype.remove = function(UUID) {
 	delete this.entityIdToUUID[this.UUIDToEntityId[UUID]];
 	delete this.UUIDToEntityId[UUID];
-	console.log("Removed mapping for " + UUID);
+	//console.log("Removed mapping for " + UUID);
 }

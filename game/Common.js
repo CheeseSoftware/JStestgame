@@ -65,3 +65,20 @@ _finishIncludeUpdate = function() {
 	clearInterval(g_includeIntervalID);
 	g_includeFinishCallback();
 }
+
+validateEmail = function(email) {
+	var re = new RegExp("^.{1,}@.{1,}\..{1,}$");
+	return re.test(email);
+}
+
+validateUsername = function(username) {
+	var re = new RegExp("^[A-Z,a-z,0-9]{3,20}$");
+	return re.test(username);
+}
+
+generateUUID = function() {
+	return ('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+		var r = crypto.randomBytes(1)[0]%16|0, v = c == 'x' ? r : (r&0x3|0x8);
+		return v.toString(16);
+	}));
+}

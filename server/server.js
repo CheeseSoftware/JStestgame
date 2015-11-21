@@ -17,8 +17,11 @@ updateGame();
 //include("lib/Box2D.js");	<- evil library
 
 // Libraries
+http = require('http');
 CES = require('ces');
 crypto = require('crypto');
+mongo = require('mongodb'); 
+socketio = require('socket.io');
 
 Box2D = require('box2dweb-commonjs').Box2D;
 b2Vec2 = Box2D.Common.Math.b2Vec2
@@ -76,78 +79,50 @@ ServerInstance = function() {
 }
 
 ServerInstance.prototype.load = function() {
+	// Initialize socket.io server
+	var app = http.createServer(function(req, res) {
+		res.end();
+	});
+	this.io = socketio.listen(app);
+	
+	// Initialize physicsWorld
 	this.physicsWorld = new b2World(new b2Vec2(0, 0), false);
 	
 	// Initialize chunkManager
-	_chunkManager = new ChunkManager();
+	this.chunkManager = new ChunkManager();
 	
 	// Initialize entityWorld
 	this.entityWorld = new CES.World();
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
-	var terrainPhysicsSystem = new ECS.Systems.TerrainPhysicsSystem(_chunkManager);
+	var terrainPhysicsSystem = new ECS.Systems.TerrainPhysicsSystem(this.chunkManager);
 	this.entityWorld.addSystem(terrainPhysicsSystem);
 	
 	// Initialize entityServer
-	this.entityServer = new EntityServer();
-	
-	var http = require('http'),
-		fs = require('fs');
-		//index = fs.readFileSync(__dirname + '/index.html');
-	var app = http.createServer(function(req, res) {
-		res.end();
-	});
-
-	var io = require('socket.io').listen(app);
+	this.entityServer = new EntityServer(this.entityWorld);
 	
 	// Initialize server systems
-	_chunkServer = new ChunkServer(_chunkManager, io);
-	_regeneratorServer = new RegeneratorServer(_chunkManager, io)
+	this.chunkServer = new ChunkServer(this.chunkManager, this.io);
+	this.regeneratorServer = new RegeneratorServer(this.chunkManager, this.io);
 	
-	var players = {};
+	this.players = {};
 	
 	var mapData = {
 		width: 256,
 		height: 256,
-		tileSize: 64
 	};
 	
-	var mongo = require('mongodb'),
-	  Server = mongo.Server,
-	  Db = mongo.Db;
-	
-	var server = new Server('localhost', 27017, {auto_reconnect: true});
-	this.db = new Db('digminer', server);
-	
-	this.db.open(function(err, db) {
-		if(!err) {
-			console.log("Connected to MongoDB");
-		}
-		else
-			console.log("There was an error connecting to MongoDB");
-	});
-	
-	validateEmail = function(email) {
-		var re = new RegExp("^.{1,}@.{1,}\..{1,}$");
-		return re.test(email);
-	}
-	
-	validateUsername = function(username) {
-		var re = new RegExp("^[A-Z,a-z,0-9]{3,20}$");
-		return re.test(username);
-	}
-	
-	
-	io.on('connection', function(socket) {
-		socket.emit('init', { mapWidth: mapData.width, mapHeight: mapData.height, tileSize: mapData.tileSize });
-		io.sockets.emit('message', "A client has joined with IP " + socket.request.connection.remoteAddress);
+	this.io.on('connection', function(socket) {
+		socket.emit('init', { mapWidth: mapData.width, mapHeight: mapData.height });
+		this.io.sockets.emit('message', "A client has joined with IP " + socket.request.connection.remoteAddress);
 	
 		// Send existing players to the new player
-		Object.keys(players).forEach(function (key) { 
-			var player = players[key];
-			if(player.entity) {
-				var physics = player.entity.getComponent('physics');
+		Object.keys(this.players).forEach(function (key) { 
+			var player = this.players[key];
+			var entity = this.entityServer.getEntity(player.uuid);
+			if(entity) {
+				var physics = entity.getComponent('physics');
 				socket.emit('playerjoin', {
-					uuid: player.entity.uuid,
+					uuid: player.uuid,
 					username: player.username,
 					x: physics.x,
 					y: physics.y,
@@ -156,58 +131,63 @@ ServerInstance.prototype.load = function() {
 					rotation: physics.rotation
 				});
 			}
-		});
+		}.bind(this));
 		
 		socket.on('error', console.error.bind(console));
 		
 		socket.on('disconnect', function(){
-			if(players[socket.id] != undefined) {
-				console.log(players[socket.id].username + ' has disconnected.');
+			var player = this.players[socket.id];
+			if(player != undefined) {
+				console.log(player.username + ' has disconnected.');
 				socket.broadcast.emit('playerleave', { 
-					uuid: players[socket.id].entity.uuid,
-					username: players[socket.id].username,		
+					uuid: player.uuid,
+					username: player.username,		
 				});
 				
-				this.entityWorld.removeEntity(players[socket.id].entity);
-				this.entityServer.entityMap.remove(players[socket.id].entity.uuid);
-				delete players[socket.id];
+				this.entityServer.removeEntity(player.uuid);
+				delete this.players[socket.id];
 			}
 		}.bind(this));
 		
-		socket.on('entityupdate', function(data) {
-			var physics = players[socket.id].entity.getComponent('physics');
-			physics.x = data.x;
-			physics.y = data.y;
-			physics.vx = data.vx;
-			physics.vy = data.vy;
-			physics.dx = data.dx;
-			physics.dy = data.dy;
-			physics.rotation = data.rotation;
-			
-			socket.broadcast.emit('entityupdate', {
-				uuid: data.uuid,
-				x: data.x,
-				y: data.y,
-				vx: data.vx,
-				vy: data.vy,
-				dx: data.dx, 
-				dy: data.dy,
-				rotation: data.rotation
-			});
-		});
-		
-		socket.on('playerupdate', function(data) {
-			io.sockets.emit('playerupdate', {
-				uuid: data.uuid,
-				isDigging: data.isDigging
-			});
-		});
+		socket.on('update', function(data) {
+			var uuid = this.players[socket.id].uuid;
+			var entity = this.entityServer.getEntity(uuid);
+
+			if(entity) {
+				var physics = entity.getComponent('physics');
+				physics.x = data.x;
+				physics.y = data.y;
+				physics.vx = data.vx;
+				physics.vy = data.vy;
+				physics.dx = data.dx;
+				physics.dy = data.dy;
+				physics.rotation = data.rotation;
+				
+				socket.broadcast.emit('entityupdate', {
+					uuid: data.uuid,
+					x: data.x,
+					y: data.y,
+					vx: data.vx,
+					vy: data.vy,
+					dx: data.dx, 
+					dy: data.dy,
+					rotation: data.rotation
+				});
+				
+				this.io.sockets.emit('playerupdate', {
+					uuid: data.uuid,
+					isDigging: data.isDigging
+				});
+			}
+			else
+				console.log("on 'update': entity undefined");
+		}.bind(this));
 		
 		socket.on('playerinit', function(data) {
-			var entity = entityTemplates.player(data.username);
-			data.username = entity.uuid;
-			players[socket.id] = { username: data.username };
-			players[socket.id].entity = entity;
+			var uuid = generateUUID(); // TODO: load uuid from database
+			var entity = entityTemplates.player(data.username, uuid);
+			data.username = uuid; //TODO: load username from database
+			this.players[socket.id] = { username: data.username , uuid: uuid};
 			
 			var physics = entity.getComponent('physics');
 			physics.x = 128;
@@ -215,12 +195,12 @@ ServerInstance.prototype.load = function() {
 			
 			// Dig spawn
 			for(var i = 0; i < 10; i++) {
-				_chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 6);
-				io.sockets.emit('dig', { x: physics.x, y: physics.y, digRadius: 6});
+				this.chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 6);
+				this.io.sockets.emit('dig', { x: physics.x, y: physics.y, digRadius: 6});
 			}
 	
 			socket.emit('playerinit', {
-				uuid: entity.uuid,
+				uuid: uuid,
 				username: data.username,
 				x: physics.x,
 				y: physics.y,
@@ -228,7 +208,7 @@ ServerInstance.prototype.load = function() {
 			});
 			
 			socket.broadcast.emit('playerjoin', {
-				uuid: entity.uuid,
+				uuid: uuid,
 				username: data.username,
 				x: physics.x,
 				y: physics.y,
@@ -236,27 +216,37 @@ ServerInstance.prototype.load = function() {
 			});
 			
 			console.log(data.username + " has connected.");
-		});
+		}.bind(this));
 		
 		socket.on('dig', function(data) {
-			_chunkManager.fillCircle(parseFloat(data.x)/32.0, parseFloat(data.y)/32.0, data.digRadius);
-			io.sockets.emit('dig', data);
-		});
+			this.chunkManager.fillCircle(parseFloat(data.x)/32.0, parseFloat(data.y)/32.0, data.digRadius);
+			this.io.sockets.emit('dig', data);
+		}.bind(this));
 		
 		require("./RegisterHandler.js")(socket, this);
 		require("./LoginHandler.js")(socket, this);
 		
 	}.bind(this));
 	
+	// Connect to MongoDB
+	this.mongoServer = new mongo.Server('localhost', 27017, {auto_reconnect: true});
+	this.db = new mongo.Db('digminer', this.mongoServer);
+	this.db.open(function(err, db) {
+		if(!err)
+			console.log("Connected to MongoDB");
+		else
+			console.log("There was an error connecting to MongoDB");
+	});
+	
+	// Start socket.io server
 	app.listen(3000);
 	console.log("Listening on port 3000");
 	
-	var context = this;
+	// Start the server loop
 	this.lastUpdate = Date.now();
 	this.run = function() {
 		var now = Date.now();
 		var dt = now - this.lastUpdate;
-		//console.log(dt);
 		this.lastUpdate = Date.now()
 	
 		this.entityWorld.update(dt);
@@ -264,8 +254,8 @@ ServerInstance.prototype.load = function() {
 		this.physicsWorld.Step(1 / 60.0, 10, 10);
 		this.physicsWorld.DrawDebugData();
 		
-		_regeneratorServer.update(dt);
-	};
-	var intervalId = setInterval((this.run).bind(this), 0.0);
+		this.regeneratorServer.update(dt);
+	}.bind(this);
+	var intervalId = setInterval(this.run, 0.0);
 }
 GLOBAL.server = new ServerInstance();
