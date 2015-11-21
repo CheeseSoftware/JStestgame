@@ -116,7 +116,7 @@ ServerInstance.prototype.load = function() {
 	
 	this.db.open(function(err, db) {
 		if(!err) {
-			console.log("We are connected");
+			console.log("Connected to MongoDB");
 		}
 		else
 			console.log("There was an error connecting to MongoDB");
@@ -239,8 +239,8 @@ ServerInstance.prototype.load = function() {
 			io.sockets.emit('dig', data);
 		});
 		
-		require("../game/RegisterHandler.js")(socket, this);
-		require("../game/LoginHandler.js")(socket, this);
+		require("./RegisterHandler.js")(socket, this);
+		require("./LoginHandler.js")(socket, this);
 		
 	}.bind(this));
 	
