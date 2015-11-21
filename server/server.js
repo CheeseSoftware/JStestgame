@@ -187,6 +187,13 @@ ServerInstance.prototype.load = function() {
 			});
 		});
 		
+		socket.on('playerupdate', function(data) {
+			io.sockets.emit('playerupdate', {
+				uuid: data.uuid,
+				isDigging: data.isDigging
+			});
+		});
+		
 		socket.on('playerinit', function(data) {
 			var entity = entityTemplates.player(data.username);
 			data.username = entity.uuid;
@@ -222,7 +229,7 @@ ServerInstance.prototype.load = function() {
 			console.log(data.username + " has connected.");
 		});
 		
-		socket.on('playerdig', function(data) {
+		socket.on('dig', function(data) {
 			_chunkManager.fillCircle(parseFloat(data.x)/32.0, parseFloat(data.y)/32.0, data.digRadius);
 			io.sockets.emit('dig', data);
 		});

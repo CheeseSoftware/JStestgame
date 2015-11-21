@@ -162,6 +162,7 @@ Game.prototype.run = function() {
 };
 
 Game.prototype.sendUpdatePacket = function() {
+	//TODO: Split playerupdate and entityupdate
 	var entities = this.entityWorld.getEntities('controlled', 'physics', 'player');
 	var context = this;
 	entities.forEach(function (entity) {
@@ -178,6 +179,10 @@ Game.prototype.sendUpdatePacket = function() {
 			dx: direction.x,
 			dy: direction.y,
 			rotation: physics.rotation
+		});
+		context.connection.send('playerupdate', {
+			uuid: entity.uuid, 
+			isDigging: keyboard.getPlayState().dig
 		});
 	});
 }
@@ -278,6 +283,27 @@ Game.prototype.initializeListeners = function() {
 		}
 		else
 			console.log("entity is undefined in 'entityupdate' Game.js");
+	}, this);
+	
+	this.connection.on('playerupdate', function(data, context) {
+		var entityId = context.entityClient.entityMap.getEntityId(data.uuid);
+		var entity = context.entityWorld.getEntity(entityId);
+		
+		if(entity != undefined) {
+			var player = entity.getComponent("player");
+			var drawable = entity.getComponent("drawable");
+			if(player) {
+				player.isDigging = data.isDigging;
+				if(data.isDigging)
+					drawable.animate("body", "dig", 400, false);
+				else if(drawable.bodyparts.body.animating)
+					drawable.animate("body", "dig", 400, true);
+			}
+			else
+				console.log("playerupdate: entity is not a player");
+		}
+		else
+			console.log("entity is undefined in 'playerupdate' Game.js");
 	}, this);
 	
 	this.connection.on('dig', function(data, context) {

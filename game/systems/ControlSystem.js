@@ -9,21 +9,21 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			var drawable = entity.getComponent('drawable');
 			var isControlled = entity.getComponent('controlled');
 			
-			if(keyboard.keys.space.isDown && !drawable.bodyparts.body.animating) {// && (new Date() - player.lastDig > 400)) {
+			if(keyboard.keys.space.isDown && (new Date() - player.lastDig > 400)) {
 				//Dig
 				player.lastDig = new Date();
+				player.isDigging = true;
 				var digRadius = 1.5;
 				var x = physics.x + 32.0*Math.sin(physics.rotation);
 				var y = physics.y - 32.0*Math.cos(physics.rotation);
-				game.connection.send("playerdig", { 
-					uuid: player.uuid,
+				game.connection.send("dig", { 
+					uuid: entity.uuid,
 					x: x,
 					y: y,
 					digRadius: digRadius
 				});
-				drawable.animate("body", "dig", 400, true);
-				
-			};
+			} else if(!keyboard.keys.space.isDown)
+				player.isDigging = false;
 			
 			if(keyboard.isDifferent(player.oldKeyboardState)) {
 				var direction = keyboard.calculateDirection();
