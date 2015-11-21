@@ -4,11 +4,16 @@ path = require("path");
 updateGame = function() {
 	console.log("Updating game...");
 
-	var stream = fs.createWriteStream("../temp/DigMiners.js");
-	stream.write("// (c) 2015 Virtual Spade \n\n");
+	var stream = fs.createWriteStream("../temp/DigMiner.js");
+	stream.write("/************************************************************\n");
+	stream.write(" * Copyrighted (c) 2015 Virtual Spade UF. All rights reserved. \n");
+	stream.write(" ************************************************************/\n\n");
 
 
-	srcFiles = findSrcFiles("../game/");
+	srcFiles = [];
+	findSrcFiles("../game/core/", srcFiles);
+	findSrcFiles("../game/", srcFiles);
+
 	srcContent = "";
 
 	console.log("Source files:")
@@ -24,12 +29,28 @@ updateGame = function() {
 	stream.end("\n");
 	process.stdout.write("\n");
 
+
+	// Run Obfuscator
+
+	var exec = require('child_process').exec,
+    child;
+
+    var command = "java -jar ../temp/yuicompressor.jar ../temp/DigMiner.js -o ../temp/DigMinerObfuscated.js --charset utf-8";
+
+/*
+	child = exec(command,
+	  function (error, stdout, stderr) {
+	    console.log('stdout: ' + stdout);
+	    console.log('stderr: ' + stderr);
+	    if (error !== null) {
+	      console.log('exec error: ' + error);
+	    }
+	});*/
+
 	console.log("Game is updated!");
 }
 
-findSrcFiles = function(dir) {
-
-	var srcFiles = [];
+findSrcFiles = function(dir, outSrcFiles) {
 
 	var walk = function(dir2) {
 		var files = fs.readdirSync(dir2);
@@ -39,33 +60,20 @@ findSrcFiles = function(dir) {
 			var stat = fs.statSync(filePath);
 
 			if (stat.isFile()) {
-				if (path.extname(filePath) == ".js")
-					srcFiles.push(filePath);
+				if (path.extname(filePath) != ".js")
+					continue;
+
+				outSrcFiles.push(filePath);
 			}
 			else if (stat.isDirectory()) {
+				if (files[i] == "core")
+					continue;
+
 				walk(filePath + "/");
 			}
 		}
 	}
 
 	walk(dir);
-
-	/*var dirs = [path];
-	while (dirs.length > 0) {
-		var files = fs.readdirSync(dirs[0]);
-		dirs.splice(0, 1);
-
-		for(var rFile in files) {
-			var file = path + rFile;
-			console.log("Current file:" + file);
-			var stat = fs.statSync(file);
-
-			/*if (stat.isFile())
-				srcFiles.push(file);
-			else if (stat.isDirectory())
-				dirs.push(file);* /
-		}
-	}*/
-
 	return srcFiles;
 }

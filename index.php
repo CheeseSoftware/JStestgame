@@ -21,8 +21,6 @@
 	    var isServer = false;
 </script>
 
-<script src="game/common.js"/></script>
-
 <script src="lib/Box2D.js"></script>
 <script src="lib/ces-browser.js"></script>
 <script src="lib/pixi.js"></script>
@@ -32,7 +30,9 @@
 <script src="lib/jquery-2.1.x.js"></script>
 <script src="lib/bootstrap.min.js"></script> <!-- For progressbar -->
 
-<!-- classes -->
+<script src="temp/DigMiner.js"></script>
+
+<!-- classes -- >
 <script src="game/core/v2.js"/></script>
 <script src="game/Constants.js"></script>
 <script src="game/EntityTemplates.js"></script>
@@ -59,7 +59,7 @@
 <script src="game/ShaderProgram.js"/></script>
 <script src="game/core/Observable.js"/></script>
 
-<!-- Chunk system -->
+<!-- Chunk system - ->
 <script src="game/TileType.js"></script>
 <script src="game/TileRegister.js"></script>
 <script src="game/Generator.js"></script>
@@ -67,7 +67,7 @@
 <script src="game/ChunkManager.js"></script>
 <script src="game/ChunkRenderer.js"></script>
 <script src="game/ChunkClient.js"></script>
-<script src="game/RegeneratorClient.js"></script>
+<script src="game/RegeneratorClient.js"></script> -->
 
 <!-- game -->
 <script>
@@ -84,8 +84,6 @@
 	,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
 	,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
 	;
-	
-	include("game/Game.js")
 
 	var game = null;
 
