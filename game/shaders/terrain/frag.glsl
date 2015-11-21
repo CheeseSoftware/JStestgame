@@ -6,6 +6,7 @@ uniform sampler2D texture;
 
 varying highp vec2 fragTilePos;
 varying highp vec2 fragPos;
+varying highp vec2 fragLocalPos;
 varying highp vec2 fragUV;
 
 #define TILE_DIM 2
@@ -50,7 +51,7 @@ highp vec3 getTileColor(Tile tile) {
 
 highp float getDensity(highp vec2 pos) {
 	
-	highp float density = texture2D(densityTexture, (pos*30.0+1.0)/32.0).x;
+	highp float density = texture2D(densityTexture, fragLocalPos).x;
 	highp float scale = 32.0;
 	for (int i = 0; i < 3; ++i) {
 		
@@ -75,16 +76,19 @@ Tile calcTile(highp vec2 tilePos, highp vec2 delta) {
 }
 
 void main() {
-	highp float density = getDensity(fragUV);
-	highp vec3 textureColor = texture2D(texture, (fragUV*30.0+1.0)/32.0).xyz;
+return;
+	highp float density = getDensity(fragLocalPos);
+	highp vec3 textureColor = texture2D(texture, fragUV).xyz;
 
 	highp vec3 colorA = textureColor*clamp(0.125+density, 0.5, 1.0);
 	highp vec3 colorB = textureColor*clamp(0.5-0.25*density, 0.0, 1.0);
+
+	highp float alpha = abs(max(1.0-3.0*abs(0.5-1.0*fragTilePos.x), 0.0)*max(1.0-3.0*abs(0.5-1.0*fragTilePos.y), 0.0));
 	
-	gl_FragColor = vec4(mix(colorB, colorA, clamp(32.0*(density-0.5), 0.0, 1.0)), 1.0);
+	//alpha = clamp(+0.5+2.0*(-0.5+alpha), 0.0, 1.0);
 
+	gl_FragColor = vec4(mix(colorB, colorA, clamp(32.0*(density-0.5), 0.0, 1.0)), alpha);
 
-	//gl_FragColor = vec4(texture2D(densityTexture, fragTilePos).xyz, 1.0);
 	return;
 
 	/*highp vec4 tilePos = vec4(floor(fragTilePos*30.0+vec2(0.5)), vec2(0.0));

@@ -87,6 +87,13 @@ ChunkRenderer.prototype.render = function(gl, chunkManager, vpMatrix, camera) {
  * texture: texture of terrain.
  */
 ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
+	
+	// GL
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+	gl.enable(gl.BLEND);
+	gl.disable(gl.DEPTH_TEST);
+
+
 	// Lazy init
 	if (!this._isReady)
 		this.lazyInit(gl);
@@ -196,6 +203,7 @@ ChunkRenderer.prototype.loadVertexBuffer = function(gl, chunk) {
 		for(var y = 0; y < 30; ++y) {
 			for (var x = 0; x < 30; ++x) {
 				var texture_dim = 2.0;
+				var scale = 3.0;
 
 				var tileID = chunk.tileData[x+30*y];
 				var texture_id = tileID;
@@ -203,15 +211,23 @@ ChunkRenderer.prototype.loadVertexBuffer = function(gl, chunk) {
 				var tx = Math.floor(tileID%texture_dim)/texture_dim;
 				var ty = Math.floor(tileID/texture_dim)/texture_dim;
 			
-				var vx1 = x/30.0/texture_dim + tx;
-				var vy1 = y/30.0/texture_dim + ty;
-				var vx2 = (x+1.0)/30.0/texture_dim + tx;
-				var vy2 = (y+1.0)/30.0/texture_dim + ty;
+				var vx = (scale*(x+0.5)/30.0/texture_dim)%0.5 + tx;
+				var vy = (scale*(y+0.5)/30.0/texture_dim)%0.5 + ty;
+
+				var vx1 = -(scale*0.5/30.0/texture_dim) + vx;
+				var vy1 = -(scale*0.5/30.0/texture_dim) + vy;
+				var vx2 = (scale*0.5/30.0/texture_dim) + vx;
+				var vy2 = (scale*0.5/30.0/texture_dim) + vy;
+
+				/*var vx1 = (2.0*x/30.0/texture_dim)%1 + tx;
+				var vy1 = (2.0*y/30.0/texture_dim)%1 + ty;
+				var vx2 = (2.0*(x+1.0)/30.0/texture_dim)%1 + tx;
+				var vy2 = (2.0*(y+1.0)/30.0/texture_dim)%1 + ty;*/
 				
-				var posx1 = (x)*32.0;
-				var posx2 = (x+1.0)*32.0;
-				var posy1 = (y)*32.0;
-				var posy2 = (y+1.0)*32.0;
+				var posx1 = (x-1.0)*32.0;
+				var posx2 = (x+2.0)*32.0;
+				var posy1 = (y-1.0)*32.0;
+				var posy2 = (y+2.0)*32.0;
 
 				triangle_vertex.push(posx1);
 				triangle_vertex.push(posy1);
