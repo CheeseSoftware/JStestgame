@@ -346,19 +346,20 @@ ServerInstance.prototype.load = function() {
 	console.log("Listening on port 3000");
 	
 	var context = this;
+	this.lastUpdate = Date.now();
 	this.run = function() {
 		var now = Date.now();
 		var dt = now - this.lastUpdate;
 		//console.log(dt);
 		this.lastUpdate = Date.now()
 	
-		context.entityWorld.update(dt);
+		this.entityWorld.update(dt);
 		
-		context.physicsWorld.Step(1 / 60.0, 10, 10);
-		context.physicsWorld.DrawDebugData();
+		this.physicsWorld.Step(1 / 60.0, 10, 10);
+		this.physicsWorld.DrawDebugData();
 		
 		_regeneratorServer.update(dt);
-	}
-	var intervalId = setInterval(this.run, 0);
+	};
+	var intervalId = setInterval((this.run).bind(this), 0.0);
 }
 GLOBAL.server = new ServerInstance();

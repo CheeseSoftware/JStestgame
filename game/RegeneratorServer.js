@@ -6,7 +6,7 @@ RegeneratorServer = function(chunkManager, io) {
 	this._tilesCount = 0;
 
 	this._regeneratedTiles = [];
-	this._lastSync = Date();
+	this._lastSync = Date.now();
 
 	//
 	this._wastedDeltaTime = 0.0;
@@ -24,8 +24,8 @@ RegeneratorServer.prototype.update = function(deltaTime) {
 
 	keys = Object.keys(this._collapsingTiles);
 
-	// Time for each tile to regenerate. (seconds)
-	regenerateTime = 60.0;
+	// Time for each tile to regenerate. (microseconds)
+	regenerateTime = 60.0 * 1000.0;
 
 	// Calculate the amount of tiles to regenerate.
 	temp = keys.length * (deltaTime) / regenerateTime + this._wastedDeltaTime;
@@ -62,8 +62,8 @@ RegeneratorServer.prototype.update = function(deltaTime) {
 		}
 	}
 
-	if (((new Date()) - this._lastSync) >= 500 && this._socket != null) {
-		this._lastSync = new Date();
+	if ((Date.now() - this._lastSync) >= 500.0 && this._regeneratedTiles.length > 0) {
+		this._lastSync = Date.now();
 
 		this._io.sockets.emit("regenerate", {regenerateAmount : this._regenerateAmount, regeneratedTiles : this._regeneratedTiles});
 
