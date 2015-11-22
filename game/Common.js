@@ -77,8 +77,12 @@ validateUsername = function(username) {
 }
 
 generateUUID = function() {
-	return ('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	if(!GLOBAL.lastUUID)
+		GLOBAL.lastUUID = 0;
+	GLOBAL.lastUUID++;
+	return GLOBAL.lastUUID;
+	/*return ('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 		var r = crypto.randomBytes(1)[0]%16|0, v = c == 'x' ? r : (r&0x3|0x8);
 		return v.toString(16);
-	}));
+	}));*/
 }

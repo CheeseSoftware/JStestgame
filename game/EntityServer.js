@@ -12,10 +12,10 @@ EntityServer = function(entityWorld, playerServer, io) {
 
 			if(entity) {
 				var physics = entity.getComponent('physics');
-				physics.x = data.x;
-				physics.y = data.y;
-				physics.vx = data.vx;
-				physics.vy = data.vy;
+				physics.gx = data.x;
+				physics.gy = data.y;
+				physics.gvx = data.vx;
+				physics.gvy = data.vy;
 				physics.dx = data.dx;
 				physics.dy = data.dy;
 				physics.rotation = data.rotation;
@@ -75,10 +75,10 @@ EntityServer.prototype.sendUpdatePacket = function(uuid, socket) {
 		
 		var data = {
 			uuid: uuid,
-			x: physics.x,
-			y: physics.y,
-			vx: physics.vx,
-			vy: physics.vy,
+			x: physics.gx,
+			y: physics.gy,
+			vx: physics.gvx,
+			vy: physics.gvy,
 			dx: physics.dx, 
 			dy: physics.dy,
 			rotation: physics.rotation

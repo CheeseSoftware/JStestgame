@@ -25,24 +25,25 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				var vy = normal.y * physics.moveSpeed;
 				
 				physics.vx += vx;
-				physics.vy += vy;	
-				if(!isControlled) {
+				physics.vy += vy;
+				physics.gvx += vx;
+				physics.gvy += vy;	
+				
+				/*if(!isControlled) {
 					physics.vx += vx;
 					physics.vy += vy;	
 					physics.gvx += vx;		
 					physics.gvy += vy;
-					
-					// Now do some linear interpolation!		
-					var duration = 500;
-					var ic = Math.min((new Date()-physics.time)/duration, 1.0);
-					physics.x = ic*physics.gx + (1.0-ic)*physics.x;
-					physics.y = ic*physics.gy + (1.0-ic)*physics.y;
-					physics.vx = ic*physics.gvx + (1.0-ic)*physics.vx;
-					physics.vy = ic*physics.gvy + (1.0-ic)*physics.vy;
-
-				}
-				
+				}*/
 			}
+					
+			// Now do some linear interpolation!		
+			var duration = 500;
+			var ic = Math.min((new Date()-physics.time)/duration, 1.0);
+			physics.x = ic*physics.gx + (1.0-ic)*physics.x;
+			physics.y = ic*physics.gy + (1.0-ic)*physics.y;
+			physics.vx = ic*physics.gvx + (1.0-ic)*physics.vx;
+			physics.vy = ic*physics.gvy + (1.0-ic)*physics.vy;
 			
 			// Apply speed limit, decrease speed, etc.
 			physics.doUpdate(physics);

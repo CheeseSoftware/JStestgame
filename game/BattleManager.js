@@ -31,19 +31,21 @@ BattleManager.prototype.doHit = function(attacker, distance, radius, damage, onH
 
 	for (var i = 0; i < entities.length; ++i) {
 		var entity = entities[i];
-		var physics = entity.getComponent("physics");
-
-		var vPos = v2.create(physics.x, physics.y);
-		var deltaPos = [0.0, 0.0];
-		v2.subtract(vPos, attackerPos, deltaPos);
-
-		if (v2.lengthSquared(deltaPos)/32.0 > radius*radius)
-			continue;
-		
-		this.hitEntity(attacker, entity, damage);
-
-		if (onHitCallback)
-			onHitCallback(attacker, entity);
+		if(entity.uuid != attacker.uuid) {
+			var physics = entity.getComponent("physics");
+	
+			var vPos = v2.create(physics.x, physics.y);
+			var deltaPos = [0.0, 0.0];
+			v2.subtract(vPos, attackerPos, deltaPos);
+	
+			if (v2.lengthSquared(deltaPos)/32.0 > radius*radius)
+				continue;
+			
+			this.hitEntity(attacker, entity, damage);
+	
+			if (onHitCallback)
+				onHitCallback(attacker, entity);
+		}
 	}
 }
 
