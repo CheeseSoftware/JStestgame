@@ -17,12 +17,8 @@ BattleClient.prototype.onHitCall = function(attacker) {
 }
 
 BattleClient.prototype.onMessageHit = function(data) {
-	var attackerUUID = data.attackerUUID;
-	var attackerID = context.entityClient.entityMap.getEntityId(attackerUUID);
- 	var attacker = context.entityWorld.getEntity(attackerID);
- 	var victimUUID = data.victimUUID;
-	var victimID = context.entityClient.entityMap.getEntityId(victimUUID);
- 	var victim = context.entityWorld.getEntity(victimUUID);
+	var attacker = this._entityClient.getEntity(data.attackerUUID);
+ 	var victim = this._entityClient.getEntity(data.victimUUID);
 	var damage = data.damage;
 
 	this._battleManager.hitEntity(attacker, victim, damage);

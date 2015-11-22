@@ -80,6 +80,12 @@ ServerInstance = function() {
 }
 
 ServerInstance.prototype.load = function() {
+	// Set up error handler
+	process.on('uncaughtException', function (error) {
+		console.log("shit");
+	   console.log(error.stack);
+	});
+	
 	// Initialize socket.io server
 	var app = http.createServer(function(req, res) {
 		res.end();
@@ -107,7 +113,7 @@ ServerInstance.prototype.load = function() {
 	// Initialize server systems
 	this.chunkServer = new ChunkServer(this.chunkManager, this.io);
 	this.regeneratorServer = new RegeneratorServer(this.chunkManager, this.io);
-	this.BattleServer = new BattleServer(this.battleManager, this.entityWorld, this.io)
+	this.BattleServer = new BattleServer(this.battleManager, this.entityWorld, this.entityServer, this.io)
 	
 	this.players = {};
 	

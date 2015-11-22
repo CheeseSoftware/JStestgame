@@ -27,7 +27,7 @@ BattleManager.prototype.doHit = function(attacker, distance, radius, damage, onH
 
 	var attackerPhysics = attacker.getComponent("physics");
 	var attackerPos = [attackerPhysics.x, attackerPhysics.y];
-	v2.add([distance*cos(attackerPhysics.rotation), distance*sin(attackerPhysics.rotation)], attackerPos, attackerPos);
+	v2.add([distance*Math.cos(attackerPhysics.rotation), distance*Math.sin(attackerPhysics.rotation)], attackerPos, attackerPos);
 
 	for (var i = 0; i < entities.length; ++i) {
 		var entity = entities[i];
@@ -39,10 +39,10 @@ BattleManager.prototype.doHit = function(attacker, distance, radius, damage, onH
 
 		if (v2.lengthSquared(deltaPos)/32.0 > radius*radius)
 			continue;
-
+		
 		this.hitEntity(attacker, entity, damage);
 
-		if (onHitCallback != undefined)
+		if (onHitCallback)
 			onHitCallback(attacker, entity);
 	}
 }
