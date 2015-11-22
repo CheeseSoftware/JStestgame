@@ -120,7 +120,7 @@ updateGame = function() {
 	    
 	    var fullPath = require('path').dirname(Object.keys(require.cache)[0]) + "\\";
 	    fullPath = fullPath.slice(0, fullPath.length - 7) + "temp\\";
-	    var command = "java -jar " + fullPath + "yuicompressor.jar " + fullPath + "DigMiner.js -o www\\temp\\DigMiner.js --charset utf-8";
+	    var command = "java -jar " + fullPath + "yuicompressor.jar " + fullPath + "DigMiner.js -o ..\\temp\\DigMinerMinified.js --charset utf-8";
 	    console.log(command);
 		
 		child = exec(command,
@@ -130,6 +130,14 @@ updateGame = function() {
 		    if (error !== null) {
 		      console.log('exec error: ' + error);
 		    }
+
+		    var content = fs.readFileSync("../temp/DigMinerMinified.js");
+
+		    var stream = fs.createWriteStream("www/temp/DigMiner.js");
+		    stream.write("/***************************************************************\n");
+			stream.write(" * Copyrighted (c) 2015 Virtual Spade UF. All rights reserved. * \n");
+			stream.write(" ***************************************************************/\n\n");
+		    stream.end(content)
 		});
 	}
 
