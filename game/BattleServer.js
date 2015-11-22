@@ -1,8 +1,9 @@
-BattleServer = function(battleManager, entityWorld, entityServer, io) {
+BattleServer = function(battleManager, entityWorld, entityServer, playerServer, io) {
 
 	this._battleManager = battleManager;
 	this._entityWorld = entityWorld;
 	this._entityServer = entityServer;
+	this._playerServer = playerServer;
 	this._io = io;
 
 	this._battleManager.subscribe(this);
@@ -21,7 +22,7 @@ BattleServer.prototype.onMeeleHit = function(attacker, victim, damage) {
 }
 
 BattleServer.prototype.onMessageHit = function(socket) {
-	var attackerUUID = server.players[socket.id].uuid;
+	var attackerUUID = this._playerServer.getPlayer(socket.id).uuid;
  	var attacker = this._entityServer.getEntity(attackerUUID);
 
  	var distance = 0.5*32.0;
