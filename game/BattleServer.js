@@ -33,5 +33,6 @@ BattleServer.prototype.onMessageHit = function(socket) {
 	var radius = 1.0*32.0;
 	var damage = 20.0;
 
+	//this._battleManager.hitEntity(attacker, victim, damage);
 	this._battleManager.doHit(attacker, distance, radius, damage);
 }
