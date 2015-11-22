@@ -20,6 +20,8 @@ ECS.Systems.ControlSystem = CES.System.extend({
 					y: y,
 					digRadius: digRadius
 				});
+
+				game.battleManagger.hit(entity);
 			}
 			
 			if(keyboard.isDifferent(player.oldKeyboardState)) {

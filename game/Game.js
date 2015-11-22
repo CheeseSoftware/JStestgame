@@ -330,12 +330,6 @@ Game.prototype.initializeListeners = function() {
 		var y = data.y;
 		var digRadius = data.digRadius;
 		context.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, digRadius);
-
-		// Temporary Battle code
-		if(uuid) {
-			var entity = this.entityClient.getEntity(uuid);
-			context.battleManagger.hit(entity, [x, y], 8.0, 20.0);
-		}
 	}.bind(this), this);
 	
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Register and login below >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
