@@ -18,11 +18,11 @@ Game.prototype.load = function() {
 			return;
 		}
 		
-		var menu = document.getElementById('playMenu');
+		var menu = document.getElementById('playMenuContainer');
 		if(menu.style.display == "none")
-			$("#playMenu").fadeIn(400);
+			$("#playMenuContainer").fadeIn(400);
 		else
-			$("#playMenu").fadeOut(100);
+			$("#playMenuContainer").fadeOut(100);
 	};
 	
 	//TODO: Move input code somewhere else
@@ -230,6 +230,10 @@ Game.prototype.initializeListeners = function() {
 		}
 		else {
 			this.camera.target = data.target;
+			var cameraVelocity = new b2Vec2(2*Math.random()-1, 2*Math.random()-1);
+			cameraVelocity.Normalize();
+			cameraVelocity.Multiply(constants.cameraHoverSpeed);
+			this.camera.velocity = cameraVelocity;
 		}
 		
 		
@@ -274,6 +278,7 @@ Game.prototype.initializeListeners = function() {
 		physics.rotation = data.rotation;
 		
 		this.camera.target = physics;
+		this.camera.velocity = null;
 	}.bind(this), this);
 	
 	this.connection.on('playerleave', function(data, context) {

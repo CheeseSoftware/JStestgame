@@ -1,15 +1,27 @@
-<div class = "playMenu" id = "playMenu">
-	<img src="game/textures/logo.png" /></img><br/><br/>
-	<div id="playButton" class = "button" onclick = "
-    	document.getElementById('playMenu').style.display = 'none'; 
-        game.spawnMainPlayer(); 
-    	">
-		<p>Play!</p>
-	</div>
-	<a class = "button" onClick="document.getElementById('registerFrame').style.display = 'block';">
-		<p>Register</p>
-	</a>
-    <a class = "button" onClick="document.getElementById('loginFrame').style.display = 'block';">
-		<p>Login</p>
-	</a>
+<div id="playMenuContainer" class="playMenuContainer">
+	<div class="playMenuBackground"></div>
+    
+    <div class = "playMenuLogo" id = "playMenuLogo">
+        <img src="game/textures/logo.png" /></img>
+    </div>
+           
+    
+    <div class = "playMenu" id = "playMenu">
+    
+        <a class="button firstButton" onClick="document.getElementById('loginFrame').style.display = 'block';">
+            <p>Login</p>
+        </a>
+        
+        <div id="playButton" class = "button" onclick = "
+       			game.spawnMainPlayer(); 
+            	$('#playMenuContainer').fadeOut(300);
+            ">
+            <p>Play</p>
+        </div>
+        
+        <a class="button" onClick="document.getElementById('registerFrame').style.display = 'block';">
+            <p>Register</p>
+        </a>
+        
+    </div>
 </div>
