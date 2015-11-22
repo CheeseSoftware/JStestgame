@@ -1,5 +1,5 @@
 
-module.exports = function (socket, server) {
+module.exports = function (socket, authenticationServer) {
 	socket.on('register', function(data) {
 		//TODO: verify data
 		
@@ -18,7 +18,7 @@ module.exports = function (socket, server) {
 			return;
 		}
 		
-		server.db.collection('users', function(err, collectionref) { 
+		authenticationServer._db.collection('users', function(err, collectionref) { 
 			if(err)
 				console.log(err);			
 			collectionref.findOne({"username":data.username}, function(err, doc) {

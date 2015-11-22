@@ -1,5 +1,5 @@
 
-module.exports = function (socket, server) {
+module.exports = function (socket, authenticationServer) {
 	socket.on('login', function(data) {
 		//TODO: verify data
 
@@ -13,7 +13,7 @@ module.exports = function (socket, server) {
 			return;
 		}
 		
-		server.db.collection('users', function(err, collectionref) { 
+		authenticationServer._db.collection('users', function(err, collectionref) { 
 			if(err)
 				console.log(err);
 				
@@ -55,7 +55,7 @@ module.exports = function (socket, server) {
 		if(user) {
 			// User with email found, check password match
 			if(user["password"] == data.password) {
-				//TODO: LOGIN
+				authenticationServer.setSocketAuthenticated(socket, true);
 				socket.emit('loginresponse', { success: true, response:"You have been logged in."});
 				return;
 			}
@@ -68,5 +68,5 @@ module.exports = function (socket, server) {
 			socket.emit('loginresponse', { success: false, response:"Internal error."});
 			return;
 		}
-	}
+	}.bind(this);
 }
