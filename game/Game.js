@@ -98,6 +98,7 @@ Game.prototype.load = function() {
 	this.entityClient = new EntityClient(this.entityWorld);
 	this.chunkClient = new ChunkClient(this.chunkManager, this.connection);
 	this.regeneratorClient = new RegeneratorClient(this.chunkManager, this.connection);
+	this.battleClient = new BattleClient(this.battleManagger, this.entityWorld, this.entityClient, this.connection);
 }
 
 Game.prototype.onMouseUpdate = function (e) {

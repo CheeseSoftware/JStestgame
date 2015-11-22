@@ -70,8 +70,9 @@ ECS = {
 include("game/systems/PhysicsSystem.js");
 include("game/systems/TerrainPhysicsSystem.js");
 include("game/components/Physics.js");
-
 include("game/EntityServer.js");
+include("game/BattleManager.js");
+include("game/BattleServer.js");
 
 
 ServerInstance = function() {
@@ -96,6 +97,9 @@ ServerInstance.prototype.load = function() {
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
 	var terrainPhysicsSystem = new ECS.Systems.TerrainPhysicsSystem(this.chunkManager);
 	this.entityWorld.addSystem(terrainPhysicsSystem);
+
+	// Initialize other systems
+	this.battleManager = new BattleManager(this.entityWorld);
 	
 	// Initialize entityServer
 	this.entityServer = new EntityServer(this.entityWorld);
@@ -103,6 +107,7 @@ ServerInstance.prototype.load = function() {
 	// Initialize server systems
 	this.chunkServer = new ChunkServer(this.chunkManager, this.io);
 	this.regeneratorServer = new RegeneratorServer(this.chunkManager, this.io);
+	this.BattleServer = new BattleServer(this.battleManager, this.entityWorld, this.io)
 	
 	this.players = {};
 	
