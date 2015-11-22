@@ -29,8 +29,8 @@ BattleServer.prototype.onMessageHit = function(socket) {
 	var attackerUUID = this._playerServer.getPlayer(socket.id).uuid;
  	var attacker = this._entityServer.getEntity(attackerUUID);
 
- 	var distance = 0.5*32.0;
-	var radius = 1.0*32.0;
+ 	var distance = 0.01*32.0;
+	var radius = 0.5*32.0;
 	var damage = 20.0;
 
 	//this._battleManager.hitEntity(attacker, victim, damage);
