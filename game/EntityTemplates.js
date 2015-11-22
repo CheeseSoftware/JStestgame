@@ -50,12 +50,59 @@ entityTemplates.player = function(username, uuid) {
 		game.stage.addChild(text);
 		game.entityWorld.addEntity(entity);
 	}
-	else
+	else {
 		server.entityWorld.addEntity(entity);
+		entity.addComponent(new ECS.Components.ServerPlayer());
+	}
 	
 	return entity;
 }
 
+entityTemplates.worker = function(uuid) {
+	var entity = entityTemplates.createEntity(uuid);
+	
+	var physicsWorld = (isServer ? server.physicsWorld : game.physicsWorld);
+	var entityWorld = (isServer ? server.entityWorld : game.entityWorld);
+	
+	// Physics
+	var fixDef = new b2FixtureDef;
+	fixDef.density = 1.0;
+	fixDef.friction = 0.5;
+	fixDef.restitution = 0.2;
+	var bodyDef = new b2BodyDef;
+	bodyDef.type = b2Body.b2_dynamicBody;
+	fixDef.shape = new b2CircleShape(constants.playerFatness);
+	bodyDef.position.Set(10, 400 / 30 + 1.8);
+	var physicsBody = physicsWorld.CreateBody(bodyDef);
+	var ghostBody = physicsWorld.CreateBody(bodyDef);
+	physicsBody.CreateFixture(fixDef);
+	ghostBody.CreateFixture(fixDef);
+	
+	var physics = new ECS.Components.Physics(physicsBody, ghostBody);
+	physics.moveSpeed = 1.0;
+	entity.addComponent(physics);
+	if(isServer) {
+		entity.addComponent(new ECS.Components.AI());
+	}
+	
+	if(!isServer) {
+		var sprite = new PIXI.Sprite(game.textureManager.textures.worker);
+		sprite.anchor.x = 0.5;
+		sprite.anchor.y = 0.5;
+		
+		var bodyparts = {
+			"body": {
+				"sprite": sprite
+			}
+		};
+		
+		entity.addComponent(new ECS.Components.Drawable(bodyparts, game.animationManager, 0, 0));
+		game.stage.addChild(sprite);
+	}
+	
+	entityWorld.addEntity(entity);
+	return entity;
+}
 
 
 entityTemplates.createEntity = function(uuid) {

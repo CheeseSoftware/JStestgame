@@ -59,6 +59,7 @@ Game.prototype.load = function() {
 	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem(this.chunkManager));
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
 	this.entityWorld.addSystem(new ECS.Systems.AnimationSystem());
+	//this.entityWorld.addSystem(new ECS.Systems.AISystem());
 	
 	// Initialize BattleManagger
 	this.battleManagger = new BattleManager(this.entityWorld);
@@ -142,7 +143,7 @@ Game.prototype.run = function() {
 	
     this.entityWorld.update(dt);
 	
-	this.physicsWorld.Step(1 / 60.0, 10, 10);
+	this.physicsWorld.Step(dt, 10, 10);
 	            this.physicsWorld.DrawDebugData();
             this.physicsWorld.ClearForces();
 	
@@ -286,8 +287,19 @@ Game.prototype.initializeListeners = function() {
 		context.despawnEntity(data.uuid);
 	}, this);
 	
+	this.connection.on('entityspawn', function(data) {
+		var entity = entityTemplates[data.type](data.uuid);
+		var physics = entity.getComponent("physics");
+		physics.gx = data.x;
+		physics.gy = data.y;
+		physics.x = data.x;
+		physics.y = data.y;
+		console.log("Spawned entity of type " + data.type);
+	}.bind(this));
+	
 	this.connection.on('entityupdate', function(data, context) {
 		var entity = this.entityClient.getEntity(data.uuid);
+		console.log("entityupdate: " + data.uuid);
 		
 		if(entity != undefined) {
 			/*var output = (entity.uuid + " updated");

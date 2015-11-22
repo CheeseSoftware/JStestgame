@@ -87,6 +87,7 @@ ServerInstance.prototype.load = function() {
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
 	var terrainPhysicsSystem = new ECS.Systems.TerrainPhysicsSystem(this.chunkManager);
 	this.entityWorld.addSystem(terrainPhysicsSystem);
+	this.entityWorld.addSystem(new ECS.Systems.AISystem());
 
 	// Initialize other systems
 	this.battleManager = new BattleManager(this.entityWorld);
@@ -188,8 +189,8 @@ ServerInstance.prototype.load = function() {
 			
 			// Dig spawn
 			for(var i = 0; i < 10; i++) {
-				this.chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 6);
-				this.io.sockets.emit('dig', { x: physics.x, y: physics.y, digRadius: 6});
+				this.chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 10);
+				this.io.sockets.emit('dig', { x: physics.x, y: physics.y, digRadius: 10});
 			}
 	
 			socket.emit('playerinit', {
@@ -206,6 +207,23 @@ ServerInstance.prototype.load = function() {
 				x: physics.x,
 				y: physics.y,
 				rotation: physics.rotation
+			});
+			
+			var monster = entityTemplates.worker();
+			var x = 128;
+			var y = 128;
+			
+			var physics = monster.getComponent("physics");
+			physics.gx = x;
+			physics.gy = y;
+			physics.x = x;
+			physics.y = y;
+			
+			this.io.sockets.emit('entityspawn', {
+				uuid: monster.uuid,
+				type: "worker",
+				x: x,
+				y: y
 			});
 			
 			console.log(username + " has connected.");
@@ -236,6 +254,6 @@ ServerInstance.prototype.load = function() {
 		
 		this.regeneratorServer.update(dt);
 	}.bind(this);
-	var intervalId = setInterval(this.run, 20);
+	var intervalId = setInterval(this.run, 0);
 }
 GLOBAL.server = new ServerInstance();

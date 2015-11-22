@@ -47,12 +47,8 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			
 			// Apply speed limit, decrease speed, etc.
 			physics.doUpdate(physics);
-		
-			// Position text and textures at this position. Animate feet
-			if(player != undefined) {
-				player.text.x = physics.x - player.text.width/2;
-				player.text.y = physics.y - 80;
-				
+			
+			if(drawable != undefined) {
 				drawable.positionAll(physics.x, physics.y, physics.rotation);
 				
 				var konstant = 100;
@@ -60,11 +56,13 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				if(disWalked > 0)
 					drawable.animate("feet", "feet", disWalked, false);
 			}
-			
-			/*if(isServer) {
-				console.log("x" + physics.x + " y" + physics.y);
-			}*/
-			
+		
+			// Position text and textures at this position. Animate feet
+			if(player != undefined) {
+				player.text.x = physics.x - player.text.width/2;
+				player.text.y = physics.y - 80;
+			}
+
 			physics.oldX = physics.x;
 			physics.oldY = physics.y;
 			
