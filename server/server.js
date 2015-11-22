@@ -66,6 +66,16 @@ ServerInstance.prototype.load = function() {
 	});
 	this.io = socketio.listen(app);
 	
+	// Connect to MongoDB
+	this.mongoServer = new mongo.Server('localhost', 27017, {auto_reconnect: true});
+	this.db = new mongo.Db('digminer', this.mongoServer);
+	this.db.open(function(err, db) {
+		if(!err)
+			console.log("Connected to MongoDB");
+		else
+			console.log("There was an error connecting to MongoDB");
+	});
+	
 	// Initialize physicsWorld
 	this.physicsWorld = new b2World(new b2Vec2(0, 0), false);
 	
@@ -85,6 +95,7 @@ ServerInstance.prototype.load = function() {
 	this.entityServer = new EntityServer(this.entityWorld);
 	
 	// Initialize server systems
+	this.authenticationServer = new AuthenticationServer(this.db, this.io);
 	this.chunkServer = new ChunkServer(this.chunkManager, this.io);
 	this.regeneratorServer = new RegeneratorServer(this.chunkManager, this.io);
 	this.BattleServer = new BattleServer(this.battleManager, this.entityWorld, this.entityServer, this.io)
@@ -232,21 +243,8 @@ ServerInstance.prototype.load = function() {
 			this.io.sockets.emit('dig', data);
 		}.bind(this));
 		
-		require("./RegisterHandler.js")(socket, this);
-		require("./LoginHandler.js")(socket, this);
-		
 	}.bind(this));
-	
-	// Connect to MongoDB
-	this.mongoServer = new mongo.Server('localhost', 27017, {auto_reconnect: true});
-	this.db = new mongo.Db('digminer', this.mongoServer);
-	this.db.open(function(err, db) {
-		if(!err)
-			console.log("Connected to MongoDB");
-		else
-			console.log("There was an error connecting to MongoDB");
-	});
-	
+
 	// Start socket.io server
 	app.listen(3000);
 	console.log("Listening on port 3000");
