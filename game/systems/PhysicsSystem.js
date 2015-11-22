@@ -38,7 +38,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			}
 					
 			// Now do some linear interpolation!		
-			var duration = 500;
+			var duration = 50;
 			var ic = Math.min((new Date()-physics.time)/duration, 1.0);
 			physics.x = ic*physics.gx + (1.0-ic)*physics.x;
 			physics.y = ic*physics.gy + (1.0-ic)*physics.y;

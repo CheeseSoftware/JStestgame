@@ -231,11 +231,11 @@ ServerInstance.prototype.load = function() {
 	
 		this.entityWorld.update(dt);
 		
-		this.physicsWorld.Step(1 / 60.0, 10, 10);
+		this.physicsWorld.Step(dt, 10, 10);
 		this.physicsWorld.DrawDebugData();
 		
 		this.regeneratorServer.update(dt);
 	}.bind(this);
-	var intervalId = setInterval(this.run, 100);
+	var intervalId = setInterval(this.run, 20);
 }
 GLOBAL.server = new ServerInstance();
