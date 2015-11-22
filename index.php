@@ -11,6 +11,13 @@
 			if(empty($ip))
 				$ip = '"107.6.140.41"';
 			echo ("ip: " . $ip);
+			
+			echo (", ");
+			
+			$debug = (isset($_GET["debug"]) ? $_GET["debug"] : 'false');
+			if(empty($debug))
+				$debug = 'false';
+			echo ("debug: " . $debug);
 		?>
 	};
 	
@@ -31,7 +38,14 @@
 <script src="lib/jquery-2.1.x.js"></script>
 <script src="lib/bootstrap.min.js"></script> <!-- For progressbar -->
 
-<script src="temp/DigMiner.js"></script>
+<?php 
+	if ($debug != "true") {
+		echo '<script src="temp/DigMiner.js"></script>';
+	}
+	else {
+		include("temp/debugSources.html");
+	}
+?>
 
 <script>
 	var   b2Vec2 = Box2D.Common.Math.b2Vec2

@@ -4,30 +4,48 @@ path = require("path");
 updateGame = function() {
 	console.log("Updating game...");
 
-	var stream = fs.createWriteStream("../temp/DigMiner.js");
-	stream.write("/************************************************************\n");
-	stream.write(" * Copyrighted (c) 2015 Virtual Spade UF. All rights reserved. \n");
-	stream.write(" ************************************************************/\n\n");
-
-
+	// Get source files
 	srcFiles = [];
 	findSrcFiles("../game/core/", srcFiles);
 	findSrcFiles("../game/", srcFiles);
 
-	srcContent = "";
+	// Update temp/DigMiner.js
+	{
+		var stream = fs.createWriteStream("../temp/DigMiner.js");
+		stream.write("/***************************************************************\n");
+		stream.write(" * Copyrighted (c) 2015 Virtual Spade UF. All rights reserved. * \n");
+		stream.write(" ***************************************************************/\n\n");
 
-	console.log("Source files:")
-	for (var i = 0; i < srcFiles.length; ++i) {
-		process.stdout.write(".");
+		console.log("Source files:")
+		for (var i = 0; i < srcFiles.length; ++i) {
+			process.stdout.write(".");
 
-		var filePath = srcFiles[i];
-		var content = fs.readFileSync(filePath, "utf8");
-		stream.write(content);
-		stream.write("\n");
+			var filePath = srcFiles[i];
+			var content = fs.readFileSync(filePath, "utf8");
+			stream.write(content);
+			stream.write("\n");
 
+		}
+		stream.end(" ");
+		process.stdout.write("\n");
 	}
-	stream.end("\n");
-	process.stdout.write("\n");
+
+
+	// Update source list in temp/debugSources.html
+	{
+		var stream = fs.createWriteStream("../temp/debugSources.html");
+		stream.write(" <!----------------------------------------------------------------->\n");
+		stream.write(" <!-- Copyrighted (c) 2015 Virtual Spade UF. All rights reserved. -->\n");
+		stream.write(" <!----------------------------------------------------------------->\n\n");
+
+		for (var i = 0; i < srcFiles.length; ++i) {
+			var filePath = srcFiles[i];
+			stream.write('<script src = "' + filePath.slice(3) +'"></script>');
+			stream.write("\n");
+		}
+
+		stream.end(" ");
+	}
 
 
 	// Run Obfuscator
