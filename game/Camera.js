@@ -26,8 +26,8 @@ var Camera = function (world) {
 
     this.root.addChild(this.world);
 };
-
-Camera.prototype = Object.create(PIXI.Container.prototype);
+if (!isServer)
+    Camera.prototype = Object.create(PIXI.Container.prototype);
 
 /**
  * update the camera position based on it's target

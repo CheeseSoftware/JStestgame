@@ -47,6 +47,21 @@ updateGame = function() {
 		stream.end(" ");
 	}
 
+	// Include all source files
+	{
+		console.log("Loading source files...")
+		for (var i = 0; i < srcFiles.length; ++i) {
+			process.stdout.write(".");
+
+
+
+			var filePath = srcFiles[i];
+			var content = fs.readFileSync(filePath, "utf8");
+			eval(content);
+		}
+		process.stdout.write("\n");
+	}
+
 
 	// Run Obfuscator
 

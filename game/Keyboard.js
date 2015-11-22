@@ -144,5 +144,6 @@ Keyboard.prototype.calculateDirection = function() {
 		output.y = 0;
 	return output;
 }
-
-var keyboard = new Keyboard();
+var keyboard = null;
+if (!isServer)
+	keyboard = new Keyboard();

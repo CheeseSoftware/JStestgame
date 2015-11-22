@@ -8,11 +8,7 @@ var simple_include = function( lib ) {
 }
 
 // Include common.js with the include system.
-simple_include("game/Common.js");
-
-// Update the game files used by the http-server.
-simple_include("server/UpdateGame.js");
-updateGame();
+//simple_include("game/Common.js");
 
 //include("lib/Box2D.js");	<- evil library
 
@@ -38,28 +34,8 @@ b2Vec2 = Box2D.Common.Math.b2Vec2
 ,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
 ;
 
-include("lib/perlin.js");
-include("lib/gl-matrix.js");
-
-// Core
-include("game/core/Observable.js");
-include("game/core/v2.js");
-
-
-include("game/Constants.js");
-include("game/EntityMap.js");
-include("game/EntityTemplates.js");
-
-// Tiles
-include("game/TileType.js");
-include("game/TileRegister.js");
-
-// Chunks, World
-include("game/Chunk.js");
-include("game/Generator.js");
-include("game/ChunkManager.js");
-include("game/ChunkServer.js");
-include("game/RegeneratorServer.js");
+simple_include("lib/perlin.js");
+simple_include("lib/gl-matrix.js");
 
 // Entity systems and components
 ECS = {
@@ -67,12 +43,10 @@ ECS = {
 	Systems: {}
 };	
 
-include("game/systems/PhysicsSystem.js");
-include("game/systems/TerrainPhysicsSystem.js");
-include("game/components/Physics.js");
-include("game/EntityServer.js");
-include("game/BattleManager.js");
-include("game/BattleServer.js");
+// Update the game files used by the http-server.
+// And Include all game files.
+simple_include("server/UpdateGame.js");
+updateGame();
 
 
 ServerInstance = function() {
