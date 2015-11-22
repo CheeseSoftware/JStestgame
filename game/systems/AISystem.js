@@ -14,10 +14,12 @@ ECS.Systems.AISystem = CES.System.extend({
 			targets.forEach(function (target) {
 				var targetPhysics = target.getComponent("physics");
 				
-				physics.dx = targetPhysics.gx - physics.gx;
-				physics.dy = targetPhysics.gy - physics.gy;
+				/*physics.dx = targetPhysics.gx - physics.gx;
+				physics.dy = targetPhysics.gy - physics.gy;*/
 				
-				if(new Date() - AI.lastPacket > 200) {
+				physics = targetPhysics;
+				
+				if(new Date() - AI.lastPacket > 0) {
 					server.entityServer.sendUpdatePacket(entity.uuid);
 					AI.lastPacket = new Date();
 					console.log("sent packet. x:" + physics.gx + " y:" + physics.gy);
