@@ -156,6 +156,11 @@ ServerInstance.prototype.load = function() {
 			var uuid = this.players[socket.id].uuid;
 			var entity = this.entityServer.getEntity(uuid);
 
+			this.io.sockets.emit('playerupdate', {
+				uuid: data.uuid,
+				isDigging: data.isDigging
+			});
+
 			if(entity) {
 				var physics = entity.getComponent('physics');
 				physics.x = data.x;
@@ -175,11 +180,6 @@ ServerInstance.prototype.load = function() {
 					dx: data.dx, 
 					dy: data.dy,
 					rotation: data.rotation
-				});
-				
-				this.io.sockets.emit('playerupdate', {
-					uuid: data.uuid,
-					isDigging: data.isDigging
 				});
 			}
 			else
