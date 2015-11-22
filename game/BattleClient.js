@@ -21,5 +21,6 @@ BattleClient.prototype.onMessageHit = function(data) {
  	var victim = this._entityClient.getEntity(data.victimUUID);
 	var damage = data.damage;
 
-	this._battleManager.hitEntity(attacker, victim, damage);
+	//Why this is commented: Interpolation makes it pushed nicely anyway so this is not required
+	//this._battleManager.hitEntity(attacker, victim, damage);
 }
