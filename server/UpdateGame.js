@@ -63,22 +63,77 @@ updateGame = function() {
 	}
 
 
+	// Copy files to www/
+	{
+		var mkdir = function(path) {
+			if (!fs.existsSync(path))
+				fs.mkdirSync(path);
+		}
+
+		var copyFile = function(pathA, pathB) {
+			if (pathB == undefined)
+				pathB = pathA;
+
+			fs.createReadStream("../" + pathA).pipe(fs.createWriteStream("www/" + pathB));
+		}
+
+		var copyDir = function(pathA, pathB) {
+			var files = [];
+			var dirs = [];
+
+			mkdir(pathB);
+			findAllFiles(pathA, files, dirs)
+
+			for (var i = 0; i < dirs.length; ++i)
+				mkdir(pathB + dirs[i].slice(pathA.length));
+
+			for (var i = 0; i < files.length; ++i) {
+				var filePath = files[i].slice(pathA.length);
+				console.log("Copying file: " + pathA + filePath);
+
+				fs.createReadStream(pathA + filePath).pipe(fs.createWriteStream(pathB + filePath));
+			}
+		}
+
+		mkdir("www/");
+		mkdir("www/temp/");
+		copyFile('index.php');
+		copyFile("style.css");
+		copyFile("login.html");
+		copyFile("loginFrame.html");
+		copyFile("playMenu.html");
+		copyFile("progress.html");
+		copyFile("registerFrame.html");
+
+		mkdir("www/lib/");
+		mkdir("www/game/");
+		mkdir("www/game/shaders/");
+		copyDir("../game/shaders/", "www/game/shaders/");
+	}
+
 	// Run Obfuscator
+	{
+		var exec = require('child_process').exec,
+	    child;
 
-	var exec = require('child_process').exec,
-    child;
 
-    var command = "java -jar ../temp/yuicompressor.jar ../temp/DigMiner.js -o ../temp/DigMinerObfuscated.js --charset utf-8";
+	    
+	    var fullPath = require('path').dirname(Object.keys(require.cache)[0]) + "\\";
+	    fullPath = fullPath.slice(0, fullPath.length - 7) + "temp\\";
+	    var command = "java -jar " + fullPath + "yuicompressor.jar " + fullPath + "DigMiner.js -o www\\temp\\DigMiner.js --charset utf-8";
+	    console.log(command);
+		
+		child = exec(command,
+		  function (error, stdout, stderr) {
+		    console.log('stdout: ' + stdout);
+		    console.log('stderr: ' + stderr);
+		    if (error !== null) {
+		      console.log('exec error: ' + error);
+		    }
+		});
+	}
 
-/*
-	child = exec(command,
-	  function (error, stdout, stderr) {
-	    console.log('stdout: ' + stdout);
-	    console.log('stderr: ' + stderr);
-	    if (error !== null) {
-	      console.log('exec error: ' + error);
-	    }
-	});*/
+	
 
 	console.log("Game is updated!");
 }
@@ -89,7 +144,7 @@ findSrcFiles = function(dir, outSrcFiles) {
 		var files = fs.readdirSync(dir2);
 
 		for(var i = 0; i < files.length; ++i) {
-			var filePath = dir2 + files[i]
+			var filePath = dir2 + files[i];
 			var stat = fs.statSync(filePath);
 
 			if (stat.isFile()) {
@@ -109,4 +164,20 @@ findSrcFiles = function(dir, outSrcFiles) {
 
 	walk(dir);
 	return srcFiles;
+}
+
+findAllFiles = function(dir, outFiles, outDirs) {
+	var files = fs.readdirSync(dir);
+	for (var i = 0; i < files.length; ++i) {
+		var filePath = dir + files[i]
+		var stat = fs.statSync(filePath);
+
+		if (stat.isFile()) {
+			outFiles.push(filePath);
+		}
+		else if (stat.isDirectory()) {
+			outDirs.push(filePath + "/");
+			findAllFiles(filePath + "/", outFiles, outDirs);
+		}
+	}
 }
