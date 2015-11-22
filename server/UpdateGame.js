@@ -121,6 +121,7 @@ updateGame = function() {
 	    var fullPath = require('path').dirname(Object.keys(require.cache)[0]) + "\\";
 	    fullPath = fullPath.slice(0, fullPath.length - 7) + "temp\\";
 	    var command = "java -jar " + fullPath + "yuicompressor.jar " + fullPath + "DigMiner.js -o ..\\temp\\DigMinerMinified.js --charset utf-8";
+	    command = command.replace("\\", "/");
 	    console.log(command);
 		
 		child = exec(command,
