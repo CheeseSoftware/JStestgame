@@ -92,15 +92,12 @@ ServerInstance.prototype.load = function() {
 	this.battleManager = new BattleManager(this.entityWorld);
 	
 	// Initialize entityServer
-	this.entityServer = new EntityServer(this.entityWorld);
-	
-	// Initialize server systems
-	this.authenticationServer = new AuthenticationServer(this.db, this.io);
+	this.playerServer = new PlayerServer(this.io);
+	this.entityServer = new EntityServer(this.entityWorld, this.playerServer, this.io);
+	this.authenticationServer = new AuthenticationServer(this.db, this.playerServer, this.io);
 	this.chunkServer = new ChunkServer(this.chunkManager, this.io);
 	this.regeneratorServer = new RegeneratorServer(this.chunkManager, this.io);
-	this.BattleServer = new BattleServer(this.battleManager, this.entityWorld, this.entityServer, this.io)
-	
-	this.players = {};
+	this.BattleServer = new BattleServer(this.battleManager, this.entityWorld, this.entityServer, this.playerServer, this.io)
 	
 	var mapData = {
 		width: 256,
@@ -110,9 +107,9 @@ ServerInstance.prototype.load = function() {
 	
 	this.io.on('connection', function(socket) {
 		// Send existing players to the new player
-		var keys = Object.keys(this.players);
+		var keys = Object.keys(this.playerServer._players);
 		keys.forEach(function (key) { 
-			var player = this.players[key];
+			var player = this.playerServer.getPlayer(key);
 			var entity = this.entityServer.getEntity(player.uuid);
 			if(entity) {
 				var physics = entity.getComponent('physics');
@@ -131,7 +128,7 @@ ServerInstance.prototype.load = function() {
 		// Send init and camera target
 		var playerToFollow;
 		if(keys.length > 0)
-			playerToFollow = this.players[keys[Math.floor(Math.random() * keys.length)]];
+			playerToFollow = this.playerServer.getPlayer(keys[Math.floor(Math.random() * keys.length)]);
 		
 		var init = { 
 			mapWidth: mapData.width, 
@@ -150,7 +147,7 @@ ServerInstance.prototype.load = function() {
 		socket.on('error', console.error.bind(console));
 		
 		socket.on('disconnect', function(){
-			var player = this.players[socket.id];
+			var player = this.playerServer.getPlayer(socket.id);
 			if(player != undefined) {
 				console.log(player.username + ' has disconnected.');
 				socket.broadcast.emit('playerleave', { 
@@ -159,46 +156,22 @@ ServerInstance.prototype.load = function() {
 				});
 				
 				this.entityServer.removeEntity(player.uuid);
-				delete this.players[socket.id];
+				delete this.playerServer.removePlayer(socket.id);
 			}
 		}.bind(this));
 		
 		socket.on('update', function(data) {
-			var uuid = this.players[socket.id].uuid;
+			var uuid = this.playerServer.getPlayer(socket.id).uuid;
 			var entity = this.entityServer.getEntity(uuid);
 
 			this.io.sockets.emit('playerupdate', {
 				uuid: data.uuid,
 				isDigging: data.isDigging
 			});
-
-			if(entity) {
-				var physics = entity.getComponent('physics');
-				physics.x = data.x;
-				physics.y = data.y;
-				physics.vx = data.vx;
-				physics.vy = data.vy;
-				physics.dx = data.dx;
-				physics.dy = data.dy;
-				physics.rotation = data.rotation;
-				
-				socket.broadcast.emit('entityupdate', {
-					uuid: data.uuid,
-					x: data.x,
-					y: data.y,
-					vx: data.vx,
-					vy: data.vy,
-					dx: data.dx, 
-					dy: data.dy,
-					rotation: data.rotation
-				});
-			}
-			else
-				console.log("on 'update': entity undefined");
 		}.bind(this));
 		
 		socket.on('playerinit', function(data) {
-			if(this.players[socket.id]) {
+			if(this.playerServer.getPlayer(socket.id)) {
 				// This player is already playing...
 				socket.disconnect();
 				return;
@@ -207,7 +180,7 @@ ServerInstance.prototype.load = function() {
 			var uuid = generateUUID(); // TODO: load uuid from database
 			var username = uuid; //TODO: load username from database
 			var entity = entityTemplates.player(username, uuid);
-			this.players[socket.id] = { username: username, uuid: uuid, spawned: true};
+			this.playerServer.setPlayer(socket.id, { username: username, uuid: uuid, spawned: true});
 			
 			var physics = entity.getComponent('physics');
 			physics.x = 128;

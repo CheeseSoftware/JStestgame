@@ -285,6 +285,12 @@ Game.prototype.initializeListeners = function() {
 		var entity = this.entityClient.getEntity(data.uuid);
 		
 		if(entity != undefined) {
+			/*var output = (entity.uuid + " updated");
+			var me = this.entityWorld.getEntities("controlled");
+			if(me.length > 0 && me[0].uuid == entity.uuid)
+				output += (" which is me");
+			console.log(output + ". received x:" + data.x + " y:" +  data.y);*/
+			
 			var physics = entity.getComponent("physics");
 			physics.gx = data.x;
 			physics.gy = data.y;

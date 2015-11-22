@@ -1,6 +1,7 @@
 
-AuthenticationServer = function(db, io) {
+AuthenticationServer = function(db, playerServer, io) {
 	this._io = io;
+	this._playerServer = playerServer;
 	this._db = db;
 	
 	this._io.on('connection', function(socket) {
@@ -11,9 +12,9 @@ AuthenticationServer = function(db, io) {
 }
 
 AuthenticationServer.prototype.isSocketAuthenticated = function(socket) {
-	return server.players[socket.id].authenticated;
+	return this._playerServer.getPlayer(socket.id).authenticated;
 }
 
 AuthenticationServer.prototype.setSocketAuthenticated = function(socket, bool) {
-	server.players[socket.id].authenticated = true;
+	this._playerServer.getPlayer(socket.id).authenticated = true;
 }
