@@ -250,22 +250,24 @@ Game.prototype.initializeListeners = function() {
 	});
 	
 	this.connection.on('playerjoin', function(data) {
-		console.log(data.username + " has connected.");
-		var player = entityTemplates.player(data.username, data.uuid);
-		
-		var physics = player.getComponent("physics");
-		physics.x = data.x;
-		physics.y = data.y;
-		physics.gx = data.x;
-		physics.gy = data.y;
-		physics.gvx = data.vx;
-		physics.gvy = data.vy;
-		physics.dx = data.dx;
-		physics.dy = data.dy;
-		physics.rotation = data.rotation;
-		
-		physics.oldX = data.x;
-		physics.oldY = data.x;
+		if(!this.entityClient.getEntity(data.uuid)) {
+			console.log(data.username + " has connected.");
+			var player = entityTemplates.player(data.username, data.uuid);
+			
+			var physics = player.getComponent("physics");
+			physics.x = data.x;
+			physics.y = data.y;
+			physics.gx = data.x;
+			physics.gy = data.y;
+			physics.gvx = data.vx;
+			physics.gvy = data.vy;
+			physics.dx = data.dx;
+			physics.dy = data.dy;
+			physics.rotation = data.rotation;
+			
+			physics.oldX = data.x;
+			physics.oldY = data.x;
+		}
 	}.bind(this), this);
 	
 	this.connection.on('playerinit', function(data, context) {

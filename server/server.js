@@ -207,27 +207,9 @@ ServerInstance.prototype.load = function() {
 				this.io.sockets.emit('dig', { x: physics.x, y: physics.y, digRadius: 10});
 			}
 	
-			socket.emit('playerinit', {
-				uuid: uuid,
-				username: username,
-				x: physics.gx,
-				y: physics.gy,
-				rotation: physics.rotation
-			});
+			this.playerServer.sendPlayerInitPacket(entity, socket.id, socket);
+			this.playerServer.sendPlayerJoinPacket(entity, socket.id);
 			
-			socket.broadcast.emit('playerjoin', {
-				uuid: uuid,
-				username: username,
-				x: physics.gx,
-				y: physics.gy,
-				vx: physics.gvx,
-				vy: physics.gvy,
-				dx: physics.dx,
-				dy: physics.dy,
-				rotation: physics.rotation
-			});
-			
-			return;
 			for(var i = 0; i < 1; ++i) {
 				var monster = entityTemplates.worker();
 				var x = Math.random() * 128;
