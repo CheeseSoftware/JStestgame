@@ -14,22 +14,13 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				//console.log("physicssystem " + entity.uuid);
 				var desiredAngle = Math.atan2(physics.dy, physics.dx);
 				physics.rotateTo(physics, desiredAngle + Math.PI / 2, 0.05);
-				physics.desiredAngle = desiredAngle;
-					
-				var vx = Math.cos(desiredAngle);
-				var vy = Math.sin(desiredAngle);
+
+				var normal = v2.create(physics.dx, physics.dy);
+				v2.normalize(normal, normal);
+				v2.multiply(physics.moveSpeed, normal, normal);
 				
-				var normal = new b2Vec2(vx, vy);
-				normal.Normalize();
-				
-				var vx = normal.x * physics.moveSpeed;
-				var vy = normal.y * physics.moveSpeed;
-				
-				physics.gvx += vx;
-				physics.gvy += vy;
-			
-				
-				//console.log("Simulated entity " + entity.uuid);
+				physics.gvx += normal[0];
+				physics.gvy += normal[1];
 			}
 					
 			// Now do some linear interpolation!		

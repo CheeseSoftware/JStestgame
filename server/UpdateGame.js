@@ -125,20 +125,18 @@ updateGame = function() {
 	    console.log(command);
 		
 		child = exec(command,
-		  function (error, stdout, stderr) {
-		    console.log('stdout: ' + stdout);
-		    console.log('stderr: ' + stderr);
-		    if (error !== null) {
-		      console.log('exec error: ' + error);
-		    }
-
-		    var content = fs.readFileSync("../temp/DigMinerMinified.js");
-
-		    var stream = fs.createWriteStream("www/temp/DigMiner.js");
-		    stream.write("/***************************************************************\n");
+			function (error, stdout, stderr) {
+				if (error !== null) {
+				  console.log('exec error: ' + error);
+			}
+			
+			var content = fs.readFileSync("../temp/DigMinerMinified.js");
+			
+			var stream = fs.createWriteStream("www/temp/DigMiner.js");
+			stream.write("/***************************************************************\n");
 			stream.write(" * Copyrighted (c) 2015 Virtual Spade UF. All rights reserved. * \n");
 			stream.write(" ***************************************************************/\n\n");
-		    stream.end(content)
+			stream.end(content)
 		});
 	}
 

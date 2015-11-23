@@ -54,12 +54,6 @@ ServerInstance = function() {
 }
 
 ServerInstance.prototype.load = function() {
-	// Set up error handler
-	process.on('uncaughtException', function (error) {
-		console.log("shit");
-	   console.log(error.stack);
-	});
-	
 	// Initialize socket.io server
 	var app = http.createServer(function(req, res) {
 		res.end();
@@ -239,6 +233,7 @@ ServerInstance.prototype.load = function() {
 				rotation: physics.rotation
 			});
 			
+			return;
 			for(var i = 0; i < 1; ++i) {
 				var monster = entityTemplates.worker();
 				var x = Math.random() * 128;
@@ -253,12 +248,7 @@ ServerInstance.prototype.load = function() {
 				var AI = monster.getComponent("AI");
 				AI.target = uuid;
 				
-				this.io.sockets.emit('entityspawn', {
-					uuid: monster.uuid,
-					type: "worker",
-					x: x,
-					y: y
-				});
+				this.entityServer.sendEntitySpawnPacket(monster);
 			}
 			
 			console.log(username + " has connected.");

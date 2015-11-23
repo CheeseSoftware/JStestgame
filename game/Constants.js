@@ -8,5 +8,5 @@ constants = {
 	friction: 0.05,
 	cameraHoverSpeed: 0.5,
 	clientInterval: 1,
-	serverInterval:10
+	serverInterval:1
 }

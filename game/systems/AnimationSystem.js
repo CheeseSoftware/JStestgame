@@ -15,7 +15,6 @@ ECS.Systems.AnimationSystem = CES.System.extend({
 				if(bodypart.animating) {
 					//console.log("nice animation");
 					if(now - bodypart.lastFrame >= bodypart.mspf) {	
-						console.log(bodypart.mspf);
 						bodypart.lastFrame = new Date();
 						//console.log("found animation to animate " + player.text.text);				
 						bodypart.currentFrame += 1;
