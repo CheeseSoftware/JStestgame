@@ -7,6 +7,7 @@ entityTemplates.player = function(username, uuid) {
 	
 	// Physics
 	var fixDef = new b2FixtureDef;
+	fixDef.filter.maskBits = 0x0000;
 	fixDef.density = 1.0;
 	fixDef.friction = 0.5;
 	fixDef.restitution = 0.2;
@@ -15,11 +16,9 @@ entityTemplates.player = function(username, uuid) {
 	fixDef.shape = new b2CircleShape(constants.playerFatness);
 	bodyDef.position.Set(10, 400 / 30 + 1.8);
 	var physicsBody = physicsWorld.CreateBody(bodyDef);
-	var ghostBody = physicsWorld.CreateBody(bodyDef);
 	physicsBody.CreateFixture(fixDef);
-	ghostBody.CreateFixture(fixDef);
 	
-	entity.addComponent(new ECS.Components.Physics(physicsBody, ghostBody));
+	entity.addComponent(new ECS.Components.Physics(physicsBody));
 	
 	if(!isServer) {
 		var sprite = new PIXI.Sprite(game.textureManager.textures.feet);
@@ -60,6 +59,7 @@ entityTemplates.player = function(username, uuid) {
 
 entityTemplates.worker = function(uuid) {
 	var entity = entityTemplates.createEntity(uuid);
+	entity.type = "worker";
 	
 	var physicsWorld = (isServer ? server.physicsWorld : game.physicsWorld);
 	var entityWorld = (isServer ? server.entityWorld : game.entityWorld);
@@ -75,11 +75,9 @@ entityTemplates.worker = function(uuid) {
 	fixDef.shape = new b2CircleShape(constants.playerFatness);
 	bodyDef.position.Set(10, 400 / 30 + 1.8);
 	var physicsBody = physicsWorld.CreateBody(bodyDef);
-	var ghostBody = physicsWorld.CreateBody(bodyDef);
 	physicsBody.CreateFixture(fixDef);
-	ghostBody.CreateFixture(fixDef);
 	
-	var physics = new ECS.Components.Physics(physicsBody, ghostBody);
+	var physics = new ECS.Components.Physics(physicsBody);
 	physics.moveSpeed = 4.0;
 	entity.addComponent(physics);
 	

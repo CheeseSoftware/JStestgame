@@ -258,10 +258,12 @@ Game.prototype.initializeListeners = function() {
 		var physics = player.getComponent("physics");
 		physics.x = data.x;
 		physics.y = data.y;
-		physics.oldX = data.x;
-		physics.oldY = data.y;
 		physics.gx = data.x;
 		physics.gy = data.y;
+		physics.gvx = data.vx;
+		physics.gvy = data.vy;
+		physics.dx = data.dx;
+		physics.dy = data.dy;
 		physics.rotation = data.rotation;
 	}, this);
 	
@@ -294,6 +296,11 @@ Game.prototype.initializeListeners = function() {
 		physics.gy = data.y;
 		physics.x = data.x;
 		physics.y = data.y;
+		physics.gvx = data.vx;
+		physics.gvy = data.vy;
+		physics.dx = data.dx;
+		physics.dy = data.dy;
+		physics.rotation = data.rotation;
 		console.log("Spawned entity of type " + data.type);
 	}.bind(this));
 	
@@ -308,10 +315,10 @@ Game.prototype.initializeListeners = function() {
 			//else if(me.length > 0)
 				//console.log(JSON.stringify(data));*/
 				//console.log(output + ". received x:" + data.x + " y:" +  data.y);
-			if(me[0].uuid != entity.uuid) {
+			/*if(me[0].uuid != entity.uuid) {
 				if(data.dx != 0 || data.dy != 0)
 					console.log(data.uuid + " dx" + data.dx + " dy" + data.dy);
-			}
+			}*/
 			
 			var physics = entity.getComponent("physics");
 			physics.gx = data.x;
