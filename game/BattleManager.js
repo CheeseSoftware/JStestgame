@@ -50,7 +50,7 @@ BattleManager.prototype.doHit = function(attacker, distance, radius, damage, onH
 
 			var dot = v2.dot(dir, dir2);
 
-			if (dot < 0.5)
+			if (dot < 0.0)
 				continue;
 			
 			this.hitEntity(attacker, entity, damage);

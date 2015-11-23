@@ -30,7 +30,7 @@ BattleServer.prototype.onMessageHit = function(socket) {
  	var attacker = this._entityServer.getEntity(attackerUUID);
 
  	var distance = 0.05*32.0;
-	var radius = 0.1*32.0;
+	var radius = 0.5*32.0;
 	var damage = 20.0;
 
 	//this._battleManager.hitEntity(attacker, victim, damage);
