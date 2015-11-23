@@ -80,6 +80,7 @@ entityTemplates.worker = function(uuid) {
 	ghostBody.CreateFixture(fixDef);
 	
 	var physics = new ECS.Components.Physics(physicsBody, ghostBody);
+	physics.moveSpeed = 4.0;
 	entity.addComponent(physics);
 	
 	if(!isServer) {
