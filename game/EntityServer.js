@@ -72,6 +72,7 @@ EntityServer.prototype.sendUpdatePacket = function(uuid, socket) {
 	var entity = this.getEntity(uuid);
 	if(entity) {
 		var physics = entity.getComponent('physics');
+		//console.log("entityserver " + physics.dx + " " + physics.dy);
 		
 		var data = {
 			uuid: uuid,
@@ -89,6 +90,8 @@ EntityServer.prototype.sendUpdatePacket = function(uuid, socket) {
 		else
 			this._io.sockets.emit('entityupdate', data);
 	}
+	else
+		console.log("EntityServer.sendUpdatePacket: entity undefined");
 }
 
 

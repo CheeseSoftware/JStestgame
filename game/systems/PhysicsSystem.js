@@ -11,6 +11,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			var state = physics.playState;
 
 			if(physics.dx != 0 || physics.dy != 0) {
+				//console.log("physicssystem " + entity.uuid);
 				var desiredAngle = Math.atan2(physics.dy, physics.dx);
 				physics.rotateTo(physics, desiredAngle + Math.PI / 2, 0.05);
 				physics.desiredAngle = desiredAngle;
@@ -24,17 +25,11 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				var vx = normal.x * physics.moveSpeed;
 				var vy = normal.y * physics.moveSpeed;
 				
-				physics.vx += vx;
-				physics.vy += vy;
 				physics.gvx += vx;
-				physics.gvy += vy;	
+				physics.gvy += vy;
+			
 				
-				/*if(!isControlled) {
-					physics.vx += vx;
-					physics.vy += vy;	
-					physics.gvx += vx;		
-					physics.gvy += vy;
-				}*/
+				//console.log("Simulated entity " + entity.uuid);
 			}
 					
 			// Now do some linear interpolation!		
@@ -47,6 +42,10 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			
 			// Apply speed limit, decrease speed, etc.
 			physics.doUpdate(physics);
+			
+						/*if(entity.uuid > 1) {
+				console.log("gvx" + physics.gvx + " gvy" + physics.gvy + " dx" + physics.dx + " dy" + physics.dy);
+			}*/
 			
 			if(drawable != undefined) {
 				drawable.positionAll(physics.x, physics.y, physics.rotation);

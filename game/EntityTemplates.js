@@ -66,6 +66,7 @@ entityTemplates.worker = function(uuid) {
 	
 	// Physics
 	var fixDef = new b2FixtureDef;
+	//fixDef.filter.maskBits = 0x0000;
 	fixDef.density = 1.0;
 	fixDef.friction = 0.5;
 	fixDef.restitution = 0.2;
@@ -79,11 +80,7 @@ entityTemplates.worker = function(uuid) {
 	ghostBody.CreateFixture(fixDef);
 	
 	var physics = new ECS.Components.Physics(physicsBody, ghostBody);
-	physics.moveSpeed = 1.0;
 	entity.addComponent(physics);
-	if(isServer) {
-		entity.addComponent(new ECS.Components.AI());
-	}
 	
 	if(!isServer) {
 		var sprite = new PIXI.Sprite(game.textureManager.textures.worker);
@@ -99,6 +96,8 @@ entityTemplates.worker = function(uuid) {
 		entity.addComponent(new ECS.Components.Drawable(bodyparts, game.animationManager, 0, 0));
 		game.stage.addChild(sprite);
 	}
+	else
+		entity.addComponent(new ECS.Components.AI());
 	
 	entityWorld.addEntity(entity);
 	return entity;

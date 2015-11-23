@@ -14,15 +14,21 @@ ECS.Systems.AISystem = CES.System.extend({
 			targets.forEach(function (target) {
 				var targetPhysics = target.getComponent("physics");
 				
-				/*physics.dx = targetPhysics.gx - physics.gx;
-				physics.dy = targetPhysics.gy - physics.gy;*/
-				
-				physics = targetPhysics;
-				
-				if(new Date() - AI.lastPacket > 0) {
+				if(new Date() - AI.lastPacket > 100) {
+					var dx = targetPhysics.gx - physics.x;
+					var dy = targetPhysics.gy - physics.y;
+					console.log(dx + " " + dy);
+					physics.dx = dx;
+					physics.dy = dy;
+					/*physics.gx = targetPhysics.gx;
+					physics.gy = targetPhysics.gy;
+					physics.gvx = targetPhysics.gvx;
+					physics.gvy = targetPhysics.gvy;
+					physics.dx = targetPhysics.dx;
+					physics.dy = targetPhysics.dy;
+					physics.rotation = targetPhysics.rotation;*/
 					server.entityServer.sendUpdatePacket(entity.uuid);
 					AI.lastPacket = new Date();
-					console.log("sent packet. x:" + physics.gx + " y:" + physics.gy);
 				}
 			});
         }.bind(this));
