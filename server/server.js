@@ -127,17 +127,7 @@ ServerInstance.prototype.load = function() {
 		var monsters = this.entityWorld.getEntities('AI');
 		monsters.forEach(function (monster) { 
 			var physics = monster.getComponent('physics');
-			socket.emit('entityspawn', {
-				uuid: monster.uuid,
-				type: monster.type,
-				x: physics.gx,
-				y: physics.gy,
-				vx: physics.gvx,
-				vy: physics.gvy,
-				dx: physics.dx,
-				dy: physics.dy,
-				rotation: physics.rotation
-			});
+			this.entityServer.sendEntitySpawnPacket(monster, socket);
 		}.bind(this));
 		
 		// Send init and camera target
@@ -179,9 +169,9 @@ ServerInstance.prototype.load = function() {
 			var uuid = this.playerServer.getPlayer(socket.id).uuid;
 			var entity = this.entityServer.getEntity(uuid);
 			
-			var serverPlayer = entity.getComponent("serverplayer");
+			var player = entity.getComponent("player");
 			var physics = entity.getComponent("physics");
-			serverPlayer.isDigging = data.isDigging;
+			player.isDigging = data.isDigging;
 			if(data.isDigging) {
 				physics.moveSpeed = constants.digMoveSpeed;
 			}
@@ -220,16 +210,20 @@ ServerInstance.prototype.load = function() {
 			socket.emit('playerinit', {
 				uuid: uuid,
 				username: username,
-				x: physics.x,
-				y: physics.y,
+				x: physics.gx,
+				y: physics.gy,
 				rotation: physics.rotation
 			});
 			
 			socket.broadcast.emit('playerjoin', {
 				uuid: uuid,
 				username: username,
-				x: physics.x,
-				y: physics.y,
+				x: physics.gx,
+				y: physics.gy,
+				vx: physics.gvx,
+				vy: physics.gvy,
+				dx: physics.dx,
+				dy: physics.dy,
 				rotation: physics.rotation
 			});
 			

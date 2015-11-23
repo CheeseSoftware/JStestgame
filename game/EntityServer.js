@@ -95,7 +95,7 @@ EntityServer.prototype.sendUpdatePacket = function(uuid, socket) {
 		//console.log("EntityServer.sendUpdatePacket: entity undefined");
 }
 
-EntityServer.prototype.sendEntitySpawnPacket = function(entity) {
+EntityServer.prototype.sendEntitySpawnPacket = function(entity, socket) {
 	var physics = entity.getComponent('physics');
 	var data = {
 		uuid: entity.uuid,
@@ -109,7 +109,10 @@ EntityServer.prototype.sendEntitySpawnPacket = function(entity) {
 		rotation: physics.rotation
 	};
 	
-	this._io.sockets.emit('entityspawn', data);
+	if(socket)
+		socket.emit('entityspawn', data);
+	else
+		this._io.sockets.emit('entityspawn', data);
 }
 
 

@@ -38,20 +38,20 @@ entityTemplates.player = function(username, uuid) {
 			}
 		};
 		
-		var text = new PIXI.Text(username, { fill: '#ffffff' });
 		
-		entity.addComponent(new ECS.Components.Player(username, text));
+		entity.addComponent(new ECS.Components.Player(username));
 		var drawable = new ECS.Components.Drawable(bodyparts, game.animationManager, 0, 0);
+		drawable.text = new PIXI.Text(username, { fill: '#ffffff' });
 		entity.addComponent(drawable);
 		
 		game.stage.addChild(sprite);
 		game.stage.addChild(bodySprite);
-		game.stage.addChild(text);
+		game.stage.addChild(drawable.text);
 		game.entityWorld.addEntity(entity);
 	}
 	else {
 		server.entityWorld.addEntity(entity);
-		entity.addComponent(new ECS.Components.ServerPlayer());
+		entity.addComponent(new ECS.Components.Player());
 	}
 	
 	return entity;

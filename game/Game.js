@@ -198,14 +198,12 @@ Game.prototype.despawnEntity = function(uuid) {
 	var entity = this.entityClient.getEntity(uuid);
 
 	if(entity) {
-		var player = entity.getComponent('player');
-		if(player) {
-			this.stage.removeChild(player.text);
-		}
-		
 		var drawable = entity.getComponent('drawable');
-		if(drawable)
+		if(drawable) {
 			drawable.remove(this.stage);
+			if(drawable.text)
+				this.stage.removeChild(drawable.text);
+		}
 			
 		this.entityClient.removeEntity(uuid);
 	}
@@ -251,7 +249,7 @@ Game.prototype.initializeListeners = function() {
 		console.log("Disconnected from server, reloaded page.");
 	});
 	
-	this.connection.on('playerjoin', function(data, context) {
+	this.connection.on('playerjoin', function(data) {
 		console.log(data.username + " has connected.");
 		var player = entityTemplates.player(data.username, data.uuid);
 		
@@ -265,7 +263,10 @@ Game.prototype.initializeListeners = function() {
 		physics.dx = data.dx;
 		physics.dy = data.dy;
 		physics.rotation = data.rotation;
-	}, this);
+		
+		physics.oldX = data.x;
+		physics.oldY = data.x;
+	}.bind(this), this);
 	
 	this.connection.on('playerinit', function(data, context) {
 		var player = entityTemplates.player(data.username, data.uuid);
