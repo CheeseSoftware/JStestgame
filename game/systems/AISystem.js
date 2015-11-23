@@ -15,9 +15,9 @@ ECS.Systems.AISystem = CES.System.extend({
 				var targetPhysics = target.getComponent("physics");
 				
 				if(new Date() - AI.lastPacket > 100) {
-					var dx = targetPhysics.gx - physics.x;
-					var dy = targetPhysics.gy - physics.y;
-					console.log(dx + " " + dy);
+					var dx = targetPhysics.gx - physics.gx;
+					var dy = targetPhysics.gy - physics.gy;
+					
 					physics.dx = dx;
 					physics.dy = dy;
 					/*physics.gx = targetPhysics.gx;
@@ -29,6 +29,13 @@ ECS.Systems.AISystem = CES.System.extend({
 					physics.rotation = targetPhysics.rotation;*/
 					server.entityServer.sendUpdatePacket(entity.uuid);
 					AI.lastPacket = new Date();
+					
+					/*console.log("----------");
+					console.log(dx + " " + dy);
+					console.log("g " + physics.gx + " " + physics.gy);
+					console.log(physics.x + " " + physics.y);
+					console.log("gv " + physics.gvx + " " + physics.gvy);
+					console.log(physics.vx + " " + physics.vy);*/
 				}
 			});
         }.bind(this));

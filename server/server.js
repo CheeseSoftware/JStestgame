@@ -219,22 +219,24 @@ ServerInstance.prototype.load = function() {
 				rotation: physics.rotation
 			});
 			
-			var monster = entityTemplates.worker();
-			var x = 128;
-			var y = 128;
-			
-			var physics = monster.getComponent("physics");
-			physics.gx = x;
-			physics.gy = y;
-			physics.x = x;
-			physics.y = y;
-			
-			this.io.sockets.emit('entityspawn', {
-				uuid: monster.uuid,
-				type: "worker",
-				x: x,
-				y: y
-			});
+			for(var i = 0; i < 1; ++i) {
+				var monster = entityTemplates.worker();
+				var x = Math.random() * 128;
+				var y = Math.random() * 128;
+				
+				var physics = monster.getComponent("physics");
+				physics.gx = x;
+				physics.gy = y;
+				physics.x = x;
+				physics.y = y;
+				
+				this.io.sockets.emit('entityspawn', {
+					uuid: monster.uuid,
+					type: "worker",
+					x: x,
+					y: y
+				});
+			}
 			
 			console.log(username + " has connected.");
 		}.bind(this));
