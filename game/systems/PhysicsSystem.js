@@ -34,7 +34,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 					
 			// Now do some linear interpolation!		
 			var duration = 50;
-			var ic = Math.min((new Date()-physics.time)/duration, 1.0);
+			var ic = Math.min((new Date()-physics.lastUpdate)/duration, 1.0);
 			physics.x = ic*physics.gx + (1.0-ic)*physics.x;
 			physics.y = ic*physics.gy + (1.0-ic)*physics.y;
 			physics.vx = ic*physics.gvx + (1.0-ic)*physics.vx;
@@ -43,9 +43,6 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			// Apply speed limit, decrease speed, etc.
 			physics.doUpdate(physics);
 			
-						/*if(entity.uuid > 1) {
-				console.log("gvx" + physics.gvx + " gvy" + physics.gvy + " dx" + physics.dx + " dy" + physics.dy);
-			}*/
 			
 			if(drawable != undefined) {
 				drawable.positionAll(physics.x, physics.y, physics.rotation);

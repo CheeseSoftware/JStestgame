@@ -18,7 +18,7 @@ ECS.Components.Drawable.prototype.animate = function(bodypartName, animation, fp
 			bodypart.animInstance = this.animationManager.getAnimation(animation);
 			bodypart.sprite.texture = bodypart.animInstance.texture.clone();
 		}
-		bodypart.mspf = Math.round(1000/fps);
+		bodypart.mspf = 1000.0/fps;
 		if(!bodypart.lastFrame)
 			bodypart.lastFrame = new Date();
 		if(!bodypart.currentFrame)

@@ -9,7 +9,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			var drawable = entity.getComponent('drawable');
 			var isControlled = entity.getComponent('controlled');
 			
-			if(keyboard.keys.space.isDown && (new Date() - player.lastDig > 400)) {
+			if(keyboard.keys.space.isDown && (new Date() - player.lastDig > 1000 / player.digSpeed)) {
 				player.lastDig = new Date();
 				var digRadius = 1.5;
 				var x = physics.x + 32.0*Math.sin(physics.rotation);

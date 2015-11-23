@@ -5,6 +5,7 @@ ECS.Components.Player = CES.Component.extend({
         this.username = username;
 		this.text = text;
 		this.lastDig = new Date();
+		this.digSpeed = 5;
     }
 });
  

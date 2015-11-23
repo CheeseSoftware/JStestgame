@@ -289,6 +289,6 @@ ServerInstance.prototype.load = function() {
 		
 		this.regeneratorServer.update(dt);
 	}.bind(this);
-	var intervalId = setInterval(this.run, 10);
+	var intervalId = setInterval(this.run, constants.serverInterval);
 }
 GLOBAL.server = new ServerInstance();

@@ -19,6 +19,7 @@ EntityServer = function(entityWorld, playerServer, io) {
 				physics.dx = data.dx;
 				physics.dy = data.dy;
 				physics.rotation = data.rotation;
+				physics.lastUpdate = new Date();
 				
 				socket.broadcast.emit('entityupdate', {
 					uuid: data.uuid,
@@ -52,8 +53,8 @@ EntityServer.prototype.getEntity = function(uuid) {
 	if(entityId != undefined) {
 		return this._entityWorld.getEntity(entityId);
 	}
-	else
-		console.log("EntityServer getEntity: entityId undefined.");
+	//else
+		//console.log("EntityServer getEntity: entityId undefined.");
 	return undefined;
 }
 
@@ -64,8 +65,8 @@ EntityServer.prototype.removeEntity = function(uuid) {
 		this._entityWorld.removeEntity(entity);
 		this._entityMap.remove(uuid);
 	}
-	else
-		console.log("EntityServer removeEntity: entityId undefined.");
+	//else
+		//console.log("EntityServer removeEntity: entityId undefined.");
 }
 
 EntityServer.prototype.sendUpdatePacket = function(uuid, socket) {
@@ -90,8 +91,8 @@ EntityServer.prototype.sendUpdatePacket = function(uuid, socket) {
 		else
 			this._io.sockets.emit('entityupdate', data);
 	}
-	else
-		console.log("EntityServer.sendUpdatePacket: entity undefined");
+	//else
+		//console.log("EntityServer.sendUpdatePacket: entity undefined");
 }
 
 

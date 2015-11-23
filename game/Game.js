@@ -90,7 +90,7 @@ Game.prototype.load = function() {
 	
 	this.lastUpdate = Date.now();
 	
-	this.intervalId = setInterval(function(){game.run()}, 10);
+	this.intervalId = setInterval(function(){game.run()}, constants.clientInterval);
 	
 	this.connection = new Connection(vars.ip, 3000);
 	this.initializeListeners();
@@ -301,25 +301,13 @@ Game.prototype.initializeListeners = function() {
 		physics.dx = data.dx;
 		physics.dy = data.dy;
 		physics.rotation = data.rotation;
-		console.log("Spawned entity of type " + data.type);
+		console.log("Spawned entity of type " + data.type + ". UUID " + data.uuid);
 	}.bind(this));
 	
 	this.connection.on('entityupdate', function(data, context) {
 		var entity = this.entityClient.getEntity(data.uuid);
 		
 		if(entity != undefined) {
-			//var output = (entity.uuid + " updated");
-			var me = this.entityWorld.getEntities("controlled");
-			//if(me.length > 0 && me[0].uuid == entity.uuid)
-				//output += (" which is me");
-			//else if(me.length > 0)
-				//console.log(JSON.stringify(data));*/
-				//console.log(output + ". received x:" + data.x + " y:" +  data.y);
-			/*if(me[0].uuid != entity.uuid) {
-				if(data.dx != 0 || data.dy != 0)
-					console.log(data.uuid + " dx" + data.dx + " dy" + data.dy);
-			}*/
-			
 			var physics = entity.getComponent("physics");
 			physics.gx = data.x;
 			physics.gy = data.y;
@@ -328,8 +316,7 @@ Game.prototype.initializeListeners = function() {
 			physics.dx = data.dx;
 			physics.dy = data.dy;
 			physics.rotation = data.rotation;		
-			physics.time = new Date();
-
+			physics.lastUpdate = new Date();
 		}
 		else
 			console.log("entity is undefined in 'entityupdate' Game.js");
@@ -342,14 +329,15 @@ Game.prototype.initializeListeners = function() {
 			var player = entity.getComponent("player");
 			var physics = entity.getComponent("physics");
 			var drawable = entity.getComponent("drawable");
+			var anim = 60 * player.digSpeed;
 			if(player) {
 				player.isDigging = data.isDigging;
 				if(data.isDigging) {
-					drawable.animate("body", "dig", 400, false);
+					drawable.animate("body", "dig", anim, false);
 					physics.moveSpeed = constants.digMoveSpeed;
 				}
 				else if(physics.moveSpeed != constants.moveSpeed) {
-					drawable.animate("body", "dig", 400, true);
+					drawable.animate("body", "dig", anim, true);
 					physics.moveSpeed = constants.moveSpeed;
 				}
 			}

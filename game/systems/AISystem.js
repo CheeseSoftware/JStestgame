@@ -14,7 +14,7 @@ ECS.Systems.AISystem = CES.System.extend({
 				var target = this._entityServer.getEntity(AI.target);
 				if(target) {
 					var targetPhysics = target.getComponent("physics");		
-					if(new Date() - AI.lastPacket > 100) {
+					if(new Date() - AI.lastPacket > 1000) {
 						var dx = targetPhysics.gx - physics.gx;
 						var dy = targetPhysics.gy - physics.gy;
 						
