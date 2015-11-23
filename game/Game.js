@@ -92,7 +92,7 @@ Game.prototype.load = function() {
 	
 	this.intervalId = setInterval(function(){game.run()}, constants.clientInterval);
 	
-	this.connection = new Connection(vars.ip, 3000);
+	this.connection = new Connection(vars.ip, constants.serverPort);
 	this.initializeListeners();
 	
 	// Initialize client systems

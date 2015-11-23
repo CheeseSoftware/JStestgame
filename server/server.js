@@ -238,8 +238,8 @@ ServerInstance.prototype.load = function() {
 	}.bind(this));
 
 	// Start socket.io server
-	app.listen(3000);
-	console.log("Listening on port 3000");
+	app.listen(constants.serverPort);
+	console.log("Listening on port " + constants.serverPort);
 	
 	// Start the server loop
 	this.lastUpdate = Date.now();
