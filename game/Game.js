@@ -90,7 +90,7 @@ Game.prototype.load = function() {
 	
 	this.lastUpdate = Date.now();
 	
-	this.intervalId = setInterval(function(){game.run()}, 0);
+	this.intervalId = setInterval(function(){game.run()}, 10);
 	
 	this.connection = new Connection(vars.ip, 3000);
 	this.initializeListeners();
@@ -143,9 +143,9 @@ Game.prototype.run = function() {
 	
     this.entityWorld.update(dt);
 	
-	this.physicsWorld.Step(dt, 10, 10);
-	            this.physicsWorld.DrawDebugData();
-            this.physicsWorld.ClearForces();
+	this.physicsWorld.Step(dt/1000.0, 10, 10);
+	this.physicsWorld.DrawDebugData();
+    this.physicsWorld.ClearForces();
 	
 	this.camera.update(dt);
 	
@@ -299,14 +299,19 @@ Game.prototype.initializeListeners = function() {
 	
 	this.connection.on('entityupdate', function(data, context) {
 		var entity = this.entityClient.getEntity(data.uuid);
-		console.log("entityupdate: " + data.uuid);
 		
 		if(entity != undefined) {
-			/*var output = (entity.uuid + " updated");
+			//var output = (entity.uuid + " updated");
 			var me = this.entityWorld.getEntities("controlled");
-			if(me.length > 0 && me[0].uuid == entity.uuid)
-				output += (" which is me");
-			console.log(output + ". received x:" + data.x + " y:" +  data.y);*/
+			//if(me.length > 0 && me[0].uuid == entity.uuid)
+				//output += (" which is me");
+			//else if(me.length > 0)
+				//console.log(JSON.stringify(data));*/
+				//console.log(output + ". received x:" + data.x + " y:" +  data.y);
+			if(me[0].uuid != entity.uuid) {
+				if(data.dx != 0 || data.dy != 0)
+					console.log(data.uuid + " dx" + data.dx + " dy" + data.dy);
+			}
 			
 			var physics = entity.getComponent("physics");
 			physics.gx = data.x;
@@ -317,6 +322,7 @@ Game.prototype.initializeListeners = function() {
 			physics.dy = data.dy;
 			physics.rotation = data.rotation;		
 			physics.time = new Date();
+
 		}
 		else
 			console.log("entity is undefined in 'entityupdate' Game.js");
@@ -335,7 +341,7 @@ Game.prototype.initializeListeners = function() {
 					drawable.animate("body", "dig", 400, false);
 					physics.moveSpeed = constants.digMoveSpeed;
 				}
-				else if(drawable.bodyparts.body.animating) {
+				else if(physics.moveSpeed != constants.moveSpeed) {
 					drawable.animate("body", "dig", 400, true);
 					physics.moveSpeed = constants.moveSpeed;
 				}

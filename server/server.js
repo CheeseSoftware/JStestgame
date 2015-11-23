@@ -164,6 +164,16 @@ ServerInstance.prototype.load = function() {
 		socket.on('update', function(data) {
 			var uuid = this.playerServer.getPlayer(socket.id).uuid;
 			var entity = this.entityServer.getEntity(uuid);
+			
+			var serverPlayer = entity.getComponent("serverplayer");
+			var physics = entity.getComponent("physics");
+			serverPlayer.isDigging = data.isDigging;
+			if(data.isDigging) {
+				physics.moveSpeed = constants.digMoveSpeed;
+			}
+			else {
+				physics.moveSpeed = constants.moveSpeed;
+			}
 
 			this.io.sockets.emit('playerupdate', {
 				uuid: data.uuid,
@@ -209,22 +219,24 @@ ServerInstance.prototype.load = function() {
 				rotation: physics.rotation
 			});
 			
-			var monster = entityTemplates.worker();
-			var x = 128;
-			var y = 128;
-			
-			var physics = monster.getComponent("physics");
-			physics.gx = x;
-			physics.gy = y;
-			physics.x = x;
-			physics.y = y;
-			
-			this.io.sockets.emit('entityspawn', {
-				uuid: monster.uuid,
-				type: "worker",
-				x: x,
-				y: y
-			});
+			for(var i = 0; i < 1; ++i) {
+				var monster = entityTemplates.worker();
+				var x = Math.random() * 128;
+				var y = Math.random() * 128;
+				
+				var physics = monster.getComponent("physics");
+				physics.gx = x;
+				physics.gy = y;
+				physics.x = x;
+				physics.y = y;
+				
+				this.io.sockets.emit('entityspawn', {
+					uuid: monster.uuid,
+					type: "worker",
+					x: x,
+					y: y
+				});
+			}
 			
 			console.log(username + " has connected.");
 		}.bind(this));
@@ -249,11 +261,11 @@ ServerInstance.prototype.load = function() {
 	
 		this.entityWorld.update(dt);
 		
-		this.physicsWorld.Step(dt, 10, 10);
+		this.physicsWorld.Step(dt/1000.0, 10, 10);
 		this.physicsWorld.DrawDebugData();
 		
 		this.regeneratorServer.update(dt);
 	}.bind(this);
-	var intervalId = setInterval(this.run, 0);
+	var intervalId = setInterval(this.run, 10);
 }
 GLOBAL.server = new ServerInstance();

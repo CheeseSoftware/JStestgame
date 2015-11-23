@@ -3,16 +3,13 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 		ECS.Systems.TerrainPhysicsSystem.chunkManager = chunkManager;
 	},
     update: function (dt) {
+		return;
         var entities = this.world.getEntities('physics');
 
 		entities.forEach(function (entity) {
 			var physics = entity.getComponent('physics');
 			var isControlled = entity.getComponent('controlled');
 			
-			var input = { x:physics.x, y:physics.y, vx:physics.vx, vy:physics.vy };
-			var values = this.simulate(dt, input);
-			physics.x = values.x; physics.y = values.y; physics.vx = values.vx; physics.vy = values.vy;
-			 
 			input = { x:physics.gx, y:physics.gy, vx:physics.gvx, vy:physics.gvy };
 			values = this.simulate(dt, input);
 			physics.gx = values.x; physics.gy = values.y; physics.gvx = values.vx; physics.gvy = values.vy;
