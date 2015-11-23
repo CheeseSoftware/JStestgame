@@ -46,11 +46,11 @@ BattleManager.prototype.doHit = function(attacker, distance, radius, damage, onH
 
 			var dir = [0.0, 0.0];
 			v2.normalize(deltaPos, dir);
-			var dir2 = [Math.sin(attackerPhysics.rotation), Math.cos(attackerPhysics.rotation)];
+			var dir2 = [Math.sin(attackerPhysics.rotation), -Math.cos(attackerPhysics.rotation)];
 
 			var dot = v2.dot(dir, dir2);
 
-			if (dot < 0.0)
+			if (dot < 0.5)
 				continue;
 			
 			this.hitEntity(attacker, entity, damage);
