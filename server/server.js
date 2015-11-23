@@ -84,10 +84,6 @@ ServerInstance.prototype.load = function() {
 	
 	// Initialize entityWorld
 	this.entityWorld = new CES.World();
-	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
-	var terrainPhysicsSystem = new ECS.Systems.TerrainPhysicsSystem(this.chunkManager);
-	this.entityWorld.addSystem(terrainPhysicsSystem);
-	this.entityWorld.addSystem(new ECS.Systems.AISystem());
 
 	// Initialize other systems
 	this.battleManager = new BattleManager(this.entityWorld);
@@ -99,6 +95,11 @@ ServerInstance.prototype.load = function() {
 	this.chunkServer = new ChunkServer(this.chunkManager, this.io);
 	this.regeneratorServer = new RegeneratorServer(this.chunkManager, this.io);
 	this.BattleServer = new BattleServer(this.battleManager, this.entityWorld, this.entityServer, this.playerServer, this.io)
+	
+	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
+	var terrainPhysicsSystem = new ECS.Systems.TerrainPhysicsSystem(this.chunkManager);
+	this.entityWorld.addSystem(terrainPhysicsSystem);
+	this.entityWorld.addSystem(new ECS.Systems.AISystem(this.entityServer));
 	
 	var mapData = {
 		width: 256,
@@ -117,13 +118,32 @@ ServerInstance.prototype.load = function() {
 				socket.emit('playerjoin', {
 					uuid: player.uuid,
 					username: player.username,
-					x: physics.x,
-					y: physics.y,
-					vx: physics.vx,
-					vy: physics.vy,
+					x: physics.gx,
+					y: physics.gy,
+					vx: physics.gvx,
+					vy: physics.gvy,
+					dx: physics.dx,
+					dy: physics.dy,
 					rotation: physics.rotation
 				});
 			}
+		}.bind(this));
+		
+		// Send existing monsters to the new player
+		var monsters = this.entityWorld.getEntities('AI');
+		monsters.forEach(function (monster) { 
+			var physics = monster.getComponent('physics');
+			socket.emit('entityspawn', {
+				uuid: monster.uuid,
+				type: monster.type,
+				x: physics.gx,
+				y: physics.gy,
+				vx: physics.gvx,
+				vy: physics.gvy,
+				dx: physics.dx,
+				dy: physics.dy,
+				rotation: physics.rotation
+			});
 		}.bind(this));
 		
 		// Send init and camera target
@@ -229,6 +249,9 @@ ServerInstance.prototype.load = function() {
 				physics.gy = y;
 				physics.x = x;
 				physics.y = y;
+				
+				var AI = monster.getComponent("AI");
+				AI.target = uuid;
 				
 				this.io.sockets.emit('entityspawn', {
 					uuid: monster.uuid,

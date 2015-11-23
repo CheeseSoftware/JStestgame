@@ -1,12 +1,17 @@
 
 ECS.Components.Physics = CES.Component.extend({
     name: 'physics',
-	init: function (body, ghostBody) {
+	init: function (body) {
 		this.body = body;
-		this.ghostBody = ghostBody;
+		//this.ghostBody = ghostBody;
 		// oldX and oldY used for feet animation
 		this.oldX = 0;
 		this.oldY = 0;
+		
+		this.x = 0;
+		this.y = 0;
+		this.vx = 0;
+		this.vy = 0;
 		
 		this.dx = 0;
 		this.dy = 0;
@@ -93,7 +98,7 @@ ECS.Components.Physics.prototype.doUpdate = function(physics) {
 }
  
 Object.defineProperties(ECS.Components.Physics.prototype, {
-	x: {
+	/*x: {
         get: function () { return this.body.GetPosition().x; },
 		set: function (value) {
 			var pos = this.body.GetPosition();
@@ -124,46 +129,46 @@ Object.defineProperties(ECS.Components.Physics.prototype, {
 			vel.y = value;
 			this.body.SetLinearVelocity(vel);
 		}
-    },
+    },*/
 	gx: {
-        get: function () { return this.ghostBody.GetPosition().x; },
+        get: function () { return this.body.GetPosition().x; },
 		set: function (value) {
-			var pos = this.ghostBody.GetPosition();
+			var pos = this.body.GetPosition();
 			pos.x = value;
-			this.ghostBody.SetPosition(new b2Vec2(pos.x,pos.y));
+			this.body.SetPosition(new b2Vec2(pos.x,pos.y));
 		}
     },
 	gy: {
-        get: function () { return this.ghostBody.GetPosition().y; },
+        get: function () { return this.body.GetPosition().y; },
 		set: function (value) {
-			var pos = this.ghostBody.GetPosition();
+			var pos = this.body.GetPosition();
 			pos.y = value;
-			this.ghostBody.SetPosition(new b2Vec2(pos.x,pos.y));
+			this.body.SetPosition(new b2Vec2(pos.x,pos.y));
 		}
     },
     gvx: {
-        get: function () { return this.ghostBody.GetLinearVelocity().x; },
+        get: function () { return this.body.GetLinearVelocity().x; },
 		set: function (value) { 
-			var vel = this.ghostBody.GetLinearVelocity();
+			var vel = this.body.GetLinearVelocity();
 			vel.x = value;
-			this.ghostBody.SetLinearVelocity(vel);
+			this.body.SetLinearVelocity(vel);
 		}
     },
 	gvy: {
-        get: function () { return this.ghostBody.GetLinearVelocity().y; },
+        get: function () { return this.body.GetLinearVelocity().y; },
 		set: function (value) { 
-			var vel = this.ghostBody.GetLinearVelocity();
+			var vel = this.body.GetLinearVelocity();
 			vel.y = value;
-			this.ghostBody.SetLinearVelocity(vel);
+			this.body.SetLinearVelocity(vel);
 		}
     },
 	rotation: {
         get: function () { return this.body.m_rotation; },
-		set: function (value) { this.body.m_rotation = value; this.ghostBody.m_rotation = value; }
+		set: function (value) { this.body.m_rotation = value; this.body.m_rotation = value; }
     },
 	angularVelocity: {
         get: function () { return this.body.m_angularVelocity; },
-		set: function (value) { this.body.m_angularVelocity = value; this.ghostBody.m_angularVelocity = value; }
+		set: function (value) { this.body.m_angularVelocity = value; this.body.m_angularVelocity = value; }
 	}
 });
 
