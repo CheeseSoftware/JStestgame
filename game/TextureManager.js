@@ -1,6 +1,7 @@
 
 TextureManager = function() {
 	this.loader = new TextureLoader();
+	this.loader.queueTexture("octopus");
 	this.loader.queueTexture("gubbe");
 	this.loader.queueTexture("cheese");
 	this.loader.queueTexture("worker");

@@ -7,6 +7,7 @@ AnimationManager.prototype.load = function(textureManager) {
 	//this.addAnimation("walk", new Animation("walk", textures.walk, 30, 150, 120));
 	this.addAnimation("feet", new Animation("feet", textureManager.textures.feet, 60, 75, 75));
 	this.addAnimation("dig", new Animation("dig", textureManager.textures.dig, 60, 75, 75));
+	this.addAnimation("octopus-walk", new Animation("octopus-walk", textureManager.textures.octopus, 60, 256, 256));
 }
 
 AnimationManager.prototype.addAnimation = function(name, animation) {

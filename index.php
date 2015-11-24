@@ -73,19 +73,25 @@
 		});
 	};
 	
-	function tryLogin(username, password) {		
-	$('#loginResult').html('<img src="game/textures/loading.gif" loop=infinite>');	
+	function login(username, password) {		
 		game.connection.send('login', { 
 			username: username,
 			password: password
 		});
 	};
+	
+	function tryLogin(username, password) {		
+		$('#loginResult').html('<img src="game/textures/loading.gif" loop=infinite>');	
+		login(username, password);
+	};
+	
 </script>
 <?php
 	include("playMenu.html");
 	include("registerFrame.html");
 	include("loginFrame.html");
 	include("progress.html");
+	include("loginPopup.html");
 ?>
 </body>
 </html>

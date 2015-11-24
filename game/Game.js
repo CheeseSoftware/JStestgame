@@ -93,6 +93,7 @@ Game.prototype.load = function() {
 	this.intervalId = setInterval(function(){game.run()}, constants.clientInterval);
 	
 	this.connection = new Connection(vars.ip, constants.serverPort);
+	
 	this.initializeListeners();
 	
 	// Initialize client systems
@@ -100,6 +101,14 @@ Game.prototype.load = function() {
 	this.chunkClient = new ChunkClient(this.chunkManager, this.connection);
 	this.regeneratorClient = new RegeneratorClient(this.chunkManager, this.connection);
 	this.battleClient = new BattleClient(this.battleManagger, this.entityWorld, this.entityClient, this.connection);
+	
+	// If cookies are set, login
+	var username = getCookie("username");
+	var password = getCookie("password");
+	if(username && password) { 
+		login(username, password);
+		console.log("Sent login details");
+	}
 }
 
 Game.prototype.onMouseUpdate = function (e) {
@@ -305,7 +314,7 @@ Game.prototype.initializeListeners = function() {
 		physics.dx = data.dx;
 		physics.dy = data.dy;
 		physics.rotation = data.rotation;
-		console.log("Spawned entity of type " + data.type + ". UUID " + data.uuid);
+		//console.log("Spawned entity of type " + data.type + ". UUID " + data.uuid);
 	}.bind(this));
 	
 	this.connection.on('entityupdate', function(data) {
@@ -362,25 +371,24 @@ Game.prototype.initializeListeners = function() {
 	
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Register and login below >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 	
-	this.connection.on('registerresponse', function(data) {
+	this.connection.on('registrationresponse', function(data) {
 		$('#registrationResult').html(data.response);
 		if(data.success == true) {
-			var d = new Date();
-			d.setTime(d.getTime() + (14*24*60*60*1000));
-			var expires = "expires="+d.toUTCString();
-			document.cookie="username=" + $('#registerUsername').val() + "; " + expires;
-			document.cookie="password=" + $('#registerPassword').val() + "; " + expires;
+			setCookie("username", $('#registerUsername').val(), 31);
+			setCookie("password", $('#registerPassword').val(), 31);
 		}
 	});
 	
 	this.connection.on('loginresponse', function(data) {
-		$('#loginResult').html(data.response);
-		if(data.success == true) {
-			var d = new Date();
-			d.setTime(d.getTime() + (14*24*60*60*1000));
-			var expires = "expires="+d.toUTCString();
-			document.cookie="username=" + $('#loginUsername').val() + "; " + expires;
-			document.cookie="password=" + $('#loginPassword').val() + "; " + expires;
+		if($('#loginFrame').is(":visible")) {
+			$('#loginResult').html(data.response);
+			if(data.success == true) {
+				setCookie("username", $('#loginUsernameEmail').val(), 31);
+				setCookie("password", $('#loginPassword').val(), 31);
+			}
+		}
+		else if(data.success == true) {
+			$("#loginPopup").fadeIn(400);
 		}
 	});
 }

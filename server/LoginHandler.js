@@ -55,7 +55,7 @@ module.exports = function (socket, authenticationServer) {
 		if(user) {
 			// User with email found, check password match
 			if(user["password"] == data.password) {
-				authenticationServer.setSocketAuthenticated(socket, true);
+				authenticationServer.setSocketAuthenticated(socket, true, user);
 				socket.emit('loginresponse', { success: true, response:"You have been logged in."});
 				return;
 			}

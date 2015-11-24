@@ -105,10 +105,11 @@ entityTemplates.worker = function(uuid) {
 	physicsBody.CreateFixture(fixDef);
 	
 	var physics = new ECS.Components.Physics(physicsBody);
+	physics.acceleration = 5000;
 	entity.addComponent(physics);
 	
 	if(!isServer) {
-		var sprite = new PIXI.Sprite(game.textureManager.textures.worker);
+		var sprite = new PIXI.Sprite(game.textureManager.textures.octopus);
 		sprite.anchor.x = 0.5;
 		sprite.anchor.y = 0.5;
 		

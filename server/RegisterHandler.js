@@ -4,17 +4,17 @@ module.exports = function (socket, authenticationServer) {
 		//TODO: verify data
 		
 		if(!data.username || !validateUsername(data.username)) {
-			socket.emit('registerresponse', { success: false, response:"Username is invalid. It has to be between 3-20 normal characters."});
+			socket.emit('registrationresponse', { success: false, response:"Username is invalid. It has to be between 3-20 normal characters."});
 			return;
 		}
 		
 		if(!data.email || !validateEmail(data.email)) {
-			socket.emit('registerresponse', { success: false, response:"Email is invalid."});
+			socket.emit('registrationresponse', { success: false, response:"Email is invalid."});
 			return;
 		}
 		
 		if(!data.password) {
-			socket.emit('registerresponse', { success: false, response:"Password is empty."});
+			socket.emit('registrationresponse', { success: false, response:"Password is empty."});
 			return;
 		}
 		
@@ -25,14 +25,14 @@ module.exports = function (socket, authenticationServer) {
 				if(err)
 					console.log(err);
 				if(doc) {
-					socket.emit('registerresponse', { success: false, response:"A user already exists with username \"" + data.username + "\""});
+					socket.emit('registrationresponse', { success: false, response:"A user already exists with username \"" + data.username + "\""});
 				}
 				else {
 					collectionref.findOne({"email":data.email}, function(err, doc) {
 					if(err)
 						console.log(err);
 					if(doc) {
-						socket.emit('registerresponse', { success: false, response:"A user already exists with email \"" + data.email + "\""});
+						socket.emit('registrationresponse', { success: false, response:"A user already exists with email \"" + data.email + "\""});
 						return;
 					}
 					else {
@@ -41,7 +41,7 @@ module.exports = function (socket, authenticationServer) {
 							if(err)
 								console.log(err);
 							else
-								socket.emit('registerresponse', { success: true, response:"User has been created."});
+								socket.emit('registrationresponse', { success: true, response:"User has been created."});
 						});
 					}
 				});

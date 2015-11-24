@@ -86,3 +86,21 @@ generateUUID = function() {
 		return v.toString(16);
 	}));*/
 }
+
+setCookie = function(name, value, days) {
+	var today = new Date();
+	var cookie = name + "=" + value;
+	if (days && days > 0) {
+		var expire = new Date();
+		expire.setTime(today.getTime() + 3600000 * 24 * days);
+		cookie += ";expires="+expire.toGMTString();
+	}
+	document.cookie = cookie;
+}
+
+getCookie = function(name) {
+	var value = "; " + document.cookie;
+	var parts = value.split("; " + name + "=");
+	if (parts.length == 2) 
+		return parts.pop().split(";").shift();
+}

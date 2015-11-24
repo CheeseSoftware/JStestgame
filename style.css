@@ -101,53 +101,6 @@ body {
 	transition: 0s;
 }
 
-.chatBox {
-	z-index: 1;
-	width: 280px;
-	height: 500px;
-	background-color: rgba(0,0,0,0.5);
-	border: solid 2px #EEE;
-	border-radius: 3px;
-	position: absolute;
-	bottom: 0px;
-	left: 0px;
-	text-align: center;
-}
-
-.chatTextContainer {
-	position:relative;
-	color: #fff;
-	top:5px;
-	margin-left:auto;
-	margin-right:auto;
-	margin-top:auto;
-	margin-bottom: -5px;
-	width: 270px;
-	height: 455px;
-	float:left;
-	overflow-y: scroll;
-	text-align:left;
-}
-
-.chatInput{
-	position:relative;
-	width: 205px;
-	height: 30px;
-	margin-top:15px;
-	margin-left:5px;
-	float:left;
-}
-
-.chatButton{
-	position:relative;
-	width: 60px;
-	height: 30px;
-	margin-right:5px;
-	margin-top:15px;
-	margin-left:5px;
-	float:left;
-}
-
 .closeWindowButton {
 	width:32px;
 	height:32px;
@@ -246,4 +199,27 @@ body {
     right:0;
     margin-left:auto;
     margin-right:auto;
+}
+
+.loginPopup {
+	position:absolute;
+	z-index: 5;
+	width: 300px;
+	height: 20px;
+	
+	color: #FFF;
+	font-family: "Comic Sans MS", cursive, sans-serif;
+	font-size: 12px;
+
+	text-decoration: none;
+
+	background-color: #505050;
+	border: solid 1px #EEE;
+	border-radius: 8px;
+	
+	bottom: 10px;
+	left: 50%;
+	margin-left: -150px;
+	text-align: center;
+	display:none;
 }

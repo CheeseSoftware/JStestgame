@@ -188,12 +188,15 @@ ServerInstance.prototype.load = function() {
 		socket.on('playerinit', function(data) {
 			if(this.playerServer.getPlayer(socket.id)) {
 				// This player is already playing...
-				socket.disconnect();
 				return;
 			}
 			
-			var uuid = generateUUID(); // TODO: load uuid from database
-			var username = uuid; //TODO: load username from database
+			if(!this.authenticationServer.isSocketAuthenticated(socket))
+				return;
+			
+			var uuid = this.authenticationServer.getUUID(socket);
+			console.log("MongoDB UUID: " + uuid);
+			var username = this.authenticationServer.getUsername(socket);
 			var entity = entityTemplates.player(username, uuid);
 			this.playerServer.setPlayer(socket.id, { username: username, uuid: uuid, spawned: true});
 			
