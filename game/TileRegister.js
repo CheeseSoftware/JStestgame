@@ -6,6 +6,8 @@ TileRegister = function() {
 	this.register("stone", true, false, 4.0);
 	this.register("stone2", true, false, 8.0);
 	this.register("stone3", true, false, 16.0);
+	this.register("ore1", true, false, 32.0);
+	this.register("ore2", true, false, 64.0);
 }
 
 TileRegister.prototype.register = function(name, isSolid, isOre, hardness) {

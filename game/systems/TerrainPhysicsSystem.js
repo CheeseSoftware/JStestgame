@@ -11,7 +11,10 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 			
 			input = { x:physics.gx, y:physics.gy, vx:physics.gvx, vy:physics.gvy };
 			values = this.simulate(dt, input);
-			physics.gx = values.x; physics.gy = values.y; physics.gvx = values.vx; physics.gvy = values.vy;
+			physics.gx = values.x;
+			physics.gy = values.y;
+			physics.gvx = values.vx;
+			physics.gvy = values.vy;
         }.bind(this));
     }
 
@@ -63,10 +66,11 @@ ECS.Systems.TerrainPhysicsSystem.prototype.simulate = function(dt, values) {
 	var velocityDir = v2.create(values.vx, values.vy);
 	if (v2.length(velocityDir) > 0.0) {
 		v2.normalize(velocityDir, velocityDir);
-		var frictionConstant = 0.03125;
-		var frictionStrength =(1.0-Math.pow(1.0-frictionConstant, dt))*v2.length(normalForce);
-		values.vx -= v2.clampF(velocityDir[0]*frictionStrength, 0.0, values.vx);
-		values.vy -= v2.clampF(velocityDir[1]*frictionStrength, 0.0, values.vy);
+		var frictionConstant = 0.5;
+		var frictionStrength =(1.0-Math.pow(1.0-frictionConstant, dt*1000.0))*v2.length(normalForce);
+		var maxForceFactor = Math.pow(0.85, dt*1000.0);
+		values.vx -= v2.clampF(velocityDir[0]*frictionStrength, -maxForceFactor*values.vx, maxForceFactor*values.vx);
+		values.vy -= v2.clampF(velocityDir[1]*frictionStrength, -maxForceFactor*values.vy, maxForceFactor*values.vy);
 	}
 	return values;
 }

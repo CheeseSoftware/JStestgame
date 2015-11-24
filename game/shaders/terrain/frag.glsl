@@ -7,8 +7,8 @@ uniform sampler2D texture;
 varying highp vec2 fragUv;
 varying highp vec2 fragPos;
 
-#define TILE_DIM 2
-#define TILE_DIM_F 2.0
+#define TILE_DIM 4
+#define TILE_DIM_F 4.0
 
 struct Tile {
 	highp float strength;
