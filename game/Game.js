@@ -84,7 +84,7 @@ Game.prototype.load = function() {
 	}
 	playerContactListener.PreSolve = function (contact, oldManifold) {
 		//console.log("PreSolve");
-		contact.SetEnabled(false);
+		//contact.SetEnabled(false);
 	}
 	this.physicsWorld.SetContactListener(playerContactListener);
 	
