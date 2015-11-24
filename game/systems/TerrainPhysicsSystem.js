@@ -27,6 +27,7 @@ ECS.Systems.TerrainPhysicsSystem.prototype.simulate = function(dt, values) {
 	var normal = v2.create(0.0, 0.0);
 	var distance = 4.0;
 
+	var floatDensity = ECS.Systems.TerrainPhysicsSystem.chunkManager.calcDensity(pos[0]/32.0-0.5, pos[1]/32.0-0.5)/255.0;
 
 	for (angle = 0; angle < 360; angle+=18) {
 		var dir = v2.create(Math.cos(angle*3.14/180), Math.sin(angle*3.14/180));
@@ -54,8 +55,12 @@ ECS.Systems.TerrainPhysicsSystem.prototype.simulate = function(dt, values) {
 	if (pushStrength <= 0.0)
 		return values;
 
-	values.x += -normal[0]*pushStrength*pushStrength*32.0/4.0;
-	values.y += -normal[1]*pushStrength*pushStrength*32.0/4.0;
+	if (floatDensity > 0.5) {
+		pushStrength *= -0.5;
+	}
+
+	values.x += -normal[0]*pushStrength*Math.abs(pushStrength)*32.0/4.0;
+	values.y += -normal[1]*pushStrength*Math.abs(pushStrength)*32.0/4.0;
 
 	var normalForce = v2.clone(normal);
 	var velocity = v2.create(values.vx, values.vy);
