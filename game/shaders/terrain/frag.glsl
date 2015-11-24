@@ -76,7 +76,6 @@ Tile calcTile(highp vec2 tilePos, highp vec2 delta) {
 }
 
 void main() {
-return;
 	highp float density = getDensity(fragLocalPos);
 	highp vec3 textureColor = texture2D(texture, fragUV).xyz;
 
