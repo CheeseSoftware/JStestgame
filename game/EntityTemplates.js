@@ -20,7 +20,7 @@ entityTemplates.player = function(username, uuid) {
 
 	// Physics
 	var fixDef = new b2FixtureDef;
-	fixDef.filter.maskBits = 0x0000;
+	//fixDef.filter.maskBits = 0x0000;
 	fixDef.density = 1.0;
 	fixDef.restitution = 0.2;
 	var bodyDef = new b2BodyDef;
@@ -93,7 +93,7 @@ entityTemplates.worker = function(uuid) {
 
 	// Physics
 	var fixDef = new b2FixtureDef;
-	fixDef.filter.maskBits = 0x0000;
+	//fixDef.filter.maskBits = 0x0000;
 	fixDef.density = 1.0;
 	fixDef.restitution = 0.2;
 	var bodyDef = new b2BodyDef;

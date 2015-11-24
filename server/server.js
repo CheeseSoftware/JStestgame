@@ -197,7 +197,7 @@ ServerInstance.prototype.load = function() {
 				return;
 			
 			var uuid = this.authenticationServer.getUUID(socket);
-			console.log("MongoDB UUID: " + uuid);
+			//console.log("MongoDB UUID: " + uuid);
 			var username = this.authenticationServer.getUsername(socket);
 			var entity = entityTemplates.player(username, uuid);
 			this.playerServer.setPlayer(socket.id, { username: username, uuid: uuid, spawned: true});
