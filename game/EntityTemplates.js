@@ -26,7 +26,7 @@ entityTemplates.player = function(username, uuid) {
 	var bodyDef = new b2BodyDef;
 	bodyDef.type = b2Body.b2_dynamicBody;
 	bodyDef.linearDamping = constants.friction;
-	fixDef.shape = new b2CircleShape(constants.playerWidth);
+	fixDef.shape = new b2CircleShape(constants.playerWidth/2);
 	bodyDef.position.Set(10, 400 / 30 + 1.8);
 	var physicsBody = physicsWorld.CreateBody(bodyDef);
 	physicsBody.CreateFixture(fixDef);
