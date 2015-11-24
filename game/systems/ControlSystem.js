@@ -11,14 +11,8 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			
 			if(keyboard.keys.space.isDown && (new Date() - player.lastDig > 1000 / player.digSpeed)) {
 				player.lastDig = new Date();
-				var digRadius = 1.5;
-				var x = physics.x + 32.0*Math.sin(physics.rotation);
-				var y = physics.y - 32.0*Math.cos(physics.rotation);
 				game.connection.send("dig", { 
-					uuid: entity.uuid,
-					x: x,
-					y: y,
-					digRadius: digRadius
+					uuid: entity.uuid
 				});
 
 				game.battleManagger.hit(entity);

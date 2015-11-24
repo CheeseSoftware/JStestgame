@@ -11,16 +11,19 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			var state = physics.playState;
 
 			if(physics.dx != 0 || physics.dy != 0) {
-				//console.log("physicssystem " + entity.uuid);
 				var desiredAngle = Math.atan2(physics.dy, physics.dx);
-				physics.rotateTo(physics, desiredAngle + Math.PI / 2, 0.05);
+				physics.rotateTo(physics, desiredAngle, physics.rotateSpeed);
 
 				var normal = v2.create(physics.dx, physics.dy);
 				v2.normalize(normal, normal);
 				v2.multiply(physics.moveSpeed, normal, normal);
 				
+				//console.log("Speed: " + v2.length(normal));
+				
 				physics.gvx += normal[0];
 				physics.gvy += normal[1];
+				//console.log("Speed: " + v2.length(normal));
+				//physics.body.ApplyImpulse(new b2Vec2(normal[0], normal[1]), physics.body.GetWorldCenter());
 			}
 					
 			// Now do some linear interpolation!		

@@ -24,6 +24,7 @@ ECS.Components.Physics = CES.Component.extend({
 		this.speedLimit = constants.speedLimit;
 		this.friction = constants.friction;
 		this.moveSpeed = constants.moveSpeed;
+		this.rotateSpeed = constants.rotateSpeed;
     }
 });
 

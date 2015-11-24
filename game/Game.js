@@ -117,22 +117,21 @@ Game.prototype.resize = function() {
 Game.prototype.preload = function() {
 	// Load textures and sound and heavy things. Progress shown on progressbar.
 	this.textureManager = new TextureManager();
-	var context = this;
 	
 	this.textureManager.onProgress(function(name, file, progress) {
 		$("#progressbar").css("width", progress + "%");
 		$("#progressbar").attr("aria-valuenow", progress);
 		$("#progressbar").html(progress + "% - " + file + ".png");
-	});
+	}.bind(this));
 	
 	this.textureManager.onComplete(function(textures) {
-		context.load(); // Continue loading the game
+		this.load(); // Continue loading the game
 		
 		window.setTimeout ( function() {
 			$("#progresscontainer").fadeOut();
 			$("#playMenu").show();
 		}, 800);
-	});
+	}.bind(this));
 	this.textureManager.load();
 }
 
@@ -169,12 +168,11 @@ Game.prototype.run = function() {
 Game.prototype.sendUpdatePacket = function() {
 	//TODO: Split playerupdate and entityupdate
 	var entities = this.entityWorld.getEntities('controlled', 'physics', 'player');
-	var context = this;
 	entities.forEach(function (entity) {
 		var physics = entity.getComponent('physics');
 		var player = entity.getComponent('player');
 		var direction = keyboard.calculateDirection();
-		context.connection.send('update', {
+		this.connection.send('update', {
 			uuid: entity.uuid, 
 			username: player.username,
 			x: physics.x,
@@ -187,7 +185,7 @@ Game.prototype.sendUpdatePacket = function() {
 			
 			isDigging: keyboard.getPlayState().dig
 		});
-	});
+	}.bind(this));
 }
 
 Game.prototype.spawnMainPlayer = function() {
@@ -212,14 +210,14 @@ Game.prototype.despawnEntity = function(uuid) {
 }
 
 Game.prototype.initializeListeners = function() {
-	this.connection.on('init', function(data, context) {
+	this.connection.on('init', function(data) {
 		
-		context.tileMap = { 
+		this.tileMap = { 
 			width: data.mapWidth,
 			height: data.mapHeight,
 		};
 		
-		context.tileSize = data.tileSize;
+		this.tileSize = data.tileSize;
 		
 		var uuid = data.follow;
 		if(uuid) {
@@ -270,7 +268,7 @@ Game.prototype.initializeListeners = function() {
 		}
 	}.bind(this), this);
 	
-	this.connection.on('playerinit', function(data, context) {
+	this.connection.on('playerinit', function(data) {
 		var player = entityTemplates.player(data.username, data.uuid);
 		player.addComponent(new ECS.Components.Controlled());
 		
@@ -285,12 +283,12 @@ Game.prototype.initializeListeners = function() {
 		
 		this.camera.target = physics;
 		this.camera.velocity = null;
-	}.bind(this), this);
+	}.bind(this));
 	
-	this.connection.on('playerleave', function(data, context) {
+	this.connection.on('playerleave', function(data) {
 		console.log(data.username + ' has disconnected.');
-		context.despawnEntity(data.uuid);
-	}, this);
+		this.despawnEntity(data.uuid);
+	}.bind(this));
 	
 	this.connection.on('entityspawn', function(data) {
 		var entity = entityTemplates[data.type](data.uuid);
@@ -307,7 +305,7 @@ Game.prototype.initializeListeners = function() {
 		console.log("Spawned entity of type " + data.type + ". UUID " + data.uuid);
 	}.bind(this));
 	
-	this.connection.on('entityupdate', function(data, context) {
+	this.connection.on('entityupdate', function(data) {
 		var entity = this.entityClient.getEntity(data.uuid);
 		
 		if(entity != undefined) {
@@ -323,9 +321,9 @@ Game.prototype.initializeListeners = function() {
 		}
 		else
 			console.log("entity is undefined in 'entityupdate' Game.js");
-	}.bind(this), this);
+	}.bind(this));
 	
-	this.connection.on('playerupdate', function(data, context) {
+	this.connection.on('playerupdate', function(data) {
 		var entity = this.entityClient.getEntity(data.uuid);
 		
 		if(entity != undefined) {
@@ -349,15 +347,15 @@ Game.prototype.initializeListeners = function() {
 		}
 		else
 			console.log("entity is undefined in 'playerupdate' Game.js");
-	}.bind(this), this);
+	}.bind(this));
 	
-	this.connection.on('dig', function(data, context) {
+	this.connection.on('dig', function(data) {
 		var uuid = data.uuid;
 		var x = data.x;
 		var y = data.y;
 		var digRadius = data.digRadius;
-		context.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, digRadius);
-	}.bind(this), this);
+		this.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, digRadius);
+	}.bind(this));
 	
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Register and login below >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 	

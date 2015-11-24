@@ -231,8 +231,23 @@ ServerInstance.prototype.load = function() {
 		}.bind(this));
 		
 		socket.on('dig', function(data) {
-			this.chunkManager.fillCircle(parseFloat(data.x)/32.0, parseFloat(data.y)/32.0, data.digRadius);
-			this.io.sockets.emit('dig', data);
+			var entity = this.entityServer.getEntity(data.uuid);
+			if(entity) {
+				var physics = entity.getComponent("physics");
+				var digRadius = 1.5;
+				var x = physics.x + 32.0*Math.cos(physics.rotation);
+				var y = physics.y + 32.0*Math.sin(physics.rotation);
+				this.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, digRadius);
+				
+				var data = {
+					uuid: data.uuid,
+					x: x,
+					y: y,
+					digRadius: digRadius
+				}
+				
+				this.io.sockets.emit('dig', data);
+			}
 		}.bind(this));
 		
 	}.bind(this));
