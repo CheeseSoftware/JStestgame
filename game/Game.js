@@ -142,7 +142,7 @@ Game.prototype.run = function() {
 	
     this.entityWorld.update(dt);
 	
-	this.physicsWorld.Step(dt/1000.0, 10, 10);
+	this.physicsWorld.Step(constants.clientInterval/1000.0, 10, 10);
 	this.physicsWorld.DrawDebugData();
     this.physicsWorld.ClearForces();
 	
@@ -335,11 +335,11 @@ Game.prototype.initializeListeners = function() {
 				player.isDigging = data.isDigging;
 				if(data.isDigging) {
 					drawable.animate("body", "dig", anim, false);
-					physics.moveSpeed = constants.digMoveSpeed;
+					physics.acceleration = constants.digAcceleration;
 				}
-				else if(physics.moveSpeed != constants.moveSpeed) {
+				else if(physics.acceleration != constants.acceleration) {
 					drawable.animate("body", "dig", anim, true);
-					physics.moveSpeed = constants.moveSpeed;
+					physics.acceleration = constants.acceleration;
 				}
 			}
 			else

@@ -173,10 +173,10 @@ ServerInstance.prototype.load = function() {
 			var physics = entity.getComponent("physics");
 			player.isDigging = data.isDigging;
 			if(data.isDigging) {
-				physics.moveSpeed = constants.digMoveSpeed;
+				physics.acceleration = constants.digAcceleration;
 			}
 			else {
-				physics.moveSpeed = constants.moveSpeed;
+				physics.acceleration = constants.acceleration;
 			}
 
 			this.io.sockets.emit('playerupdate', {
@@ -265,7 +265,7 @@ ServerInstance.prototype.load = function() {
 	
 		this.entityWorld.update(dt);
 		
-		this.physicsWorld.Step(dt/1000.0, 10, 10);
+		this.physicsWorld.Step(constants.serverInterval/1000.0, 10, 10);
 		this.physicsWorld.DrawDebugData();
 		
 		this.regeneratorServer.update(dt);

@@ -14,6 +14,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				game.connection.send("dig", { 
 					uuid: entity.uuid
 				});
+				game.sendUpdatePacket();
 
 				game.battleManagger.hit(entity);
 			}

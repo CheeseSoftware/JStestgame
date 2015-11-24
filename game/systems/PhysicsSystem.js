@@ -16,14 +16,10 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 
 				var normal = v2.create(physics.dx, physics.dy);
 				v2.normalize(normal, normal);
-				v2.multiply(physics.moveSpeed, normal, normal);
+				v2.multiply(physics.acceleration, normal, normal);
 				
 				//console.log("Speed: " + v2.length(normal));
-				
-				physics.gvx += normal[0];
-				physics.gvy += normal[1];
-				//console.log("Speed: " + v2.length(normal));
-				//physics.body.ApplyImpulse(new b2Vec2(normal[0], normal[1]), physics.body.GetWorldCenter());
+				physics.body.ApplyImpulse(new b2Vec2(normal[0], normal[1]), physics.body.GetWorldCenter());
 			}
 					
 			// Now do some linear interpolation!		
@@ -33,9 +29,6 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			physics.y = ic*physics.gy + (1.0-ic)*physics.y;
 			physics.vx = ic*physics.gvx + (1.0-ic)*physics.vx;
 			physics.vy = ic*physics.gvy + (1.0-ic)*physics.vy;
-			
-			// Apply speed limit, decrease speed, etc.
-			physics.doUpdate(physics);
 			
 			// Position text and textures at this position. Animate feet
 			if(drawable != undefined) {

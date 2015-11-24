@@ -9,11 +9,11 @@ entityTemplates.player = function(username, uuid) {
 	var fixDef = new b2FixtureDef;
 	fixDef.filter.maskBits = 0x0000;
 	fixDef.density = 1.0;
-	fixDef.friction = 0.5;
 	fixDef.restitution = 0.2;
 	var bodyDef = new b2BodyDef;
 	bodyDef.type = b2Body.b2_dynamicBody;
-	fixDef.shape = new b2CircleShape(constants.playerFatness);
+	bodyDef.linearDamping = constants.friction;
+	fixDef.shape = new b2CircleShape(constants.playerWidth);
 	bodyDef.position.Set(10, 400 / 30 + 1.8);
 	var physicsBody = physicsWorld.CreateBody(bodyDef);
 	physicsBody.CreateFixture(fixDef);
@@ -68,17 +68,16 @@ entityTemplates.worker = function(uuid) {
 	var fixDef = new b2FixtureDef;
 	fixDef.filter.maskBits = 0x0000;
 	fixDef.density = 1.0;
-	fixDef.friction = 0.5;
 	fixDef.restitution = 0.2;
 	var bodyDef = new b2BodyDef;
 	bodyDef.type = b2Body.b2_dynamicBody;
-	fixDef.shape = new b2CircleShape(constants.playerFatness);
+	bodyDef.linearDamping = constants.friction;
+	fixDef.shape = new b2CircleShape(constants.playerWidth);
 	bodyDef.position.Set(10, 400 / 30 + 1.8);
 	var physicsBody = physicsWorld.CreateBody(bodyDef);
 	physicsBody.CreateFixture(fixDef);
 	
 	var physics = new ECS.Components.Physics(physicsBody);
-	physics.moveSpeed = 4.0;
 	entity.addComponent(physics);
 	
 	if(!isServer) {
