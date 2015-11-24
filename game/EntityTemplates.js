@@ -79,7 +79,7 @@ entityTemplates.worker = function(uuid) {
 	
 
 	// Health
-	var health = new ECS.Components.Health(50.0);
+	var health = new ECS.Components.Health(10.0);
 	entity.addComponent(health);
 	if (!isServer) {
 		var sprite = new PIXI.Sprite(game.textureManager.textures.healthbar);
