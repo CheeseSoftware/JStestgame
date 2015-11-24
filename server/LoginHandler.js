@@ -54,7 +54,8 @@ module.exports = function (socket, authenticationServer) {
 	var onUserReceived = function(user, data) {
 		if(user) {
 			// User with email found, check password match
-			if(user["password"] == data.password) {
+			var hashedPassword = crypto.createHash('md5').update(data.password).digest('hex');
+			if(user["password"] == hashedPassword) {
 				authenticationServer.setSocketAuthenticated(socket, true, user);
 				socket.emit('loginresponse', { success: true, response:"You have been logged in."});
 				return;

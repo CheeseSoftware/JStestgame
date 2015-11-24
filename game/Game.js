@@ -223,7 +223,6 @@ Game.prototype.despawnEntity = function(uuid) {
 
 Game.prototype.initializeListeners = function() {
 	this.connection.on('init', function(data) {
-		
 		this.tileMap = { 
 			width: data.mapWidth,
 			height: data.mapHeight,
@@ -281,6 +280,10 @@ Game.prototype.initializeListeners = function() {
 	}.bind(this), this);
 	
 	this.connection.on('playerinit', function(data) {
+		
+		$('#playMenuContainer').fadeOut(300);
+        $('#loginPopup').fadeOut(300);
+		
 		var player = entityTemplates.player(data.username, data.uuid);
 		player.addComponent(new ECS.Components.Controlled());
 		

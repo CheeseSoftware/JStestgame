@@ -18,6 +18,8 @@ CES = require('ces');
 crypto = require('crypto');
 mongo = require('mongodb'); 
 socketio = require('socket.io');
+crypto = require('crypto');
+
 
 Box2D = require('box2dweb-commonjs').Box2D;
 b2Vec2 = Box2D.Common.Math.b2Vec2

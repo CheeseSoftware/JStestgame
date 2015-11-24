@@ -13,7 +13,7 @@ AuthenticationServer = function(db, playerServer, io) {
 }
 
 AuthenticationServer.prototype.isSocketAuthenticated = function(socket) {
-	return this._authenticated[socket.id].authenticated;
+	return this._authenticated[socket.id] && this._authenticated[socket.id].authenticated;
 }
 
 AuthenticationServer.prototype.getUsername = function(socket) {

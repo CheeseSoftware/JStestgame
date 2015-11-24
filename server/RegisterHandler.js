@@ -36,7 +36,8 @@ module.exports = function (socket, authenticationServer) {
 						return;
 					}
 					else {
-						var doc = {"username":data.username, "email":data.email, "password":data.password};
+						var hashedPassword = crypto.createHash('md5').update(data.password).digest('hex');
+						var doc = {"username":data.username, "email":data.email, "password":hashedPassword};
 						collectionref.insert(doc, function (err, result) {
 							if(err)
 								console.log(err);
