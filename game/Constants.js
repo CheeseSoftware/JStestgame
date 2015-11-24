@@ -12,5 +12,6 @@ constants = {
 	serverInterval: 10.0,
 	clientInterval: 10.0,
 	physicsInterval: 10.0,
+	step: 1.0 / 60.0,
 	serverPort: 8080
 }
