@@ -26,7 +26,7 @@ ECS.Components.Physics = CES.Component.extend({
     }
 });
 
-ECS.Components.Physics.prototype.rotateTo = function(physics, newRotation, speed) {
+ECS.Components.Physics.prototype.rotateTo = function(physics, newRotation, speed, dt) {
 	if(physics.rotation == newRotation)
 		return;
 
@@ -34,8 +34,8 @@ ECS.Components.Physics.prototype.rotateTo = function(physics, newRotation, speed
 	var newDiry = Math.sin(newRotation);
 	var oldDirx = Math.cos(physics.rotation);
 	var oldDiry = Math.sin(physics.rotation);
-	oldDirx += (newDirx - oldDirx) * speed;
-	oldDiry += (newDiry - oldDiry) * speed;
+	oldDirx += (newDirx - oldDirx) * speed * dt;
+	oldDiry += (newDiry - oldDiry) * speed * dt;
 	physics.rotation = Math.atan2(oldDiry, oldDirx);
 }
  

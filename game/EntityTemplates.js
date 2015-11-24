@@ -105,7 +105,7 @@ entityTemplates.worker = function(uuid) {
 	physicsBody.CreateFixture(fixDef);
 	
 	var physics = new ECS.Components.Physics(physicsBody);
-	physics.acceleration = 5000;
+	//physics.acceleration = 500;
 	entity.addComponent(physics);
 	
 	if(!isServer) {

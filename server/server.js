@@ -97,6 +97,23 @@ ServerInstance.prototype.load = function() {
 	this.entityWorld.addSystem(terrainPhysicsSystem);
 	this.entityWorld.addSystem(new ECS.Systems.AISystem(this.entityServer));
 	
+	//TODO: Fix and move playerContactListener
+	var playerContactListener = new Box2D.Dynamics.b2ContactListener;// Contact listener begin: Temporarily disable player-to-player collisions
+	playerContactListener.BeginContact = function (contact) {
+	  //console.log("begincontact");
+	}
+	playerContactListener.EndContact = function (contact) {
+	  //console.log("endcontact");
+	}
+	playerContactListener.PostSolve = function (contact, impulse) {
+		//console.log("PostSolve");
+	}
+	playerContactListener.PreSolve = function (contact, oldManifold) {
+		//console.log("PreSolve");
+		contact.SetEnabled(false);
+	}
+	this.physicsWorld.SetContactListener(playerContactListener);
+	
 	var mapData = {
 		width: 256,
 		height: 256,

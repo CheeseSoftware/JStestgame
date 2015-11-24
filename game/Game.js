@@ -84,7 +84,7 @@ Game.prototype.load = function() {
 	}
 	playerContactListener.PreSolve = function (contact, oldManifold) {
 		//console.log("PreSolve");
-		//contact.SetEnabled(false);
+		contact.SetEnabled(false);
 	}
 	this.physicsWorld.SetContactListener(playerContactListener);
 	
@@ -325,6 +325,12 @@ Game.prototype.initializeListeners = function() {
 		
 		if(entity != undefined) {
 			var physics = entity.getComponent("physics");
+			/*if(data.uuid >= 1 && data.uuid <= 10) {
+				console.log("data " + data.x + " and current " + physics.gx);
+				console.log("data " + data.vx + " and current " + physics.gvx);
+				console.log("data " + data.dx + " and current " + physics.dx);
+				console.log(".-------");
+			}*/
 			physics.gx = data.x;
 			physics.gy = data.y;
 			physics.gvx = data.vx;
