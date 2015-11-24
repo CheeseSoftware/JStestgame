@@ -8,6 +8,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
             var player = entity.getComponent('player');
 			var drawable = entity.getComponent('drawable');
 			var isControlled = entity.hasComponent('controlled');
+			var health = entity.getComponent('health');
 			var state = physics.playState;
 
 			if(physics.dx != 0 || physics.dy != 0) {
@@ -45,6 +46,12 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				if(drawable.text) {
 					drawable.text.x = physics.x - drawable.text.width / 2;
 					drawable.text.y = physics.y - 80;
+				}
+
+				if (health) {
+					health.sprite.x = physics.x;
+					health.sprite.y = physics.y - 50;
+					health.sprite.width = 96.0*(health.value / health.max);
 				}
 			}
 

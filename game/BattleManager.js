@@ -65,26 +65,33 @@ BattleManager.prototype.hitEntity = function(attacker, victim, damage) {
 
 	var physics = victim.getComponent("physics");
 	var attackerPhysics = attacker.getComponent("physics");
+	var health = victim.getComponent("health");
 
-	// Push the victim
-	var dir = [attackerPhysics.x - physics.x, attackerPhysics.y - physics.y];
-	if (v2.lengthSquared(dir) > 0.0) {
 
-		v2.normalize(dir, dir);
+	if (isServer) {
+		// Push the victim
+		var dir = [attackerPhysics.x - physics.x, attackerPhysics.y - physics.y];
+		if (v2.lengthSquared(dir) > 0.0) {
 
-		physics.vx += -dir[0]*100.0*32.0;
-		physics.vy += -dir[1]*100.0*32.0;
+			v2.normalize(dir, dir);
+
+			physics.vx += -dir[0]*100.0*32.0;
+			physics.vy += -dir[1]*100.0*32.0;
+		}
+		
+		// Push the victim ghost
+		var dir = [attackerPhysics.gx - physics.gx, attackerPhysics.gy - physics.gy];
+		if (v2.lengthSquared(dir) > 0.0) {
+
+			v2.normalize(dir, dir);
+
+			physics.gvx += -dir[0]*100.0*32.0;
+			physics.gvy += -dir[1]*100.0*32.0;
+		}
 	}
-	
-	// Push the victim ghost
-	var dir = [attackerPhysics.gx - physics.gx, attackerPhysics.gy - physics.gy];
-	if (v2.lengthSquared(dir) > 0.0) {
 
-		v2.normalize(dir, dir);
-
-		physics.gvx += -dir[0]*100.0*32.0;
-		physics.gvy += -dir[1]*100.0*32.0;
-	}
+	if (health)
+		health.value = Math.max(health.value-damage, 0.0);
 
 	this.on("onMeeleHit", [attacker, victim, damage]);
 }

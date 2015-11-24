@@ -5,6 +5,19 @@ entityTemplates.player = function(username, uuid) {
 	
 	var physicsWorld = (isServer ? server.physicsWorld : game.physicsWorld);
 	
+
+	// Health
+	var health = new ECS.Components.Health(100.0);
+	entity.addComponent(health);
+	if (!isServer) {
+		var sprite = new PIXI.Sprite(game.textureManager.textures.healthbar);
+		sprite.anchor.x = 0.5;
+		sprite.anchor.y = 0.5;
+
+		health.sprite = sprite;
+		game.stage.addChild(sprite);
+	}
+
 	// Physics
 	var fixDef = new b2FixtureDef;
 	fixDef.filter.maskBits = 0x0000;
@@ -64,6 +77,20 @@ entityTemplates.worker = function(uuid) {
 	var physicsWorld = (isServer ? server.physicsWorld : game.physicsWorld);
 	var entityWorld = (isServer ? server.entityWorld : game.entityWorld);
 	
+
+	// Health
+	var health = new ECS.Components.Health(50.0);
+	entity.addComponent(health);
+	if (!isServer) {
+		var sprite = new PIXI.Sprite(game.textureManager.textures.healthbar);
+		sprite.cropEnabled = true;
+		sprite.anchor.x = 0.5;
+		sprite.anchor.y = 0.5;
+
+		health.sprite = sprite;
+		game.stage.addChild(sprite);
+	}
+
 	// Physics
 	var fixDef = new b2FixtureDef;
 	fixDef.filter.maskBits = 0x0000;

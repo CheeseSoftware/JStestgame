@@ -7,6 +7,7 @@ TextureManager = function() {
 	this.loader.queueTexture("ground");
 	this.loader.queueTexture("block");
 	this.loader.queueTexture("rock");
+	this.loader.queueTexture("healthbar");
 	this.loader.queueTexture("largerock", "rock_large");
 	this.loader.queueTexture("feet", "feetSheet");
 	this.loader.queueTexture("dig", "digSheet");
