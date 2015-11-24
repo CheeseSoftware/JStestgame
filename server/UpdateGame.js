@@ -89,8 +89,26 @@ updateGame = function() {
 
 			for (var i = 0; i < files.length; ++i) {
 				var filePath = files[i].slice(pathA.length);
-				console.log("Copying file: " + pathA + filePath);
+				
 
+				var extName = path.extname(filePath);
+
+				// Check if the size is the same
+				if (extName != ".js" &&
+					extName != ".glsl" &&
+				    fs.existsSync(pathB + filePath))
+				{
+					var statsA = fs.statSync(pathA + filePath);
+					var statsB = fs.statSync(pathB + filePath);
+					var sizeA = statsA["size"];
+					var sizeB = statsB["size"];
+
+					// Don't copy if the size is the same
+					if (sizeA == sizeB)
+						continue;
+				}
+
+				console.log("Copying file: " + pathA + filePath);
 				fs.createReadStream(pathA + filePath).pipe(fs.createWriteStream(pathB + filePath));
 			}
 		}
@@ -108,7 +126,14 @@ updateGame = function() {
 		mkdir("www/lib/");
 		mkdir("www/game/");
 		mkdir("www/game/shaders/");
+		mkdir("www/game/textures/")
 		copyDir("../game/shaders/", "www/game/shaders/");
+		copyDir("../game/textures/", "www/game/textures/");
+
+		if(process.argv.length >= 3 && process.argv[2] == "update") {
+			copyDir("../lib/", "www/lib/");
+		}
+
 	}
 
 	// Run Obfuscator
