@@ -23,9 +23,10 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			}
 					
 			// Now do some linear interpolation!
-			var dis = physics.gx-physics.x;
+			//var dis = v2.create(physics.gx - physics.x, physics.gy - physics.y);
 			// Only interpolate if there is a major difference
-			var duration = Math.min(Math.abs(dis), 1.0);
+			//var duration = Math.max(Math.abs(v2.length(dis) - 10), 1.0);
+			var duration = 50;
 			var ic = Math.min((new Date()-physics.lastUpdate)/duration, 1.0);
 			physics.x = ic*physics.gx + (1.0-ic)*physics.x;
 			physics.y = ic*physics.gy + (1.0-ic)*physics.y;

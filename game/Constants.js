@@ -9,8 +9,8 @@ constants = {
 	rotateSpeed: 0.05,
 	cameraHoverSpeed: 0.5,
 	
-	serverInterval: 10.0,
-	clientInterval: 10.0,
+	serverInterval: 5.0,
+	clientInterval: 5.0,
 	physicsStep: 1.0 / 90.0,
 	serverPort: 8080
 }
