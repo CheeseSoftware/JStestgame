@@ -12,7 +12,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			var state = physics.playState;
 			
 			if(entity.uuid >= 1 && entity.uuid <= 10) {
-				console.log("and current " + physics.gvx);
+				console.log("before " + physics.gvx);
 			}
 
 			if(physics.dx != 0 || physics.dy != 0) {
@@ -25,7 +25,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				
 				//console.log("Speed: " + v2.length(normal));
 				var toApply = new b2Vec2(normal[0], normal[1]);
-				toApply.Multiply(dt * 1000);
+				//toApply.Multiply(dt * 1000);
 				physics.body.ApplyImpulse(toApply, physics.body.GetWorldCenter());
 			}
 					
@@ -33,12 +33,18 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			//var dis = v2.create(physics.gx - physics.x, physics.gy - physics.y);
 			// Only interpolate if there is a major difference
 			//var duration = Math.max(Math.abs(v2.length(dis) - 10), 1.0);
-			var duration = 100 * 100 * dt;
+			var duration = 50; //* dt;
 			var ic = Math.min((new Date()-physics.lastUpdate)/duration, 1.0);
 			physics.x = ic*physics.gx + (1.0-ic)*physics.x;
 			physics.y = ic*physics.gy + (1.0-ic)*physics.y;
 			physics.vx = ic*physics.gvx + (1.0-ic)*physics.vx;
 			physics.vy = ic*physics.gvy + (1.0-ic)*physics.vy;
+			
+			
+			if(entity.uuid >= 1 && entity.uuid <= 10) {
+				console.log("after " + physics.gvx);
+			}
+			console.log("------------");
 			
 			// Position text and textures at this position. Animate feet
 			if(drawable != undefined) {
