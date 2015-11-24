@@ -265,11 +265,16 @@ ServerInstance.prototype.load = function() {
 	
 		this.entityWorld.update(dt);
 		
-		this.physicsWorld.Step(constants.serverInterval/1000.0, 10, 10);
-		this.physicsWorld.DrawDebugData();
-		
 		this.regeneratorServer.update(dt);
 	}.bind(this);
 	var intervalId = setInterval(this.run, constants.serverInterval);
+	
+	
+	// experiment
+	this.lastUpdate = Date.now();
+	this.physicsRun = function() {
+		this.physicsWorld.Step(constants.physicsInterval/1000.0, 10, 10);
+	}.bind(this);
+	var intervalId = setInterval(this.physicsRun, constants.physicsInterval);
 }
 GLOBAL.server = new ServerInstance();

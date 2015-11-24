@@ -91,6 +91,7 @@ Game.prototype.load = function() {
 	this.lastUpdate = Date.now();
 	
 	this.intervalId = setInterval(function(){game.run()}, constants.clientInterval);
+	var intessrvalId = setInterval(function(){game.physicsRun()}, constants.physicsInterval);
 	
 	this.connection = new Connection(vars.ip, constants.serverPort);
 	this.initializeListeners();
@@ -142,10 +143,6 @@ Game.prototype.run = function() {
 	
     this.entityWorld.update(dt);
 	
-	this.physicsWorld.Step(constants.clientInterval/1000.0, 10, 10);
-	this.physicsWorld.DrawDebugData();
-    this.physicsWorld.ClearForces();
-	
 	this.camera.update(dt);
 	
 	if(this.chunkClient)
@@ -163,6 +160,10 @@ Game.prototype.run = function() {
 	
 	this.renderer.render(this.camera);
 	
+};
+
+Game.prototype.physicsRun = function() {
+	this.physicsWorld.Step(constants.physicsInterval/1000.0, 10, 10);
 };
 
 Game.prototype.sendUpdatePacket = function() {
