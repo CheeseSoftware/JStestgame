@@ -22,8 +22,10 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				physics.body.ApplyImpulse(new b2Vec2(normal[0], normal[1]), physics.body.GetWorldCenter());
 			}
 					
-			// Now do some linear interpolation!		
-			var duration = 50;
+			// Now do some linear interpolation!
+			var dis = physics.gx-physics.x;
+			// Only interpolate if there is a major difference
+			var duration = Math.min(Math.abs(dis), 1.0);
 			var ic = Math.min((new Date()-physics.lastUpdate)/duration, 1.0);
 			physics.x = ic*physics.gx + (1.0-ic)*physics.x;
 			physics.y = ic*physics.gy + (1.0-ic)*physics.y;

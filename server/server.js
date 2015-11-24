@@ -258,23 +258,22 @@ ServerInstance.prototype.load = function() {
 	
 	// Start the server loop
 	this.lastUpdate = Date.now();
+	var accumulator = 0;
 	this.run = function() {
 		var now = Date.now();
-		var dt = now - this.lastUpdate;
-		this.lastUpdate = Date.now()
+		var dt = (now - this.lastUpdate)/1000.0;
+		this.lastUpdate = Date.now();
+		
+		accumulator += dt;
+		while(accumulator >= constants.physicsStep) {
+			this.physicsWorld.Step(constants.physicsStep, 10, 10);
+			accumulator -= constants.physicsStep;
+		}
 	
 		this.entityWorld.update(dt);
 		
 		this.regeneratorServer.update(dt);
 	}.bind(this);
 	var intervalId = setInterval(this.run, constants.serverInterval);
-	
-	
-	// experiment
-	this.lastUpdate = Date.now();
-	this.physicsRun = function() {
-		this.physicsWorld.Step(constants.physicsInterval/1000.0, 10, 10);
-	}.bind(this);
-	var intervalId = setInterval(this.physicsRun, constants.physicsInterval);
 }
 GLOBAL.server = new ServerInstance();
