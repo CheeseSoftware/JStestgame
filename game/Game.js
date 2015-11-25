@@ -88,7 +88,7 @@ Game.prototype.load = function() {
 	}
 	this.physicsWorld.SetContactListener(playerContactListener);
 	
-	this.lastUpdate = Date.now();
+	this.lastUpdate = window.performance.now();
 	
 	this.intervalId = setInterval(function(){game.run()}, constants.clientInterval);
 	
@@ -146,17 +146,17 @@ Game.prototype.preload = function() {
 
 accumulator = 0;
 Game.prototype.run = function() {
-    var now = Date.now();
-    var dt = (now - this.lastUpdate)/1000.0;
-	this.lastUpdate = Date.now();
+    var now = window.performance.now();
+    var dt = (now - this.lastUpdate);
+	this.lastUpdate = window.performance.now();
 	
-	accumulator += dt;
+    this.entityWorld.update(dt);
+	
+	accumulator += dt/1000.0;
 	while(accumulator >= constants.physicsStep) {
 		this.physicsWorld.Step(constants.physicsStep, 10, 10);
 		accumulator -= constants.physicsStep;
 	}
-	
-    this.entityWorld.update(dt);
 	
 	this.camera.update(dt);
 	
@@ -325,18 +325,24 @@ Game.prototype.initializeListeners = function() {
 		
 		if(entity != undefined) {
 			var physics = entity.getComponent("physics");
-			/*if(data.uuid >= 1 && data.uuid <= 10) {
-				console.log("data " + data.x + " and current " + physics.gx);
-				console.log("data " + data.vx + " and current " + physics.gvx);
-				console.log("data " + data.dx + " and current " + physics.dx);
-				console.log(".-------");
-			}*/
-			physics.gx = data.x;
-			physics.gy = data.y;
-			physics.gvx = data.vx;
-			physics.gvy = data.vy;
-			physics.dx = data.dx;
-			physics.dy = data.dy;
+			
+			physics.x = physics.gx;
+			physics.y = physics.gy;
+			physics.vx = physics.gvx;
+			physics.vy = physics.gvy;
+			
+			physics.updatePosition = true;
+			physics.ax = data.x;
+			physics.ay = data.y;
+			
+			physics.updateVelocity = true;
+			physics.avx = data.vx;
+			physics.avy = data.vy;
+			
+			physics.updateDirection = true;
+			physics.adx = data.dx;
+			physics.ady = data.dy;
+
 			physics.rotation = data.rotation;		
 			physics.lastUpdate = new Date();
 		}

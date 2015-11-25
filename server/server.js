@@ -19,6 +19,7 @@ crypto = require('crypto');
 mongo = require('mongodb'); 
 socketio = require('socket.io');
 crypto = require('crypto');
+performancenow = require("performance-now");
 
 
 Box2D = require('box2dweb-commonjs').Box2D;
@@ -279,20 +280,21 @@ ServerInstance.prototype.load = function() {
 	console.log("Listening on port " + constants.serverPort);
 	
 	// Start the server loop
-	this.lastUpdate = Date.now();
+	this.lastUpdate = performancenow().toFixed(3);
 	var accumulator = 0;
 	this.run = function() {
-		var now = Date.now();
-		var dt = (now - this.lastUpdate)/1000.0;
-		this.lastUpdate = Date.now();
+		var now = performancenow();
+		var dt = (now.toFixed(3) - this.lastUpdate);
+		this.lastUpdate = performancenow().toFixed(3);
+		//console.log(dt);
+	
+		this.entityWorld.update(dt);
 		
-		accumulator += dt;
+		accumulator += dt/1000.0;
 		while(accumulator >= constants.physicsStep) {
 			this.physicsWorld.Step(constants.physicsStep, 10, 10);
 			accumulator -= constants.physicsStep;
 		}
-	
-		this.entityWorld.update(dt);
 		
 		this.regeneratorServer.update(dt);
 	}.bind(this);
