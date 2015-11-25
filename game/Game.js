@@ -265,14 +265,14 @@ Game.prototype.initializeListeners = function() {
 			var player = entityTemplates.player(data.username, data.uuid);
 			
 			var physics = player.getComponent("physics");
+			var control = player.getComponent('control');
 			physics.x = data.x;
 			physics.y = data.y;
 			physics.gx = data.x;
 			physics.gy = data.y;
 			physics.gvx = data.vx;
 			physics.gvy = data.vy;
-			physics.dx = data.dx;
-			physics.dy = data.dy;
+			control.moveDir = [data.dx, data.dy];
 			physics.rotation = data.rotation;
 			
 			physics.oldX = data.x;
@@ -309,14 +309,14 @@ Game.prototype.initializeListeners = function() {
 	this.connection.on('entityspawn', function(data) {
 		var entity = entityTemplates[data.type](data.uuid);
 		var physics = entity.getComponent("physics");
+		var control = entity.getComponent('control');
 		physics.gx = data.x;
 		physics.gy = data.y;
 		physics.x = data.x;
 		physics.y = data.y;
 		physics.gvx = data.vx;
 		physics.gvy = data.vy;
-		physics.dx = data.dx;
-		physics.dy = data.dy;
+		control.moveDir = [data.dx, data.dy];
 		physics.rotation = data.rotation;
 		//console.log("Spawned entity of type " + data.type + ". UUID " + data.uuid);
 	}.bind(this));
@@ -337,8 +337,6 @@ Game.prototype.initializeListeners = function() {
 			physics.gy = data.y;
 			physics.gvx = data.vx;
 			physics.gvy = data.vy;
-			physics.dx = data.dx;
-			physics.dy = data.dy;
 			control.moveDir = [data.dx, data.dy];
 			physics.rotation = data.rotation;		
 			physics.lastUpdate = new Date();

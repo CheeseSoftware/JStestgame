@@ -12,8 +12,6 @@ ECS.Components.Physics = CES.Component.extend({
 		this.y = 0;
 		this.vx = 0;
 		this.vy = 0;
-		this.dx = 0;
-		this.dy = 0;
 		this.rotation = 0;
 		
 		// lastUpdate used for interpolation

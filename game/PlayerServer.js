@@ -18,6 +18,7 @@ PlayerServer.prototype.removePlayer = function(socketid) {
 
 PlayerServer.prototype.sendPlayerJoinPacket = function(entity, socketid, socket) {
 	var physics = entity.getComponent('physics');
+	var control = entity.getComponent('control')
 	var player = this.getPlayer(socketid);
 	var data = {
 		uuid: entity.uuid,
@@ -26,8 +27,8 @@ PlayerServer.prototype.sendPlayerJoinPacket = function(entity, socketid, socket)
 		y: physics.gy,
 		vx: physics.gvx,
 		vy: physics.gvy,
-		dx: physics.dx, 
-		dy: physics.dy,
+		dx: control.moveDir[0], 
+		dy: control.moveDir[0],
 		rotation: physics.rotation
 	};
 	

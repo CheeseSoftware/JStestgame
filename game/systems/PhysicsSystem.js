@@ -14,20 +14,6 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			if(entity.uuid >= 1 && entity.uuid <= 10) {
 				console.log("before " + physics.gvx);
 			}
-
-			/*if(physics.dx != 0 || physics.dy != 0) {
-				var desiredAngle = Math.atan2(physics.dy, physics.dx);
-				physics.rotateTo(physics, desiredAngle, physics.rotateSpeed, dt);
-
-				var normal = v2.create(physics.dx, physics.dy);
-				v2.normalize(normal, normal);
-				v2.multiply(physics.acceleration, normal, normal);
-				
-				//console.log("Speed: " + v2.length(normal));
-				var toApply = new b2Vec2(normal[0], normal[1]);
-				//toApply.Multiply(dt * 1000);
-				physics.body.ApplyImpulse(toApply, physics.body.GetWorldCenter());
-			}*/
 					
 			// Now do some linear interpolation!
 			//var dis = v2.create(physics.gx - physics.x, physics.gy - physics.y);
