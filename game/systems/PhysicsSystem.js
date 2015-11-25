@@ -16,13 +16,22 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			// Only interpolate if there is a major difference
 			//var duration = v2.length(dif) > 1 ? 10 * dt : 0;
 			//var ic = Math.min(duration > 0 ? (new Date()-physics.lastUpdate)/duration : 1.0, 1.0);
-			var duration = 10 * dt;
+			var duration = 420 * dt;
 			var ic = Math.min((new Date()-physics.lastUpdate)/duration, 1.0);
 			
-			physics.x = ic*physics.gx + (1.0-ic)*physics.x;
-			physics.y = ic*physics.gy + (1.0-ic)*physics.y;
-			physics.vx = ic*physics.gvx + (1.0-ic)*physics.vx;
-			physics.vy = ic*physics.gvy + (1.0-ic)*physics.vy;
+			if(!isServer) {
+				//if(ic != 0)
+					//console.log("interpolating." + physics.x);
+				physics.x = ic*physics.gx + (1.0-ic)*physics.x;
+				physics.y = ic*physics.gy + (1.0-ic)*physics.y;
+				physics.vx = ic*physics.gvx + (1.0-ic)*physics.vx;
+				physics.vy = ic*physics.gvy + (1.0-ic)*physics.vy;
+				
+				//physics.x = physics.gx;
+				//physics.y = physics.gy;
+				//physics.vx = physics.gvx;
+				//physics.vy = physics.gvy;
+			}
 
 			// Position text and textures at this position. Animate feet
 			if(drawable != undefined) {

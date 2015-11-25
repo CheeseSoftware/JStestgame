@@ -327,11 +327,12 @@ Game.prototype.initializeListeners = function() {
 		if(entity != undefined) {
 			var control = entity.getComponent("control");
 			var physics = entity.getComponent("physics");
-			
-			physics.x = physics.gx;
+			control.moveDir = [data.dx, data.dy];
+			console.log(JSON.stringify(data));
+			/*physics.x = physics.gx;
 			physics.y = physics.gy;
 			physics.vx = physics.gvx;
-			physics.vy = physics.gvy;
+			physics.vy = physics.gvy;*/
 			
 			physics.gx = data.x;
 			physics.gy = data.y;
@@ -341,7 +342,7 @@ Game.prototype.initializeListeners = function() {
 			physics.rotation = data.rotation;		
 			physics.lastUpdate = new Date();
 			
-			control.moveDir = [data.dx, data.dy];
+			
 		}
 		else
 			console.log("entity is undefined in 'entityupdate' Game.js");
