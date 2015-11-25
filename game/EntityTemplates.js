@@ -109,7 +109,7 @@ entityTemplates.worker = function(uuid) {
 	entity.addComponent(physics);
 	
 	if(!isServer) {
-		var sprite = new PIXI.Sprite(game.textureManager.textures.octopus);
+		var sprite = new PIXI.Sprite(game.textureManager.textures.worker);
 		sprite.anchor.x = 0.5;
 		sprite.anchor.y = 0.5;
 		
