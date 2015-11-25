@@ -58,6 +58,7 @@ Game.prototype.load = function() {
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
 	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem(this.chunkManager));
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
+	this.entityWorld.addSystem(new ECS.Systems.MovementSystem());
 	this.entityWorld.addSystem(new ECS.Systems.AnimationSystem());
 	//this.entityWorld.addSystem(new ECS.Systems.AISystem());
 	
@@ -324,6 +325,7 @@ Game.prototype.initializeListeners = function() {
 		var entity = this.entityClient.getEntity(data.uuid);
 		
 		if(entity != undefined) {
+			var control = entity.getComponent("control");
 			var physics = entity.getComponent("physics");
 			/*if(data.uuid >= 1 && data.uuid <= 10) {
 				console.log("data " + data.x + " and current " + physics.gx);
@@ -337,6 +339,7 @@ Game.prototype.initializeListeners = function() {
 			physics.gvy = data.vy;
 			physics.dx = data.dx;
 			physics.dy = data.dy;
+			control.moveDir = [data.dx, data.dy];
 			physics.rotation = data.rotation;		
 			physics.lastUpdate = new Date();
 		}

@@ -15,7 +15,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				console.log("before " + physics.gvx);
 			}
 
-			if(physics.dx != 0 || physics.dy != 0) {
+			/*if(physics.dx != 0 || physics.dy != 0) {
 				var desiredAngle = Math.atan2(physics.dy, physics.dx);
 				physics.rotateTo(physics, desiredAngle, physics.rotateSpeed, dt);
 
@@ -27,7 +27,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				var toApply = new b2Vec2(normal[0], normal[1]);
 				//toApply.Multiply(dt * 1000);
 				physics.body.ApplyImpulse(toApply, physics.body.GetWorldCenter());
-			}
+			}*/
 					
 			// Now do some linear interpolation!
 			//var dis = v2.create(physics.gx - physics.x, physics.gy - physics.y);

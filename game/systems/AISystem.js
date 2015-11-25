@@ -4,11 +4,12 @@ ECS.Systems.AISystem = CES.System.extend({
 		this._entityServer = entityServer;
 	},
     update: function (dt) {
-        var entities = this.world.getEntities('physics', 'AI');
+        var entities = this.world.getEntities('physics', 'AI', 'control');
  
         entities.forEach(function (entity) {
 			var physics = entity.getComponent('physics');
             var AI = entity.getComponent('AI');
+            var control = entity.getComponent('control');
 			
 			if(AI.target) {
 				var target = this._entityServer.getEntity(AI.target);
@@ -20,7 +21,11 @@ ECS.Systems.AISystem = CES.System.extend({
 						
 						physics.dx = dx;
 						physics.dy = dy;
-						server.entityServer.sendUpdatePacket(entity.uuid);
+						control.moveDir[0] = dx;
+						control.moveDir[1] = dy;
+						v2.normalize(control.moveDir, control.moveDir)
+						control.isChanged = true;
+						//server.entityServer.sendUpdatePacket(entity.uuid);
 						AI.lastPacket = new Date();
 					}
 				}

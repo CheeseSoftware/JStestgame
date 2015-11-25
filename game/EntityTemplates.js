@@ -5,6 +5,9 @@ entityTemplates.player = function(username, uuid) {
 	
 	var physicsWorld = (isServer ? server.physicsWorld : game.physicsWorld);
 	
+	// Control
+	var control = new ECS.Components.Control();
+	entity.addComponent(control);
 
 	// Health
 	var health = new ECS.Components.Health(100.0);
@@ -77,6 +80,9 @@ entityTemplates.worker = function(uuid) {
 	var physicsWorld = (isServer ? server.physicsWorld : game.physicsWorld);
 	var entityWorld = (isServer ? server.entityWorld : game.entityWorld);
 	
+	// Control
+	var control = new ECS.Components.Control();
+	entity.addComponent(control);
 
 	// Health
 	var health = new ECS.Components.Health(10.0);

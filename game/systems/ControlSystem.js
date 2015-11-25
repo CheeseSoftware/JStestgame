@@ -4,6 +4,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
         var entities = this.world.getEntities('physics', 'player', 'drawable', 'controlled');
  
         entities.forEach(function (entity) {
+        	var control = entity.getComponent('control')
 			var physics = entity.getComponent('physics');
             var player = entity.getComponent('player');
 			var drawable = entity.getComponent('drawable');
@@ -23,6 +24,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				var direction = keyboard.calculateDirection();
 				physics.dx = direction.x;
 				physics.dy = direction.y;
+				control.moveDir = [direction.x, direction.y];
 				game.sendUpdatePacket();
 				physics.playState = keyboard.getPlayState();
 			}		
