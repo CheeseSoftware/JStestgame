@@ -6,7 +6,7 @@ ECS.Systems.MovementSystem = CES.System.extend({
 			var control = entity.getComponent('control');
 			var physics = entity.getComponent('physics');
 
-    		if(physics.dx != 0 || physics.dy != 0) {
+    		if(control.moveDir[0] != 0 || control.moveDir[1] != 0) {
 				var desiredAngle = Math.atan2(control.moveDir[1], control.moveDir[0]);
 				physics.rotateTo(physics, desiredAngle, physics.rotateSpeed, dt);
 
@@ -15,6 +15,7 @@ ECS.Systems.MovementSystem = CES.System.extend({
 				v2.multiply(physics.acceleration, normal, normal);
 				
 				var toApply = new b2Vec2(normal[0], normal[1]);
+				toApply.Multiply(dt);
 				physics.body.ApplyImpulse(toApply, physics.body.GetWorldCenter());
 			}
 		});

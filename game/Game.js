@@ -328,23 +328,15 @@ Game.prototype.initializeListeners = function() {
 			var control = entity.getComponent("control");
 			var physics = entity.getComponent("physics");
 			
-			physics.x = physics.gx;
-			physics.y = physics.gy;
-			physics.vx = physics.gvx;
-			physics.vy = physics.gvy;
+			physics.gx = data.x;
+			physics.gy = data.y;
+			physics.gvx = data.vx;
+			physics.gvy = data.vy;
 			
-			physics.updatePosition = true;
-			physics.ax = data.x;
-			physics.ay = data.y;
-			
-			physics.updateVelocity = true;
-			physics.avx = data.vx;
-			physics.avy = data.vy;
-			
-			control.moveDir = [data.dx, data.dy];
-
 			physics.rotation = data.rotation;		
 			physics.lastUpdate = new Date();
+			
+			control.moveDir = [data.dx, data.dy];
 		}
 		else
 			console.log("entity is undefined in 'entityupdate' Game.js");
