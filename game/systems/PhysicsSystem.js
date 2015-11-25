@@ -11,9 +11,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			var health = entity.getComponent('health');
 			var state = physics.playState;
 			
-			if(entity.uuid >= 1 && entity.uuid <= 10) {
-				console.log("before " + physics.gvx);
-			}
+			var diffbefore = (physics.gx - physics.x);
 
 			if(physics.dx != 0 || physics.dy != 0) {
 				var desiredAngle = Math.atan2(physics.dy, physics.dx);
@@ -23,29 +21,44 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				v2.normalize(normal, normal);
 				v2.multiply(physics.acceleration, normal, normal);
 				
-				//console.log("Speed: " + v2.length(normal));
 				var toApply = new b2Vec2(normal[0], normal[1]);
-				//toApply.Multiply(dt * 1000);
-				physics.body.ApplyImpulse(toApply, physics.body.GetWorldCenter());
+				toApply.Multiply(dt);
+				physics.body.ApplyImpulse(toApply, physics.body.GetWorldCenter());			
 			}
+			
+			if(physics.updatePosition == true) {
+				//physics.gx = physics.ax;
+				//physics.gy = physics.ay;
+				physics.updatePosition = false;
+			}
+			
+			if(physics.updateVelocity == true) {
+				console.log("set velocity");
+				//physics.gvx = physics.avx;
+				//hysics.gvy = physics.avy;
+				physics.updateVelocity = false;
+			}
+			
+			if(physics.updateDdirection == true) {
+				console.log("set direction");
+				physics.dx = physics.adx;
+				physics.dy = physics.ady;
+				physics.updateDdirection = false;
+			}
+			
 					
 			// Now do some linear interpolation!
-			//var dis = v2.create(physics.gx - physics.x, physics.gy - physics.y);
+			var dif = v2.create(physics.gx - physics.x, physics.gy - physics.y);
 			// Only interpolate if there is a major difference
-			//var duration = Math.max(Math.abs(v2.length(dis) - 10), 1.0);
-			var duration = 50; //* dt;
-			var ic = Math.min((new Date()-physics.lastUpdate)/duration, 1.0);
+			if(entity.uuid >= 1 && entity.uuid <= 10)
+				console.log(v2.length(dif));
+			var duration = v2.length(dif) > 2 ? 10 * dt : 0;
+			var ic = Math.min(duration > 0 ? (new Date()-physics.lastUpdate)/duration : 1.0, 1.0);
 			physics.x = ic*physics.gx + (1.0-ic)*physics.x;
 			physics.y = ic*physics.gy + (1.0-ic)*physics.y;
 			physics.vx = ic*physics.gvx + (1.0-ic)*physics.vx;
 			physics.vy = ic*physics.gvy + (1.0-ic)*physics.vy;
-			
-			
-			if(entity.uuid >= 1 && entity.uuid <= 10) {
-				console.log("after " + physics.gvx);
-			}
-			console.log("------------");
-			
+
 			// Position text and textures at this position. Animate feet
 			if(drawable != undefined) {
 				drawable.positionAll(physics.x, physics.y, physics.rotation);

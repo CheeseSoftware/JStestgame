@@ -8,6 +8,18 @@ ECS.Components.Physics = CES.Component.extend({
 		this.oldX = 0;
 		this.oldY = 0;
 		
+		this.updatePosition = false;
+		this.ax = 0;
+		this.ay = 0;
+		
+		this.updateVelocity = false;
+		this.avx = 0;
+		this.avy = 0;
+		
+		this.updateDirection = false;
+		this.adx = 0;
+		this.ady = 0;
+		
 		this.x = 0;
 		this.y = 0;
 		this.vx = 0;
