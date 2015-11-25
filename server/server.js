@@ -298,7 +298,7 @@ ServerInstance.prototype.load = function() {
 			accumulator -= constants.physicsStep;
 		}
 		
-		this.regeneratorServer.update(dt);
+		this.regeneratorServer.update(dt/1000.0);
 	}.bind(this);
 	var intervalId = setInterval(this.run, constants.serverInterval);
 }
