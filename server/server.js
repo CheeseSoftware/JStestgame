@@ -98,6 +98,7 @@ ServerInstance.prototype.load = function() {
 	this.entityWorld.addSystem(terrainPhysicsSystem);
 	this.entityWorld.addSystem(new ECS.Systems.ControlServerSystem());
 	this.entityWorld.addSystem(new ECS.Systems.AISystem(this.entityServer));
+	this.entityWorld.addSystem(new ECS.Systems.MovementSystem());
 	
 	//TODO: Fix and move playerContactListener
 	var playerContactListener = new Box2D.Dynamics.b2ContactListener;// Contact listener begin: Temporarily disable player-to-player collisions

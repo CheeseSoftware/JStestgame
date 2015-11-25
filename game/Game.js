@@ -328,6 +328,11 @@ Game.prototype.initializeListeners = function() {
 			var control = entity.getComponent("control");
 			var physics = entity.getComponent("physics");
 			
+			physics.x = physics.gx;
+			physics.y = physics.gy;
+			physics.vx = physics.gvx;
+			physics.vy = physics.gvy;
+			
 			physics.gx = data.x;
 			physics.gy = data.y;
 			physics.gvx = data.vx;

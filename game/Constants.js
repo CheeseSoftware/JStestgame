@@ -6,7 +6,7 @@ constants = {
 	acceleration: 5000.0,
 	friction: 4.5,
 	
-	rotateSpeed: 8.0,
+	rotateSpeed: 0.008,
 	cameraHoverSpeed: 0.5,
 	
 	serverInterval: 16.0,
