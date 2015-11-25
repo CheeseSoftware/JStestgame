@@ -58,6 +58,7 @@ Game.prototype.load = function() {
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
 	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem(this.chunkManager));
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
+	this.entityWorld.addSystem(new ECS.Systems.MovementSystem());
 	this.entityWorld.addSystem(new ECS.Systems.AnimationSystem());
 	//this.entityWorld.addSystem(new ECS.Systems.AISystem());
 	
@@ -264,14 +265,14 @@ Game.prototype.initializeListeners = function() {
 			var player = entityTemplates.player(data.username, data.uuid);
 			
 			var physics = player.getComponent("physics");
+			var control = player.getComponent('control');
 			physics.x = data.x;
 			physics.y = data.y;
 			physics.gx = data.x;
 			physics.gy = data.y;
 			physics.gvx = data.vx;
 			physics.gvy = data.vy;
-			physics.dx = data.dx;
-			physics.dy = data.dy;
+			control.moveDir = [data.dx, data.dy];
 			physics.rotation = data.rotation;
 			
 			physics.oldX = data.x;
@@ -308,14 +309,14 @@ Game.prototype.initializeListeners = function() {
 	this.connection.on('entityspawn', function(data) {
 		var entity = entityTemplates[data.type](data.uuid);
 		var physics = entity.getComponent("physics");
+		var control = entity.getComponent('control');
 		physics.gx = data.x;
 		physics.gy = data.y;
 		physics.x = data.x;
 		physics.y = data.y;
 		physics.gvx = data.vx;
 		physics.gvy = data.vy;
-		physics.dx = data.dx;
-		physics.dy = data.dy;
+		control.moveDir = [data.dx, data.dy];
 		physics.rotation = data.rotation;
 		//console.log("Spawned entity of type " + data.type + ". UUID " + data.uuid);
 	}.bind(this));
@@ -324,6 +325,7 @@ Game.prototype.initializeListeners = function() {
 		var entity = this.entityClient.getEntity(data.uuid);
 		
 		if(entity != undefined) {
+			var control = entity.getComponent("control");
 			var physics = entity.getComponent("physics");
 			
 			physics.x = physics.gx;
@@ -339,9 +341,7 @@ Game.prototype.initializeListeners = function() {
 			physics.avx = data.vx;
 			physics.avy = data.vy;
 			
-			physics.updateDirection = true;
-			physics.adx = data.dx;
-			physics.ady = data.dy;
+			control.moveDir = [data.dx, data.dy];
 
 			physics.rotation = data.rotation;		
 			physics.lastUpdate = new Date();

@@ -11,6 +11,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			var health = entity.getComponent('health');
 			var state = physics.playState;
 			
+			
 			var diffbefore = (physics.gx - physics.x);
 
 			if(physics.dx != 0 || physics.dy != 0) {

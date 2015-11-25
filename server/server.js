@@ -96,6 +96,7 @@ ServerInstance.prototype.load = function() {
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
 	var terrainPhysicsSystem = new ECS.Systems.TerrainPhysicsSystem(this.chunkManager);
 	this.entityWorld.addSystem(terrainPhysicsSystem);
+	this.entityWorld.addSystem(new ECS.Systems.ControlServerSystem());
 	this.entityWorld.addSystem(new ECS.Systems.AISystem(this.entityServer));
 	
 	//TODO: Fix and move playerContactListener

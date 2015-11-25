@@ -12,12 +12,12 @@ EntityServer = function(entityWorld, playerServer, io) {
 
 			if(entity) {
 				var physics = entity.getComponent('physics');
+				var control = entity.getComponent('control');
 				physics.gx = data.x;
 				physics.gy = data.y;
 				physics.gvx = data.vx;
 				physics.gvy = data.vy;
-				physics.dx = data.dx;
-				physics.dy = data.dy;
+				control.moveDir = [data.dx, data.dy];
 				physics.rotation = data.rotation;
 				physics.lastUpdate = new Date();
 				
@@ -73,6 +73,7 @@ EntityServer.prototype.sendUpdatePacket = function(uuid, socket) {
 	var entity = this.getEntity(uuid);
 	if(entity) {
 		var physics = entity.getComponent('physics');
+		var control = entity.getComponent('control');
 		//console.log("entityserver " + physics.dx + " " + physics.dy);
 		
 		/*if(entity.uuid >= 1 && entity.uuid <= 10) {
@@ -88,8 +89,8 @@ EntityServer.prototype.sendUpdatePacket = function(uuid, socket) {
 			y: physics.gy,
 			vx: physics.gvx,
 			vy: physics.gvy,
-			dx: physics.dx, 
-			dy: physics.dy,
+			dx: control.moveDir[0], 
+			dy: control.moveDir[1],
 			rotation: physics.rotation
 		};
 		
@@ -104,6 +105,7 @@ EntityServer.prototype.sendUpdatePacket = function(uuid, socket) {
 
 EntityServer.prototype.sendEntitySpawnPacket = function(entity, socket) {
 	var physics = entity.getComponent('physics');
+	var control = entity.getComponent('control');
 	var data = {
 		uuid: entity.uuid,
 		type: entity.type,
@@ -111,8 +113,8 @@ EntityServer.prototype.sendEntitySpawnPacket = function(entity, socket) {
 		y: physics.gy,
 		vx: physics.gvx,
 		vy: physics.gvy,
-		dx: physics.dx, 
-		dy: physics.dy,
+		dx: control.moveDir[0],
+		dy: control.moveDir[1],
 		rotation: physics.rotation
 	};
 	
