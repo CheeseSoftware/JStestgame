@@ -39,36 +39,20 @@ ECS.Components.Physics.prototype.rotateTo = function(physics, newRotation, speed
  
 Object.defineProperties(ECS.Components.Physics.prototype, {
 	gx: {
-        get: function () { return this.body.GetPosition().x; },
-		set: function (value) {
-			var pos = this.body.GetPosition();
-			pos.x = value;
-			this.body.SetPosition(new b2Vec2(pos.x,pos.y));
-		}
+        get: function () { return this.body.m_xf.position.x; },
+		set: function (value) { this.body.m_xf.position.x = value; }
     },
 	gy: {
-        get: function () { return this.body.GetPosition().y; },
-		set: function (value) {
-			var pos = this.body.GetPosition();
-			pos.y = value;
-			this.body.SetPosition(new b2Vec2(pos.x,pos.y));
-		}
+        get: function () { return this.body.m_xf.position.y; },
+		set: function (value) { this.body.m_xf.position.y = value; }
     },
     gvx: {
-        get: function () { return this.body.GetLinearVelocity().x; },
-		set: function (value) { 
-			var vel = this.body.GetLinearVelocity();
-			vel.x = value;
-			this.body.SetLinearVelocity(vel);
-		}
+        get: function () { return this.body.m_linearVelocity.x; },
+		set: function (value) { this.body.m_linearVelocity.x = value; }
     },
 	gvy: {
-        get: function () { return this.body.GetLinearVelocity().y; },
-		set: function (value) { 
-			var vel = this.body.GetLinearVelocity();
-			vel.y = value;
-			this.body.SetLinearVelocity(vel);
-		}
+        get: function () { return this.body.m_linearVelocity.y },
+		set: function (value) { this.body.m_linearVelocity.y = value;}
     },
 	rotation: {
         get: function () { return this.body.m_rotation; },
