@@ -8,6 +8,19 @@ body {
 	padding: 0
 }
 
+.hud {
+	position:absolute;
+	width: 750px;
+	height: 50px;
+	top:50px;
+	left:50%;
+	margin-left:-375px;
+	position: fixed;
+	text-align: center;
+	cursor: default;
+	z-index: 1;
+}
+
 .playMenuBackground {
 	position:absolute;
 	width:100%;

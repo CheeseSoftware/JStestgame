@@ -5,6 +5,9 @@ Game = function() {
 }
 
 Game.prototype.load = function() {
+
+	this.hud = new Hud();
+	this.hud.create();
 	
 	//TODO: Move esc code somewhere else
 	keyboard.keys.esc.press = function() {
