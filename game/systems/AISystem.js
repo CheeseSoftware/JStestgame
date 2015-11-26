@@ -15,14 +15,16 @@ ECS.Systems.AISystem = CES.System.extend({
 				var target = this._entityServer.getEntity(AI.target);
 				if(target) {
 					var targetPhysics = target.getComponent("physics");		
-					if(new Date() - AI.lastPacket > 4000) {
+					if(new Date() - AI.lastPacket > 500) {
 						var dx = targetPhysics.gx - physics.gx;
 						var dy = targetPhysics.gy - physics.gy;
 						
-						physics.dx = dx;
-						physics.dy = dy;
+						if(dx == 0 && dy == 0)
+							return;
+						
 						control.moveDir[0] = dx;
 						control.moveDir[1] = dy;
+						
 						v2.normalize(control.moveDir, control.moveDir)
 						control.isChanged = true;
 						//server.entityServer.sendUpdatePacket(entity.uuid);
