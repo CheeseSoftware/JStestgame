@@ -1,7 +1,7 @@
 
 ECS.Systems.ControlSystem = CES.System.extend({
     update: function (dt) {
-        var entities = this.world.getEntities('physics', 'player', 'drawable', 'controlled');
+        var entities = this.world.getEntities('control', 'physics', 'player', 'drawable', 'controlled');
  
         entities.forEach(function (entity) {
         	var control = entity.getComponent('control')
@@ -10,7 +10,7 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			var drawable = entity.getComponent('drawable');
 			var isControlled = entity.getComponent('controlled');
 			
-			if(keyboard.keys.space.isDown && (new Date() - player.lastDig > 1000 / player.digSpeed)) {
+			/*if(keyboard.keys.space.isDown && (new Date() - player.lastDig > 1000 / player.digSpeed)) {
 				player.lastDig = new Date();
 				game.connection.send("dig", { 
 					uuid: entity.uuid
@@ -18,6 +18,11 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				game.sendUpdatePacket();
 
 				game.battleManagger.hit(entity);
+			}*/
+
+			if(keyboard.keys.space.isDown != control.isUsingTool) {
+				control.isUsingTool = keyboard.keys.space.isDown;
+				control.isChanged = true;
 			}
 			
 			if(keyboard.isDifferent(player.oldKeyboardState)) {
@@ -25,10 +30,15 @@ ECS.Systems.ControlSystem = CES.System.extend({
 				physics.dx = direction.x;
 				physics.dy = direction.y;
 				control.moveDir = [direction.x, direction.y];
-				game.sendUpdatePacket();
+				control.isChanged = true;
 				physics.playState = keyboard.getPlayState();
 			}		
 			player.oldKeyboardState = keyboard.getState();
+
+			if (control.isChanged) {
+				control.isChanged = false;
+				game.sendUpdatePacket();
+			}
 			
         });
     }

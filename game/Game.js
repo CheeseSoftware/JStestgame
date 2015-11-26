@@ -182,6 +182,7 @@ Game.prototype.sendUpdatePacket = function() {
 	//TODO: Split playerupdate and entityupdate
 	var entities = this.entityWorld.getEntities('controlled', 'physics', 'player');
 	entities.forEach(function (entity) {
+		var control = entity.getComponent('control');
 		var physics = entity.getComponent('physics');
 		var player = entity.getComponent('player');
 		var direction = keyboard.calculateDirection();
@@ -195,8 +196,7 @@ Game.prototype.sendUpdatePacket = function() {
 			dx: direction.x,
 			dy: direction.y,
 			rotation: physics.rotation,
-			
-			isDigging: keyboard.getPlayState().dig
+			isDigging: control.isUsingTool
 		});
 	}.bind(this));
 }

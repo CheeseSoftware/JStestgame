@@ -193,7 +193,9 @@ ServerInstance.prototype.load = function() {
 			
 			var player = entity.getComponent("player");
 			var physics = entity.getComponent("physics");
+			var control = entity.getComponent('control');
 			player.isDigging = data.isDigging;
+			control.isUsingTool = data.isDigging;
 			if(data.isDigging) {
 				physics.acceleration = constants.digAcceleration;
 			}
