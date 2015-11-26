@@ -4,18 +4,10 @@ ECS.Components.Physics = CES.Component.extend({
 	init: function (body) {
 		this.body = body;
 
-		// oldX and oldY used for feet animation
 		this.oldX = 0;
 		this.oldY = 0;
 		
-		this.x = 0;
-		this.y = 0;
-		this.vx = 0;
-		this.vy = 0;
 		this.rotation = 0;
-		
-		// lastUpdate used for interpolation
-		this.lastUpdate = new Date();
 		
 		this.playState = {};
 
@@ -38,30 +30,38 @@ ECS.Components.Physics.prototype.rotateTo = function(physics, newRotation, speed
 }
  
 Object.defineProperties(ECS.Components.Physics.prototype, {
+	x: {
+        get: function () { return this.body.x; },
+		set: function (value) { this.body.x = value; }
+    },
+	y: {
+        get: function () { return this.body.y; },
+		set: function (value) { this.body.y = value; }
+    },
+    vx: {
+        get: function () { return this.body.vx; },
+		set: function (value) { this.body.vx = value; }
+    },
+	vy: {
+        get: function () { return this.body.vy },
+		set: function (value) { this.body.vy = value;}
+    },
 	gx: {
-        get: function () { return this.body.m_xf.position.x; },
-		set: function (value) { this.body.m_xf.position.x = value; }
+        get: function () { return this.body.gx; },
+		set: function (value) { this.body.gx = value; }
     },
 	gy: {
-        get: function () { return this.body.m_xf.position.y; },
-		set: function (value) { this.body.m_xf.position.y = value; }
+        get: function () { return this.body.gy; },
+		set: function (value) { this.body.gy = value; }
     },
     gvx: {
-        get: function () { return this.body.m_linearVelocity.x; },
-		set: function (value) { this.body.m_linearVelocity.x = value; }
+        get: function () { return this.body.gvx; },
+		set: function (value) { this.body.gvx = value; }
     },
 	gvy: {
-        get: function () { return this.body.m_linearVelocity.y },
-		set: function (value) { this.body.m_linearVelocity.y = value;}
-    },
-	rotation: {
-        get: function () { return this.body.m_rotation; },
-		set: function (value) { this.body.m_rotation = value; this.body.m_rotation = value; }
-    },
-	angularVelocity: {
-        get: function () { return this.body.m_angularVelocity; },
-		set: function (value) { this.body.m_angularVelocity = value; this.body.m_angularVelocity = value; }
-	}
+        get: function () { return this.body.gvy },
+		set: function (value) { this.body.gvy = value;}
+    }
 });
 
 

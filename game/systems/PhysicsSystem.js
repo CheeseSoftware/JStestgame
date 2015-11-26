@@ -10,28 +10,6 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			var isControlled = entity.hasComponent('controlled');
 			var health = entity.getComponent('health');
 			var state = physics.playState;
-			
-			if(!isServer) {
-				
-				// Now do some linear interpolation!
-				var duration = 100 * dt;
-				var ic = Math.min((new Date()-physics.lastUpdate)/duration, 1.0);
-
-				// VERY BAD CODE. MUST BE SIMULATED THROUGH PHYSICS ENGINE INSTEAD.
-				physics.x += physics.gx - physics.x;
-				physics.y += physics.gy - physics.y;
-
-				physics.x = ic*physics.gx + (1.0-ic)*physics.x;
-				physics.y = ic*physics.gy + (1.0-ic)*physics.y;
-				physics.vx = ic*physics.gvx + (1.0-ic)*physics.vx;
-				physics.vy = ic*physics.gvy + (1.0-ic)*physics.vy;
-			}
-			else {
-				physics.x = physics.gx;
-				physics.y = physics.gy;
-				physics.vx = physics.gvx;
-				physics.vy = physics.gvy;
-			}
 
 			// Position text and textures at this position. Animate feet
 			if(drawable != undefined) {

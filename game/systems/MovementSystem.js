@@ -16,9 +16,7 @@ ECS.Systems.MovementSystem = CES.System.extend({
 				
 				var toApply = new b2Vec2(normal[0], normal[1]);
 				toApply.Multiply(dt);
-				if(entity.uuid >= 1 && entity.uuid <= 10)
-					console.log("Applied pulse. x:" + toApply.x + " y:" + toApply.y);
-				physics.body.ApplyImpulse(toApply, physics.body.GetWorldCenter());
+				physics.body.addImpulse(toApply);
 			}
 
 			if (isServer) {
