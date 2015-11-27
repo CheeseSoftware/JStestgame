@@ -12,6 +12,9 @@ PhysicsBody = function() {
 	this.y = 0;
 	this.vx = 0;
 	this.vy = 0;
+
+	this.friction = 0.999;
+	this.maxSpeed = 300.0;
 	
 	this.interpolationDate = new Date();
 }

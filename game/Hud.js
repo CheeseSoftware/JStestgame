@@ -18,7 +18,6 @@ Hud.prototype.create = function() {
 	client.onreadystatechange = (function() {
 		this._content = client.responseText;
 
-		$("body").prepend("<p> HEJ! JAG ÄR GLAD! </p>");
 		$("body").prepend(this._content);
 		console.log(this._content);
 
