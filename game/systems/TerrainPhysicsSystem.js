@@ -9,12 +9,9 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 			var physics = entity.getComponent('physics');
 			var isControlled = entity.getComponent('controlled');
 			
-			input = { x:physics.x, y:physics.y, vx:physics.vx, vy:physics.vy };
-			values = this.simulate(dt, input);
-			physics.x = values.x;
-			physics.y = values.y;
-			physics.vx = values.vx;
-			physics.vy = values.vy;
+			this.simulate(dt, physics.body.data);
+			this.simulate(dt, physics.body.idata);
+
         }.bind(this));
     }
 
@@ -77,7 +74,6 @@ ECS.Systems.TerrainPhysicsSystem.prototype.simulate = function(dt, values) {
 		values.vx -= v2.clampF(velocityDir[0]*frictionStrength, -maxForceFactor*values.vx, maxForceFactor*values.vx);
 		values.vy -= v2.clampF(velocityDir[1]*frictionStrength, -maxForceFactor*values.vy, maxForceFactor*values.vy);
 	}
-	return values;
 }
 
 
