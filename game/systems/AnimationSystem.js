@@ -14,7 +14,10 @@ ECS.Systems.AnimationSystem = CES.System.extend({
 				//TODO: Sort animations by priority to allow multiple animations per sprite
 				if(bodypart.animating) {
 					//console.log("nice animation");
-					if(now - bodypart.lastFrame >= bodypart.mspf) {	
+					var diff = now - bodypart.lastFrame;
+					
+					while(diff >= bodypart.mspf) {	
+						diff -= bodypart.mspf;
 						bodypart.lastFrame = new Date();
 						//console.log("found animation to animate " + player.text.text);				
 						bodypart.currentFrame += 1;

@@ -9,16 +9,6 @@ ECS.Systems.ControlSystem = CES.System.extend({
             var player = entity.getComponent('player');
 			var drawable = entity.getComponent('drawable');
 			var isControlled = entity.getComponent('controlled');
-			
-			/*if(keyboard.keys.space.isDown && (new Date() - player.lastDig > 1000 / player.digSpeed)) {
-				player.lastDig = new Date();
-				game.connection.send("dig", { 
-					uuid: entity.uuid
-				});
-				game.sendUpdatePacket();
-
-				game.battleManagger.hit(entity);
-			}*/
 
 			if(keyboard.keys.space.isDown != control.isUsingTool) {
 				control.isUsingTool = keyboard.keys.space.isDown;
