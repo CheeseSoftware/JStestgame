@@ -14,69 +14,64 @@ PhysicsWorld.prototype.removeBody = function(body) {
 PhysicsWorld.prototype.update = function(dt) {
 	for(var i = 0; i < this.bodies.length; ++i) {
 		var body = this.bodies[i];
-		// TODO: Check collision
-		
-		body.x += body.vx * dt;
-		body.y += body.vy * dt;
-		body.ix += body.ivx * dt;
-		body.iy += body.ivy * dt;
-		body.vx *= Math.pow(1.0-body.friction, dt);
-		body.vy *= Math.pow(1.0-body.friction, dt);
-		body.ivx *= Math.pow(1.0-body.friction, dt);
-		body.ivy *= Math.pow(1.0-body.friction, dt);
+		this.simulateBody(body, dt);
+	}
+}
 
-		if(Math.abs(body.vx) < 0.001)
-			body.vx = 0;
-		if(Math.abs(body.vy) < 0.001)
-			body.vy = 0;
-		if(Math.abs(body.ivx) < 0.001)
-			body.ivx = 0;
-		if(Math.abs(body.ivy) < 0.001)
-			body.ivy = 0;
+PhysicsWorld.prototype.simulateBody = function(body, dt) {
+	this.simulateData(body.data, "normal", body, dt);
+	
+	if(isServer) {
+		body.idata.x = body.data.x;
+		body.idata.y = body.data.y;
+		body.idata.vx = body.data.vx;
+		body.idata.vy = body.data.vy;
+	}
+	else
+		this.simulateData(body.idata, "interpolated", body, dt);
+}
 
-		if (body.vx*body.vx + body.vy*body.vy > body.maxSpeed * body.maxSpeed) {
-			var speed = Math.sqrt(body.vx*body.vx + body.vy*body.vy);
-			body.vx *= body.maxSpeed/speed;
-			body.vy *= body.maxSpeed/speed;
+PhysicsWorld.prototype.simulateData = function(data, dataType, body, dt) {
+	data.x += data.vx * dt;
+	data.y += data.vy * dt;
+	data.vx *= Math.pow(1.0-body.friction, dt);
+	data.vy *= Math.pow(1.0-body.friction, dt);
+
+	if(Math.abs(data.vx) < 0.001)
+		data.vx = 0;
+	if(Math.abs(data.vy) < 0.001)
+		data.vy = 0;
+
+	if (data.vx*data.vx + data.vy*data.vy > body.maxSpeed * body.maxSpeed) {
+		var speed = Math.sqrt(data.vx*data.vx + data.vy*data.vy);
+		data.vx *= body.maxSpeed/speed;
+		data.vy *= body.maxSpeed/speed;
+	}
+	
+	
+	// Collision
+	for(var j = 0; j < this.bodies.length; ++j) {
+		var body2 = this.bodies[j];
+		var data2 = (dataType == "normal" ? body2.data : body2.idata);
+		var bodypos = [data.x, data.y];
+		var body2pos = [data2.x, data2.y];
+		var delta = [0.0, 0.0];
+		v2.subtract(bodypos, body2pos, delta);
+		var distanceSquared = v2.lengthSquared(delta);
+
+		if (distanceSquared > 0.0 && distanceSquared <= (body.radius+body2.radius)*(body.radius+body2.radius)) {
+			var distance = Math.sqrt(distanceSquared);
+			var wantedDistance = body.radius+body2.radius;
+
+			data.x += 0.5*delta[0] * (wantedDistance/distance - 1.0);
+			data.y += 0.5*delta[1] * (wantedDistance/distance - 1.0);
+			data2.x -= 0.5*delta[0] * (wantedDistance/distance - 1.0);
+			data2.y -= 0.5*delta[1] * (wantedDistance/distance - 1.0);
+
+			data.vx += 4.0*0.5*delta[0] * (wantedDistance/distance - 1.0);
+			data.vy += 4.0*0.5*delta[1] * (wantedDistance/distance - 1.0);
+			data2.vx -= 4.0*0.5*delta[0] * (wantedDistance/distance - 1.0);
+			data2.vy -= 4.0*0.5*delta[1] * (wantedDistance/distance - 1.0);
 		}
-		if (body.ivx*body.ivx + body.ivy*body.ivy > body.maxSpeed * body.maxSpeed) {
-			var speed = Math.sqrt(body.ivx*body.ivx + body.ivy*body.ivy);
-			body.ivx *= body.maxSpeed/speed;
-			body.ivy *= body.maxSpeed/speed;
-		}
-		
-		// Collision
-		for(var j = 0; j < this.bodies.length; ++j) {
-			var body2 = this.bodies[j];
-
-			var bodypos = [body.x, body.y];
-			var body2pos = [body2.x, body2.y];
-			var delta = [0.0, 0.0];
-			v2.subtract(bodypos, body2pos, delta);
-			var distanceSquared = v2.lengthSquared(delta);
-
-			if (distanceSquared > 0.0 && distanceSquared <= (body.radius+body2.radius)*(body.radius+body2.radius)) {
-				var distance = Math.sqrt(distanceSquared);
-				var wantedDistance = body.radius+body2.radius;
-
-				body.x += 0.5*delta[0] * (wantedDistance/distance - 1.0);
-				body.y += 0.5*delta[1] * (wantedDistance/distance - 1.0);
-				body2.x -= 0.5*delta[0] * (wantedDistance/distance - 1.0);
-				body2.y -= 0.5*delta[1] * (wantedDistance/distance - 1.0);
-
-				body.vx += 4.0*0.5*delta[0] * (wantedDistance/distance - 1.0);
-				body.vy += 4.0*0.5*delta[1] * (wantedDistance/distance - 1.0);
-				body2.vx -= 4.0*0.5*delta[0] * (wantedDistance/distance - 1.0);
-				body2.vy -= 4.0*0.5*delta[1] * (wantedDistance/distance - 1.0);
-			}
-		}
-		
-		if(isServer) {
-			body.ix = body.x;
-			body.iy = body.y;
-			body.ivx = body.vx;
-			body.ivy = body.vy;	
-		}
-		
 	}
 }

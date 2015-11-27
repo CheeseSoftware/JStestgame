@@ -2,16 +2,20 @@
 PhysicsBody = function() {
 	this.shape = "circle";
 	this.radius = constants.playerWidth / 2;
+
+	this.data = {
+		x: 0,
+		y: 0,
+		vx: 0,
+		vy: 0
+	}
 	
-	this.x = 0;
-	this.y = 0;
-	this.vx = 0;
-	this.vy = 0;
-	
-	this.ix = 0;
-	this.iy = 0;
-	this.ivx = 0;
-	this.ivy = 0;
+	this.idata = {
+		x: 0,
+		y: 0,
+		vx: 0,
+		vy: 0
+	}
 
 	this.friction = 0.999;
 	this.maxSpeed = 300.0;
@@ -20,8 +24,8 @@ PhysicsBody = function() {
 }
 
 PhysicsBody.prototype.addImpulse = function(impulse) {
-	this.vx += impulse[0];
-	this.vy += impulse[1];
-	this.ivx += impulse[0];
-	this.ivy += impulse[1];
+	this.data.vx += impulse[0];
+	this.data.vy += impulse[1];
+	this.idata.vx += impulse[0];
+	this.idata.vy += impulse[1];
 }

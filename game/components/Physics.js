@@ -31,36 +31,36 @@ ECS.Components.Physics.prototype.rotateTo = function(physics, newRotation, speed
  
 Object.defineProperties(ECS.Components.Physics.prototype, {
 	x: {
-        get: function () { return this.body.x; },
-		set: function (value) { this.body.x = value; }
+        get: function () { return this.body.data.x; },
+		set: function (value) { this.body.data.x = value; }
     },
 	y: {
-        get: function () { return this.body.y; },
-		set: function (value) { this.body.y = value; }
+        get: function () { return this.body.data.y; },
+		set: function (value) { this.body.data.y = value; }
     },
     vx: {
-        get: function () { return this.body.vx; },
-		set: function (value) { this.body.vx = value; }
+        get: function () { return this.body.data.vx; },
+		set: function (value) { this.body.data.vx = value; }
     },
 	vy: {
-        get: function () { return this.body.vy },
-		set: function (value) { this.body.vy = value;}
+        get: function () { return this.body.data.vy },
+		set: function (value) { this.body.data.vy = value;}
     },
 	ix: {
-        get: function () { return this.body.ix; },
-		set: function (value) { this.body.ix = value; }
+        get: function () { return this.body.idata.x; },
+		set: function (value) { this.body.idata.x = value; }
     },
 	iy: {
-        get: function () { return this.body.iy; },
-		set: function (value) { this.body.iy = value; }
+        get: function () { return this.body.idata.y; },
+		set: function (value) { this.body.idata.y = value; }
     },
     ivx: {
-        get: function () { return this.body.ivx; },
-		set: function (value) { this.body.ivx = value; }
+        get: function () { return this.body.idata.vx },
+		set: function (value) { this.body.idata.vx = value; }
     },
 	ivy: {
-        get: function () { return this.body.ivy },
-		set: function (value) { this.body.ivy = value;}
+        get: function () { return this.body.idata.vx },
+		set: function (value) { this.body.idata.vx = value;}
     }
 });
 
