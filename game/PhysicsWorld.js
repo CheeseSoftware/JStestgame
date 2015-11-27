@@ -63,15 +63,17 @@ PhysicsWorld.prototype.simulateData = function(data, dataType, body, dt) {
 			var distance = Math.sqrt(distanceSquared);
 			var wantedDistance = body.radius+body2.radius;
 
-			data.x += 0.5*delta[0] * (wantedDistance/distance - 1.0);
-			data.y += 0.5*delta[1] * (wantedDistance/distance - 1.0);
-			data2.x -= 0.5*delta[0] * (wantedDistance/distance - 1.0);
-			data2.y -= 0.5*delta[1] * (wantedDistance/distance - 1.0);
+			var impulse = v2.clone(delta);
+			v2.normalize(impulse, impulse);
+			v2.multiply(wantedDistance - distance, impulse, impulse);
+			v2.multiply(0.5, impulse, impulse);
 
-			data.vx += 4.0*0.5*delta[0] * (wantedDistance/distance - 1.0);
-			data.vy += 4.0*0.5*delta[1] * (wantedDistance/distance - 1.0);
-			data2.vx -= 4.0*0.5*delta[0] * (wantedDistance/distance - 1.0);
-			data2.vy -= 4.0*0.5*delta[1] * (wantedDistance/distance - 1.0);
+			// Apply impulse to first body
+			body.addImpulse(impulse);
+
+			// Apply negative impulse to second body. 
+			v2.multiply(-1.0, impulse, impulse);
+			body2.addImpulse(impulse);
 		}
 	}
 }
