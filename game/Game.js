@@ -73,7 +73,7 @@ Game.prototype.load = function() {
 	this.animationManager.load(this.textureManager);
 	
 	// Initialize physicsWorld
-	this.physicsWorld = new b2World(new b2Vec2(0, 0), false); // Args: gravity, sleep
+	this.physicsWorld = new PhysicsWorld(); // Args: gravity, sleep
 	
 	//TODO: Fix and move playerContactListener
 	var playerContactListener = new Box2D.Dynamics.b2ContactListener;// Contact listener begin: Temporarily disable player-to-player collisions
@@ -90,7 +90,7 @@ Game.prototype.load = function() {
 		//console.log("PreSolve");
 		contact.SetEnabled(false);
 	}
-	this.physicsWorld.SetContactListener(playerContactListener);
+	//this.physicsWorld.SetContactListener(playerContactListener);
 	
 	this.lastUpdate = window.performance.now();
 	
@@ -156,11 +156,12 @@ Game.prototype.run = function() {
 	
     this.entityWorld.update(dt);
 	
-	accumulator += dt/1000.0;
+	this.physicsWorld.update(dt/1000.0);
+	/*accumulator += dt/1000.0;
 	while(accumulator >= constants.physicsStep) {
 		this.physicsWorld.Step(constants.physicsStep, 10, 10);
 		accumulator -= constants.physicsStep;
-	}
+	}*/
 	
 	this.camera.update(dt);
 	

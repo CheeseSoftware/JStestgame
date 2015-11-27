@@ -22,18 +22,9 @@ entityTemplates.player = function(username, uuid) {
 	}
 
 	// Physics
-	var fixDef = new b2FixtureDef;
-	//fixDef.filter.maskBits = 0x0000;
-	fixDef.density = 1.0;
-	fixDef.restitution = 0.2;
-	var bodyDef = new b2BodyDef;
-	bodyDef.type = b2Body.b2_dynamicBody;
-	bodyDef.linearDamping = constants.friction;
-	fixDef.shape = new b2CircleShape(constants.playerWidth/2);
-	bodyDef.position.Set(10, 400 / 30 + 1.8);
-	var physicsBody = physicsWorld.CreateBody(bodyDef);
-	physicsBody.CreateFixture(fixDef);
-	
+	var physicsBody = new PhysicsBody();
+
+	physicsWorld.addBody(physicsBody);
 	entity.addComponent(new ECS.Components.Physics(physicsBody));
 	
 	if(!isServer) {
@@ -98,18 +89,9 @@ entityTemplates.worker = function(uuid) {
 	}
 
 	// Physics
-	var fixDef = new b2FixtureDef;
-	//fixDef.filter.maskBits = 0x0000;
-	fixDef.density = 1.0;
-	fixDef.restitution = 0.2;
-	var bodyDef = new b2BodyDef;
-	bodyDef.type = b2Body.b2_dynamicBody;
-	bodyDef.linearDamping = constants.friction;
-	fixDef.shape = new b2CircleShape(constants.playerWidth);
-	bodyDef.position.Set(10, 400 / 30 + 1.8);
-	var physicsBody = physicsWorld.CreateBody(bodyDef);
-	physicsBody.CreateFixture(fixDef);
+	var physicsBody = new PhysicsBody();
 	
+	physicsWorld.addBody(physicsBody);
 	var physics = new ECS.Components.Physics(physicsBody);
 	//physics.acceleration = 500;
 	entity.addComponent(physics);

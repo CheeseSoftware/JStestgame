@@ -12,10 +12,11 @@ ECS.Systems.MovementSystem = CES.System.extend({
 
 				var normal = v2.clone(control.moveDir);
 				v2.normalize(normal, normal);
-				v2.multiply(physics.acceleration, normal, normal);
 				
-				var toApply = new b2Vec2(normal[0], normal[1]);
-				toApply.Multiply(dt);
+				
+				var toApply = v2.clone(normal);
+				v2.multiply(physics.acceleration, toApply, toApply);
+				v2.multiply(dt/1000.0, toApply, toApply);
 				physics.body.addImpulse(toApply);
 			}
 

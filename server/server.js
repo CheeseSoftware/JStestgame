@@ -74,7 +74,7 @@ ServerInstance.prototype.load = function() {
 	});
 	
 	// Initialize physicsWorld
-	this.physicsWorld = new b2World(new b2Vec2(0, 0), false);
+	this.physicsWorld = new PhysicsWorld();
 	
 	// Initialize chunkManager
 	this.chunkManager = new ChunkManager();
@@ -115,7 +115,7 @@ ServerInstance.prototype.load = function() {
 		//console.log("PreSolve");
 		contact.SetEnabled(false);
 	}
-	this.physicsWorld.SetContactListener(playerContactListener);
+	//this.physicsWorld.SetContactListener(playerContactListener);
 	
 	var mapData = {
 		width: 256,
@@ -294,11 +294,12 @@ ServerInstance.prototype.load = function() {
 	
 		this.entityWorld.update(dt);
 		
-		accumulator += dt/1000.0;
+		this.physicsWorld.update(dt/1000.0);
+		/*accumulator += dt/1000.0;
 		while(accumulator >= constants.physicsStep) {
 			this.physicsWorld.Step(constants.physicsStep, 10, 10);
 			accumulator -= constants.physicsStep;
-		}
+		}*/
 		
 		this.regeneratorServer.update(dt/1000.0);
 	}.bind(this);
