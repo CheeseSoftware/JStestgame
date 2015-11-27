@@ -46,21 +46,21 @@ Object.defineProperties(ECS.Components.Physics.prototype, {
         get: function () { return this.body.vy },
 		set: function (value) { this.body.vy = value;}
     },
-	gx: {
-        get: function () { return this.body.gx; },
-		set: function (value) { this.body.gx = value; }
+	ix: {
+        get: function () { return this.body.ix; },
+		set: function (value) { this.body.ix = value; }
     },
-	gy: {
-        get: function () { return this.body.gy; },
-		set: function (value) { this.body.gy = value; }
+	iy: {
+        get: function () { return this.body.iy; },
+		set: function (value) { this.body.iy = value; }
     },
-    gvx: {
-        get: function () { return this.body.gvx; },
-		set: function (value) { this.body.gvx = value; }
+    ivx: {
+        get: function () { return this.body.ivx; },
+		set: function (value) { this.body.ivx = value; }
     },
-	gvy: {
-        get: function () { return this.body.gvy },
-		set: function (value) { this.body.gvy = value;}
+	ivy: {
+        get: function () { return this.body.ivy },
+		set: function (value) { this.body.ivy = value;}
     }
 });
 

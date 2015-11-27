@@ -23,10 +23,10 @@ PlayerServer.prototype.sendPlayerJoinPacket = function(entity, socketid, socket)
 	var data = {
 		uuid: entity.uuid,
 		username: player.username,
-		x: physics.gx,
-		y: physics.gy,
-		vx: physics.gvx,
-		vy: physics.gvy,
+		x: physics.x,
+		y: physics.y,
+		vx: physics.vx,
+		vy: physics.vy,
 		dx: control.moveDir[0], 
 		dy: control.moveDir[0],
 		rotation: physics.rotation
@@ -44,8 +44,8 @@ PlayerServer.prototype.sendPlayerInitPacket = function(entity, socketid, socket)
 	var data = {
 		uuid: entity.uuid,
 		username: player.username,
-		x: physics.gx,
-		y: physics.gy,
+		x: physics.x,
+		y: physics.y,
 		rotation: physics.rotation
 	};
 	

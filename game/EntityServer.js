@@ -13,10 +13,12 @@ EntityServer = function(entityWorld, playerServer, io) {
 			if(entity) {
 				var physics = entity.getComponent('physics');
 				var control = entity.getComponent('control');
-				physics.gx = data.x;
-				physics.gy = data.y;
-				physics.gvx = data.vx;
-				physics.gvy = data.vy;
+				
+				physics.x = data.x;
+				physics.y = data.y;
+				physics.vx = data.vx;
+				physics.vy = data.vy;
+				
 				control.moveDir = [data.dx, data.dy];
 				physics.rotation = data.rotation;
 				physics.lastUpdate = new Date();
@@ -44,7 +46,7 @@ EntityServer.prototype.createEntity = function(uuid) {
 	var entity = new CES.Entity();
 	entity.uuid = uuid;
 	this._entityMap.map(uuid, entity.id);
-	//console.log("Mapped entity. entityId:" + entity.id + " UUID:" + uuid);
+	console.log("Mapped entity. entityId:" + entity.id + " UUID:" + uuid);
 	return entity;
 }
 
@@ -85,10 +87,10 @@ EntityServer.prototype.sendUpdatePacket = function(uuid, socket) {
 		
 		var data = {
 			uuid: uuid,
-			x: physics.gx,
-			y: physics.gy,
-			vx: physics.gvx,
-			vy: physics.gvy,
+			x: physics.x,
+			y: physics.y,
+			vx: physics.vx,
+			vy: physics.vy,
 			dx: control.moveDir[0], 
 			dy: control.moveDir[1],
 			rotation: physics.rotation
@@ -109,10 +111,10 @@ EntityServer.prototype.sendEntitySpawnPacket = function(entity, socket) {
 	var data = {
 		uuid: entity.uuid,
 		type: entity.type,
-		x: physics.gx,
-		y: physics.gy,
-		vx: physics.gvx,
-		vy: physics.gvy,
+		x: physics.x,
+		y: physics.y,
+		vx: physics.vx,
+		vy: physics.vy,
 		dx: control.moveDir[0],
 		dy: control.moveDir[1],
 		rotation: physics.rotation

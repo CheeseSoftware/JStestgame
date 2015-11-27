@@ -75,23 +75,6 @@ Game.prototype.load = function() {
 	// Initialize physicsWorld
 	this.physicsWorld = new PhysicsWorld(); // Args: gravity, sleep
 	
-	//TODO: Fix and move playerContactListener
-	var playerContactListener = new Box2D.Dynamics.b2ContactListener;// Contact listener begin: Temporarily disable player-to-player collisions
-	playerContactListener.BeginContact = function (contact) {
-	  //console.log("begincontact");
-	}
-	playerContactListener.EndContact = function (contact) {
-	  //console.log("endcontact");
-	}
-	playerContactListener.PostSolve = function (contact, impulse) {
-		//console.log("PostSolve");
-	}
-	playerContactListener.PreSolve = function (contact, oldManifold) {
-		//console.log("PreSolve");
-		contact.SetEnabled(false);
-	}
-	//this.physicsWorld.SetContactListener(playerContactListener);
-	
 	this.lastUpdate = window.performance.now();
 	
 	this.intervalId = setInterval(function(){game.run()}, constants.clientInterval);
@@ -243,9 +226,10 @@ Game.prototype.initializeListeners = function() {
 		}
 		else {
 			this.camera.target = data.target;
-			var cameraVelocity = new b2Vec2(2*Math.random()-1, 2*Math.random()-1);
-			cameraVelocity.Normalize();
-			cameraVelocity.Multiply(constants.cameraHoverSpeed);
+			
+			var cameraVelocity = v2.create(2*Math.random()-1, 2*Math.random()-1);
+			v2.normalize(cameraVelocity, cameraVelocity);
+			v2.multiply(constants.cameraHoverSpeed, cameraVelocity, cameraVelocity);
 			this.camera.velocity = cameraVelocity;
 		}
 		
@@ -272,10 +256,12 @@ Game.prototype.initializeListeners = function() {
 			var control = player.getComponent('control');
 			physics.x = data.x;
 			physics.y = data.y;
-			physics.gx = data.x;
-			physics.gy = data.y;
-			physics.gvx = data.vx;
-			physics.gvy = data.vy;
+			physics.vx = data.vx;
+			physics.vy = data.vy;
+			physics.ix = data.x;
+			physics.iy = data.y;
+			physics.ivx = data.vx;
+			physics.ivy = data.vy;
 			control.moveDir = [data.dx, data.dy];
 			physics.rotation = data.rotation;
 			
@@ -293,12 +279,15 @@ Game.prototype.initializeListeners = function() {
 		player.addComponent(new ECS.Components.Controlled());
 		
 		var physics = player.getComponent('physics');
+		
 		physics.x = data.x;
 		physics.y = data.y;
+		physics.ix = data.x;
+		physics.iy = data.y;
+		
 		physics.oldX = data.x;
 		physics.oldY = data.y;
-		physics.gx = data.x;
-		physics.gy = data.y;
+
 		physics.rotation = data.rotation;
 		
 		this.camera.target = physics;
@@ -314,12 +303,14 @@ Game.prototype.initializeListeners = function() {
 		var entity = entityTemplates[data.type](data.uuid);
 		var physics = entity.getComponent("physics");
 		var control = entity.getComponent('control');
-		physics.gx = data.x;
-		physics.gy = data.y;
 		physics.x = data.x;
 		physics.y = data.y;
-		physics.gvx = data.vx;
-		physics.gvy = data.vy;
+		physics.ix = data.x;
+		physics.iy = data.y;
+		physics.vx = data.vx;
+		physics.vy = data.vy;
+		physics.ivx = data.vx;
+		physics.ivy = data.vy;
 		control.moveDir = [data.dx, data.dy];
 		physics.rotation = data.rotation;
 		//console.log("Spawned entity of type " + data.type + ". UUID " + data.uuid);
@@ -332,21 +323,14 @@ Game.prototype.initializeListeners = function() {
 			var control = entity.getComponent("control");
 			var physics = entity.getComponent("physics");
 			control.moveDir = [data.dx, data.dy];
-			console.log(JSON.stringify(data));
-			/*physics.x = physics.gx;
-			physics.y = physics.gy;
-			physics.vx = physics.gvx;
-			physics.vy = physics.gvy;*/
-			
-			physics.gx = data.x;
-			physics.gy = data.y;
-			physics.gvx = data.vx;
-			physics.gvy = data.vy;
+
+			physics.x = data.x;
+			physics.y = data.y;
+			physics.vx = data.vx;
+			physics.vy = data.vy;
 			
 			physics.rotation = data.rotation;		
 			physics.lastUpdate = new Date();
-			
-			
 		}
 		else
 			console.log("entity is undefined in 'entityupdate' Game.js");

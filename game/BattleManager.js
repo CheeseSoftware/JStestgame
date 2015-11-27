@@ -18,7 +18,7 @@ BattleManager.prototype.hit = function(attacker, distance, radius, damage, onHit
 	var entities = this._entityWorld.getEntities("physics");
 
 	var attackerPhysics = attacker.getComponent("physics");
-	var attackerPos = [attackerPhysics.gx, attackerPhysics.gy];
+	var attackerPos = [attackerPhysics.x, attackerPhysics.y];
 	v2.add([distance*Math.cos(attackerPhysics.rotation), distance*Math.sin(attackerPhysics.rotation)], attackerPos, attackerPos);
 
 	for (var i = 0; i < entities.length; ++i) {
@@ -26,7 +26,7 @@ BattleManager.prototype.hit = function(attacker, distance, radius, damage, onHit
 		if(entity.uuid != attacker.uuid) {
 			var physics = entity.getComponent("physics");
 	
-			var vPos = v2.create(physics.gx, physics.gy);
+			var vPos = v2.create(physics.x, physics.y);
 			var deltaPos = [0.0, 0.0];
 			v2.subtract(vPos, attackerPos, deltaPos);
 	
@@ -59,13 +59,13 @@ BattleManager.prototype.hitEntity = function(attacker, victim, damage) {
 
 	if (isServer) {
 		// Push the victim ghost
-		var dir = [attackerPhysics.gx - physics.gx, attackerPhysics.gy - physics.gy];
+		var dir = [attackerPhysics.x - physics.x, attackerPhysics.y - physics.y];
 		if (v2.lengthSquared(dir) > 0.0) {
 
 			v2.normalize(dir, dir);
 
-			physics.gvx += -dir[0]*100.0*32.0;
-			physics.gvy += -dir[1]*100.0*32.0;
+			physics.vx += -dir[0]*100.0*32.0;
+			physics.vy += -dir[1]*100.0*32.0;
 		}
 
 		server.entityServer.sendUpdatePacket(victim);

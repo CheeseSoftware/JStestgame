@@ -13,27 +13,27 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 
 			// Position text and textures at this position. Animate feet
 			if(drawable != undefined) {
-				drawable.positionAll(physics.x, physics.y, physics.rotation);
+				drawable.positionAll(physics.ix, physics.iy, physics.rotation);
 				
 				var konstant = 100;
-				var disWalked = konstant * Math.sqrt(Math.pow(physics.x - physics.oldX, 2) + Math.pow(physics.y - physics.oldY, 2));
+				var disWalked = konstant * Math.sqrt(Math.pow(physics.ix - physics.oldX, 2) + Math.pow(physics.iy - physics.oldY, 2));
 				if(disWalked > 0)
 					drawable.animate("feet", "feet", disWalked, false);
 					
 				if(drawable.text) {
-					drawable.text.x = physics.x - drawable.text.width / 2;
-					drawable.text.y = physics.y - 80;
+					drawable.text.x = physics.ix - drawable.text.width / 2;
+					drawable.text.y = physics.iy - 80;
 				}
 
 				if (health) {
-					health.sprite.x = physics.x;
-					health.sprite.y = physics.y - 50;
+					health.sprite.x = physics.ix;
+					health.sprite.y = physics.iy - 50;
 					health.sprite.width = 96.0*(health.value / health.max);
 				}
 			}
 
-			physics.oldX = physics.x;
-			physics.oldY = physics.y;
+			physics.oldX = physics.ix;
+			physics.oldY = physics.iy;
 			
         });
     }

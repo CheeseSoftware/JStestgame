@@ -18,10 +18,13 @@ PhysicsWorld.prototype.update = function(dt) {
 		
 		body.x += body.vx * dt;
 		body.y += body.vy * dt;
-		body.gx = body.x;
-		body.gy = body.y;
 		body.vx *= Math.pow(1.0-body.friction, dt);
 		body.vy *= Math.pow(1.0-body.friction, dt);
+
+		if(Math.abs(body.vx) < 0.001)
+			body.vx = 0;
+		if(Math.abs(body.vy) < 0.001)
+			body.vy = 0;
 
 		if (body.vx*body.vx + body.vy*body.vy > body.maxSpeed * body.maxSpeed) {
 			var speed = Math.sqrt(body.vx*body.vx + body.vy*body.vy);
@@ -30,7 +33,7 @@ PhysicsWorld.prototype.update = function(dt) {
 		}
 		
 		// Collision
-		for(var j = 0; j < this.bodies.length; ++j) {
+		/*for(var j = 0; j < this.bodies.length; ++j) {
 			var body2 = this.bodies[j];
 
 			var bodypos = [body.x, body.y];
@@ -52,12 +55,13 @@ PhysicsWorld.prototype.update = function(dt) {
 				body.vy += 4.0*0.5*delta[1] * (wantedDistance/distance - 1.0);
 				body2.vx -= 4.0*0.5*delta[0] * (wantedDistance/distance - 1.0);
 				body2.vy -= 4.0*0.5*delta[1] * (wantedDistance/distance - 1.0);
-
-				body.gx = body.x;
-				body.gy = body.y;
-				body2.gx = body2.x;
-				body2.gy = body2.y;
 			}
-		}
+		}*/
+		
+		body.ix = body.x;
+		body.iy = body.y;
+		body.ivx = body.vx;
+		body.ivy = body.vy;
+		
 	}
 }

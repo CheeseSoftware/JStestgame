@@ -1,7 +1,21 @@
 v2 = {};
 
 v2.create = function(x, y) {
-	return [x, y];
+	var v = [x, y];
+	
+	// Temporary properties
+	Object.defineProperties(v, {
+		x: {
+			get: function () { return v[0]; },
+			set: function (value) { v[0] = value; }
+		},
+		y: {
+			get: function () { return v[1]; },
+			set: function (value) { v[1] = value; }
+		},
+	});
+	
+	return v;
 }
 
 v2.clone = function(a) {

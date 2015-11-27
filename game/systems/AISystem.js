@@ -14,10 +14,11 @@ ECS.Systems.AISystem = CES.System.extend({
 			if(AI.target) {
 				var target = this._entityServer.getEntity(AI.target);
 				if(target) {
-					var targetPhysics = target.getComponent("physics");		
-					if(new Date() - AI.lastPacket > 500) {
-						var dx = targetPhysics.gx - physics.gx;
-						var dy = targetPhysics.gy - physics.gy;
+					var targetPhysics = target.getComponent("physics");
+					var targetControl = target.getComponent("control");	
+					if(new Date() - AI.lastPacket > 50) {
+						var dx = targetPhysics.x - physics.x;
+						var dy = targetPhysics.y - physics.y;
 						
 						if(dx == 0 && dy == 0)
 							return;
@@ -27,7 +28,6 @@ ECS.Systems.AISystem = CES.System.extend({
 						
 						v2.normalize(control.moveDir, control.moveDir)
 						control.isChanged = true;
-						//server.entityServer.sendUpdatePacket(entity.uuid);
 						AI.lastPacket = new Date();
 					}
 				}

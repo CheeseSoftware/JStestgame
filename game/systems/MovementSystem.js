@@ -5,6 +5,7 @@ ECS.Systems.MovementSystem = CES.System.extend({
 		entities.forEach(function (entity) {
 			var control = entity.getComponent('control');
 			var physics = entity.getComponent('physics');
+			var isControlled = entity.hasComponent('controlled');
 
     		if(control.moveDir[0] != 0 || control.moveDir[1] != 0) {
 				var desiredAngle = Math.atan2(control.moveDir[1], control.moveDir[0]);
@@ -25,8 +26,8 @@ ECS.Systems.MovementSystem = CES.System.extend({
 					control.lastToolUse = Date.now();
 
 					var digRadius = 1.5;
-					var x = physics.gx + 32.0*Math.cos(physics.rotation);
-					var y = physics.gy + 32.0*Math.sin(physics.rotation);
+					var x = physics.x + 32.0*Math.cos(physics.rotation);
+					var y = physics.y + 32.0*Math.sin(physics.rotation);
 					server.chunkManager.fillCircle(parseFloat(x)/32.0, parseFloat(y)/32.0, digRadius);
 					
 					var data = {
@@ -43,6 +44,16 @@ ECS.Systems.MovementSystem = CES.System.extend({
 					server.battleManager.hit(entity, distance, radius, damage);
 				}
 			}
+			
+			/*if(entity.uuid != 1) {
+				console.log("-----physics-----");
+				console.log("x " + physics.x);
+				console.log("y " + physics.y);
+				console.log("vx " + physics.vx);
+				console.log("vy " + physics.vy);
+				console.log("-----end-----");
+			}*/
+			
 		});
 	}
 });

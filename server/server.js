@@ -10,8 +10,6 @@ var simple_include = function( lib ) {
 // Include common.js with the include system.
 //simple_include("game/Common.js");
 
-//include("lib/Box2D.js");	<- evil library
-
 // Libraries
 http = require('http');
 CES = require('ces');
@@ -20,22 +18,6 @@ mongo = require('mongodb');
 socketio = require('socket.io');
 crypto = require('crypto');
 performancenow = require("performance-now");
-
-
-Box2D = require('box2dweb-commonjs').Box2D;
-b2Vec2 = Box2D.Common.Math.b2Vec2
-,  b2AABB = Box2D.Collision.b2AABB
-,	b2BodyDef = Box2D.Dynamics.b2BodyDef
-,	b2Body = Box2D.Dynamics.b2Body
-,	b2FixtureDef = Box2D.Dynamics.b2FixtureDef
-,	b2Fixture = Box2D.Dynamics.b2Fixture
-,	b2World = Box2D.Dynamics.b2World
-,	b2MassData = Box2D.Collision.Shapes.b2MassData
-,	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
-,	b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
-,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
-;
 
 simple_include("lib/perlin.js");
 simple_include("lib/gl-matrix.js");
@@ -100,23 +82,6 @@ ServerInstance.prototype.load = function() {
 	this.entityWorld.addSystem(new ECS.Systems.AISystem(this.entityServer));
 	this.entityWorld.addSystem(new ECS.Systems.MovementSystem());
 	
-	//TODO: Fix and move playerContactListener
-	var playerContactListener = new Box2D.Dynamics.b2ContactListener;// Contact listener begin: Temporarily disable player-to-player collisions
-	playerContactListener.BeginContact = function (contact) {
-	  //console.log("begincontact");
-	}
-	playerContactListener.EndContact = function (contact) {
-	  //console.log("endcontact");
-	}
-	playerContactListener.PostSolve = function (contact, impulse) {
-		//console.log("PostSolve");
-	}
-	playerContactListener.PreSolve = function (contact, oldManifold) {
-		//console.log("PreSolve");
-		contact.SetEnabled(false);
-	}
-	//this.physicsWorld.SetContactListener(playerContactListener);
-	
 	var mapData = {
 		width: 256,
 		height: 256,
@@ -134,10 +99,10 @@ ServerInstance.prototype.load = function() {
 				socket.emit('playerjoin', {
 					uuid: player.uuid,
 					username: player.username,
-					x: physics.gx,
-					y: physics.gy,
-					vx: physics.gvx,
-					vy: physics.gvy,
+					x: physics.x,
+					y: physics.y,
+					vx: physics.vx,
+					vy: physics.vy,
 					dx: physics.dx,
 					dy: physics.dy,
 					rotation: physics.rotation
@@ -243,10 +208,10 @@ ServerInstance.prototype.load = function() {
 				var y = Math.random() * 128;
 				
 				var physics = monster.getComponent("physics");
-				physics.gx = x;
-				physics.gy = y;
 				physics.x = x;
 				physics.y = y;
+				physics.ix = x;
+				physics.iy = y;
 				
 				var AI = monster.getComponent("AI");
 				AI.target = uuid;

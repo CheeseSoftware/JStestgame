@@ -9,12 +9,12 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 			var physics = entity.getComponent('physics');
 			var isControlled = entity.getComponent('controlled');
 			
-			input = { x:physics.gx, y:physics.gy, vx:physics.gvx, vy:physics.gvy };
+			input = { x:physics.x, y:physics.y, vx:physics.vx, vy:physics.vy };
 			values = this.simulate(dt, input);
-			physics.gx = values.x;
-			physics.gy = values.y;
-			physics.gvx = values.vx;
-			physics.gvy = values.vy;
+			physics.x = values.x;
+			physics.y = values.y;
+			physics.vx = values.vx;
+			physics.vy = values.vy;
         }.bind(this));
     }
 
