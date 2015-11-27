@@ -48,16 +48,21 @@ body {
 	margin-left:-375px;
 	position: fixed;
 	text-align: center;
-	cursor: default;
 	z-index: 1;
 }
 
-.playMenu >  h2 {
-	font-size: 18px;
-}
+.button {
+	text-align: center;
+	color: #FFF;
+	font-family: "Comic Sans MS", cursive, sans-serif;
 
-.playMenu >  img {
-	width:230px;
+	text-decoration: none;
+	
+	background-color: #505050;
+	border: solid 1px #CCC;
+	border-radius: 8px;
+	transition: 0.25s;
+	cursor: default;
 }
 
 .playMenu > .button {
@@ -66,50 +71,19 @@ body {
 	width: 230px;
 	height: 48px;
 	margin-left: 30px;
-	text-align: center;
-	color: #FFF;
 	line-height: 40px;
-	font-family: "Comic Sans MS", cursive, sans-serif;
 	font-size: 24px;
-
-	text-decoration: none;
-	
-	background-color: #505050;
-	border: solid 1px #CCC;
-	border-radius: 8px;
-	transition: 0.25s;
 }
 
 .playMenu > .firstButton {
 	margin-left: 0px;
 }
 
-.playMenu > .button {
-	display: block;
-	float: left;
-	width: 230px;
-	height: 48px;
-	text-align: center;
-	color: #FFF;
-	line-height: 40px;
-	font-family: "Comic Sans MS", cursive, sans-serif;
-	font-size: 24px;
-
-	text-decoration: none;
-	
-	background-color: #505050;
-	border: solid 1px #CCC;
-	border-radius: 8px;
-	transition: 0.25s;
-}
-
-.playMenu > .button:hover {
-
+.button:hover {
 	background-color: #808080;
 }
 
-.playMenu > .button:active {
-
+.button:active {
 	background-color: #373737;
 	transition: 0s;
 }
@@ -121,9 +95,16 @@ body {
 	float:right;
 	margin-top:5px;
 	margin-right:5px;
+	transition: 0.25s;
 }
 
-/* Register frame */
+.closeWindowButton:hover {
+	background-color: #808080;
+}
+
+.closeWindowButton:active {
+	transition: 0s;
+}
 
 .registerFrame {
 	z-index: 2;
@@ -146,37 +127,22 @@ body {
 	width:90%;
 	height:90%;
 	margin-top:30px;
-	/*background-color:#03F;*/
 }
 
 .registerLoginButton {
 	display: block;
-	
 	width: 298px;
 	height: 48px;
 	margin: auto;
 	margin-top: 30;
 	margin-bottom: 8;
-	text-align: center;
-	color: #FFF;
 	line-height: 40px;
-	font-family: "Comic Sans MS", cursive, sans-serif;
 	font-size: 24px;
-
-	text-decoration: none;
-	
-	background-color: #505050;
-	border: solid 2px #CCC;
-	border-radius: 8px;
-	transition: 0.25s;
 }
 
 .registerLoginButton:hover {
-
 	background-color: #808080;
 }
-
-/* Login frame */
 
 .loginFrame {
 	z-index: 2;
@@ -235,4 +201,72 @@ body {
 	margin-left: -150px;
 	text-align: center;
 	display:none;
+}
+
+.logoutButton {
+	position:absolute;
+	width: 100px;
+	height: 35px;
+	right:10px;
+	bottom:10px;
+	line-height: 30px;
+	font-size: 20px;
+}
+
+.messagePopup {
+	position:absolute;
+	z-index: 20;
+	width: 400px;
+	height: 280px;
+	padding: 32px;
+
+	background-color: rgba(255,255,255,0.95);
+	border: solid 1px #EEE;
+	border-radius: 32px;
+	position: fixed;
+	top: 50%;
+  	left: 50%;
+ 	transform: translate(-50%, -50%);
+	text-align: center;
+	display:none;
+}
+
+.innerMessagePopup {
+	float:left;
+	width:85%;
+	height:90%;
+}
+
+.messagePopup .title {
+	float:left;
+	width:100%;
+	height:40px;
+	font-size:28px;
+	font-family: "Comic Sans MS", cursive, sans-serif;
+	cursor: default;
+	text-decoration:none;
+	text-align:left;
+	border-bottom: solid 2px #000000;
+}
+
+.messagePopup .message {
+	float:left;
+	width:100%;
+	height:100%;
+	font-size:16px;
+	font-family: "Comic Sans MS", cursive, sans-serif;
+	cursor: default;
+	text-decoration: none;
+	text-align:left;
+	margin-top:20px;
+}
+
+.messagePopupButton {
+	position:absolute;
+	width: 150px;
+	height: 35px;
+	right:20px;
+	bottom:20px;
+	line-height: 30px;
+	font-size: 20px;
 }

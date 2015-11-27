@@ -9,6 +9,11 @@ AuthenticationServer = function(db, playerServer, io) {
 		// Load listeners for "register" and "login"
 		require("./RegisterHandler.js")(socket, this);
 		require("./LoginHandler.js")(socket, this);
+		
+		socket.on('logout', function(data) {
+			this.setSocketAuthenticated(socket, false);
+			sendClientMessage(socket, "Log out", "You have been logged out.");
+		}.bind(this));
 	}.bind(this));
 }
 

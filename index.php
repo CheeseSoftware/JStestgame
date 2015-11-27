@@ -70,8 +70,21 @@
 		login(username, password);
 	};
 	
+	function logout() {		
+		game.connection.send('logout', {});
+		removeCookie("username");
+		removeCookie("password");
+	};
+	
+	function showPopup(title, message) {
+		$("#messagePopup .title").html(title);
+		$("#messagePopup .message").html(message);
+		$("#messagePopup").fadeIn(100);
+	};
+	
 </script>
 <?php
+	include("messagePopup.html");
 	include("playMenu.html");
 	include("registerFrame.html");
 	include("loginFrame.html");

@@ -90,7 +90,7 @@ generateUUID = function() {
 setCookie = function(name, value, days) {
 	var today = new Date();
 	var cookie = name + "=" + value;
-	if (days && days > 0) {
+	if (days) {
 		var expire = new Date();
 		expire.setTime(today.getTime() + 3600000 * 24 * days);
 		cookie += ";expires="+expire.toGMTString();
@@ -103,4 +103,12 @@ getCookie = function(name) {
 	var parts = value.split("; " + name + "=");
 	if (parts.length == 2) 
 		return parts.pop().split(";").shift();
+}
+
+removeCookie = function(name) {
+    setCookie(name, "", -1);
+}
+
+sendClientMessage = function(socket, title, message) {
+	socket.emit("popupmessage", { title: title, message: message });
 }

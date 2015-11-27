@@ -181,7 +181,7 @@ ServerInstance.prototype.load = function() {
 			}
 			
 			if(!this.authenticationServer.isSocketAuthenticated(socket))
-				return;
+				this.authenticationServer.setSocketAuthenticated(socket, true, { username: "Guest", email: "none", _id: generateUUID() });
 			
 			var uuid = this.authenticationServer.getUUID(socket);
 			//console.log("MongoDB UUID: " + uuid);
