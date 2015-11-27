@@ -70,6 +70,12 @@
 		login(username, password);
 	};
 	
+	function logout() {		
+		game.connection.send('logout', {});
+		removeCookie("username");
+		removeCookie("password");
+	};
+	
 </script>
 <?php
 	include("playMenu.html");
