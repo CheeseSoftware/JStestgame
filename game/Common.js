@@ -108,3 +108,7 @@ getCookie = function(name) {
 removeCookie = function(name) {
     setCookie(name, "", -1);
 }
+
+sendClientMessage = function(socket, title, message) {
+	socket.emit("popupmessage", { title: title, message: message });
+}

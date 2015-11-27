@@ -12,6 +12,7 @@ AuthenticationServer = function(db, playerServer, io) {
 		
 		socket.on('logout', function(data) {
 			this.setSocketAuthenticated(socket, false);
+			sendClientMessage(socket, "Log out", "You have been logged out.");
 		}.bind(this));
 	}.bind(this));
 }

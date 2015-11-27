@@ -239,10 +239,6 @@ Game.prototype.initializeListeners = function() {
 	
 	this.connection.on('error', console.error.bind(console));
 	
-	this.connection.on('message', function(data) {
-		console.log(data);
-	});
-	
 	this.connection.on('disconnect', function(data){
 		location.reload();
 		console.log("Disconnected from server, reloaded page.");
@@ -394,5 +390,9 @@ Game.prototype.initializeListeners = function() {
 		else if(data.success == true) {
 			$("#loginPopup").fadeIn(400);
 		}
+	});
+	
+	this.connection.on('popupmessage', function(data) {
+		showPopup(data.title, data.message);
 	});
 }
