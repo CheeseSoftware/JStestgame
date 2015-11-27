@@ -294,6 +294,8 @@ Game.prototype.initializeListeners = function() {
 		this.camera.target = physics;
 		//console.log(physics.cameraPos);
 		this.camera.velocity = null;
+		// Bind hud to player
+		this.hud.initPlayer(player);
 	}.bind(this));
 	
 	this.connection.on('playerleave', function(data) {

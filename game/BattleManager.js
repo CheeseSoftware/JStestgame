@@ -72,7 +72,7 @@ BattleManager.prototype.hitEntity = function(attacker, victim, damage) {
 	}
 
 	if (health)
-		health.value = Math.max(health.value-damage, 0.0);
+		health.doDamage(damage);
 
 	this.on("onMeeleHit", [attacker, victim, damage]);
 }
