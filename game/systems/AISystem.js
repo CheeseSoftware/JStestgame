@@ -16,7 +16,7 @@ ECS.Systems.AISystem = CES.System.extend({
 				if(target) {
 					var targetPhysics = target.getComponent("physics");
 					var targetControl = target.getComponent("control");	
-					if(new Date() - AI.lastPacket > 50) {
+					if(new Date() - AI.lastPacket > 500) {
 						var dx = targetPhysics.x - physics.x;
 						var dy = targetPhysics.y - physics.y;
 						

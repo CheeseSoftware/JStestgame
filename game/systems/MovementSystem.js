@@ -51,6 +51,10 @@ ECS.Systems.MovementSystem = CES.System.extend({
 				console.log("y " + physics.y);
 				console.log("vx " + physics.vx);
 				console.log("vy " + physics.vy);
+				console.log("ix " + physics.ix);
+				console.log("iy " + physics.iy);
+				console.log("ivx " + physics.ivx);
+				console.log("ivy " + physics.ivy);
 				console.log("-----end-----");
 			}*/
 			

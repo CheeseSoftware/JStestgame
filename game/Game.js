@@ -63,6 +63,7 @@ Game.prototype.load = function() {
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
 	this.entityWorld.addSystem(new ECS.Systems.MovementSystem());
 	this.entityWorld.addSystem(new ECS.Systems.AnimationSystem());
+	this.entityWorld.addSystem(new ECS.Systems.InterpolationSystem());
 	//this.entityWorld.addSystem(new ECS.Systems.AISystem());
 	
 	// Initialize BattleManagger
@@ -225,7 +226,7 @@ Game.prototype.initializeListeners = function() {
 			this.camera.target = physics;
 		}
 		else {
-			this.camera.target = data.target;
+			this.camera.targetPos = v2.create(data.target.x, data.target.y);
 			
 			var cameraVelocity = v2.create(2*Math.random()-1, 2*Math.random()-1);
 			v2.normalize(cameraVelocity, cameraVelocity);
@@ -291,6 +292,7 @@ Game.prototype.initializeListeners = function() {
 		physics.rotation = data.rotation;
 		
 		this.camera.target = physics;
+		//console.log(physics.cameraPos);
 		this.camera.velocity = null;
 	}.bind(this));
 	
@@ -322,6 +324,7 @@ Game.prototype.initializeListeners = function() {
 		if(entity != undefined) {
 			var control = entity.getComponent("control");
 			var physics = entity.getComponent("physics");
+			var interpolation = entity.getComponent("interpolation");
 			control.moveDir = [data.dx, data.dy];
 
 			physics.x = data.x;
@@ -330,7 +333,7 @@ Game.prototype.initializeListeners = function() {
 			physics.vy = data.vy;
 			
 			physics.rotation = data.rotation;		
-			physics.lastUpdate = new Date();
+			interpolation.interpolationDate = new Date();
 		}
 		else
 			console.log("entity is undefined in 'entityupdate' Game.js");

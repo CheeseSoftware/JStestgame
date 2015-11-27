@@ -18,22 +18,35 @@ PhysicsWorld.prototype.update = function(dt) {
 		
 		body.x += body.vx * dt;
 		body.y += body.vy * dt;
+		body.ix += body.ivx * dt;
+		body.iy += body.ivy * dt;
 		body.vx *= Math.pow(1.0-body.friction, dt);
 		body.vy *= Math.pow(1.0-body.friction, dt);
+		body.ivx *= Math.pow(1.0-body.friction, dt);
+		body.ivy *= Math.pow(1.0-body.friction, dt);
 
 		if(Math.abs(body.vx) < 0.001)
 			body.vx = 0;
 		if(Math.abs(body.vy) < 0.001)
 			body.vy = 0;
+		if(Math.abs(body.ivx) < 0.001)
+			body.ivx = 0;
+		if(Math.abs(body.ivy) < 0.001)
+			body.ivy = 0;
 
 		if (body.vx*body.vx + body.vy*body.vy > body.maxSpeed * body.maxSpeed) {
 			var speed = Math.sqrt(body.vx*body.vx + body.vy*body.vy);
 			body.vx *= body.maxSpeed/speed;
 			body.vy *= body.maxSpeed/speed;
 		}
+		if (body.ivx*body.ivx + body.ivy*body.ivy > body.maxSpeed * body.maxSpeed) {
+			var speed = Math.sqrt(body.ivx*body.ivx + body.ivy*body.ivy);
+			body.ivx *= body.maxSpeed/speed;
+			body.ivy *= body.maxSpeed/speed;
+		}
 		
 		// Collision
-		/*for(var j = 0; j < this.bodies.length; ++j) {
+		for(var j = 0; j < this.bodies.length; ++j) {
 			var body2 = this.bodies[j];
 
 			var bodypos = [body.x, body.y];
@@ -56,12 +69,14 @@ PhysicsWorld.prototype.update = function(dt) {
 				body2.vx -= 4.0*0.5*delta[0] * (wantedDistance/distance - 1.0);
 				body2.vy -= 4.0*0.5*delta[1] * (wantedDistance/distance - 1.0);
 			}
-		}*/
+		}
 		
-		body.ix = body.x;
-		body.iy = body.y;
-		body.ivx = body.vx;
-		body.ivy = body.vy;
+		if(isServer) {
+			body.ix = body.x;
+			body.iy = body.y;
+			body.ivx = body.vx;
+			body.ivy = body.vy;	
+		}
 		
 	}
 }

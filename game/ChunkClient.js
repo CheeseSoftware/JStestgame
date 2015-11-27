@@ -15,10 +15,10 @@ ChunkClient = function(chunkManager, connection) {
 }
 
 ChunkClient.prototype.update = function(camera) {
-	var x1 = Math.floor(camera.pos.x/32.0/30.0);
-	var y1 = Math.floor(camera.pos.y/32.0/30.0);
-	var x2 = Math.ceil((camera.pos.x+camera.width)/32.0/30.0);
-	var y2 = Math.ceil((camera.pos.y+camera.width)/32.0/30.0);
+	var x1 = Math.floor((camera.pos.x-32)/32.0/30.0);
+	var y1 = Math.floor((camera.pos.y-32)/32.0/30.0);
+	var x2 = Math.ceil((camera.pos.x+camera.width+32)/32.0/30.0);
+	var y2 = Math.ceil((camera.pos.y+camera.width+32)/32.0/30.0);
 	
 	// Create/Load chunks:
 	for (var y = y1; y <= y2; ++y) {

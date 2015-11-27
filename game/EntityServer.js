@@ -21,7 +21,6 @@ EntityServer = function(entityWorld, playerServer, io) {
 				
 				control.moveDir = [data.dx, data.dy];
 				physics.rotation = data.rotation;
-				physics.lastUpdate = new Date();
 				
 				socket.broadcast.emit('entityupdate', {
 					uuid: data.uuid,

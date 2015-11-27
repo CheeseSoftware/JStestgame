@@ -11,7 +11,8 @@ var Camera = function (world) {
 
     this.root = new PIXI.Container();
 
-	this.target = { x: 0, y: 0 };
+	this.targetPos = v2.create(0, 0);
+	this.target = null;
 	this.velocity = null;
 
     this.mask = new PIXI.Graphics();
@@ -37,12 +38,12 @@ if (!isServer)
 Camera.prototype.update = function (dt) {
 
 	if(this.velocity) {
-		this.target.x += this.velocity.x;
-		this.target.y += this.velocity.y;
+		this.targetPos.x += this.velocity.x;
+		this.targetPos.y += this.velocity.y;
 	}
 
-	var x = (this.target.x * this.zoom) - (this.width / 2);
-	var y = (this.target.y * this.zoom) - (this.height / 2);
+	var x = ((this.target != null ? this.target.ix : this.targetPos.x) * this.zoom) - (this.width / 2);
+	var y = ((this.target != null ? this.target.iy : this.targetPos.y) * this.zoom) - (this.height / 2);
 
     this.frustrum.x = x / this.zoom;
     this.frustrum.y = y / this.zoom;

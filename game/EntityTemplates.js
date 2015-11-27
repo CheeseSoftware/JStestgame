@@ -50,6 +50,7 @@ entityTemplates.player = function(username, uuid) {
 		var drawable = new ECS.Components.Drawable(bodyparts, game.animationManager, 0, 0);
 		drawable.text = new PIXI.Text(username, { fill: '#ffffff' });
 		entity.addComponent(drawable);
+		entity.addComponent(new ECS.Components.Interpolation());
 		
 		game.stage.addChild(sprite);
 		game.stage.addChild(bodySprite);
@@ -108,6 +109,7 @@ entityTemplates.worker = function(uuid) {
 		};
 		
 		entity.addComponent(new ECS.Components.Drawable(bodyparts, game.animationManager, 0, 0));
+		entity.addComponent(new ECS.Components.Interpolation());
 		game.stage.addChild(sprite);
 	}
 	else
