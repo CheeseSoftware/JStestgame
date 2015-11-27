@@ -19,7 +19,7 @@ PhysicsWorld.prototype.update = function(dt) {
 }
 
 PhysicsWorld.prototype.simulateBody = function(body, dt) {
-	this.simulateData(body.data, "normal", body, dt);
+	this.simulateData(body.data, body, dt);
 	
 	if(isServer) {
 		body.idata.x = body.data.x;
@@ -28,10 +28,10 @@ PhysicsWorld.prototype.simulateBody = function(body, dt) {
 		body.idata.vy = body.data.vy;
 	}
 	else
-		this.simulateData(body.idata, "interpolated", body, dt);
+		this.simulateData(body.idata, body, dt);
 }
 
-PhysicsWorld.prototype.simulateData = function(data, dataType, body, dt) {
+PhysicsWorld.prototype.simulateData = function(data, body, dt) {
 	data.x += data.vx * dt;
 	data.y += data.vy * dt;
 	data.vx *= Math.pow(1.0-body.friction, dt);
@@ -52,7 +52,7 @@ PhysicsWorld.prototype.simulateData = function(data, dataType, body, dt) {
 	// Collision
 	for(var j = 0; j < this.bodies.length; ++j) {
 		var body2 = this.bodies[j];
-		var data2 = (dataType == "normal" ? body2.data : body2.idata);
+		var data2 = (data.type == "normal" ? body2.data : body2.idata);
 		var bodypos = [data.x, data.y];
 		var body2pos = [data2.x, data2.y];
 		var delta = [0.0, 0.0];

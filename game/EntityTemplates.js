@@ -91,7 +91,7 @@ entityTemplates.worker = function(uuid) {
 
 	// Physics
 	var physicsBody = new PhysicsBody();
-	
+	physicsBody.maxSpeed = 100;
 	physicsWorld.addBody(physicsBody);
 	var physics = new ECS.Components.Physics(physicsBody);
 	//physics.acceleration = 500;

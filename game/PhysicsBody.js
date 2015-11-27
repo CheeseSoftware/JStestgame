@@ -4,6 +4,7 @@ PhysicsBody = function() {
 	this.radius = constants.playerWidth / 2;
 
 	this.data = {
+		type: "normal",
 		x: 0,
 		y: 0,
 		vx: 0,
@@ -11,6 +12,7 @@ PhysicsBody = function() {
 	}
 	
 	this.idata = {
+		type: "interpolated",
 		x: 0,
 		y: 0,
 		vx: 0,
