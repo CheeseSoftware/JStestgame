@@ -58,12 +58,12 @@ Game.prototype.load = function() {
 	
 	// Initialize entityWorld and add entity component systems
 	this.entityWorld = new CES.World();
-	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
+	this.entityWorld.addSystem(new ECS.Systems.MovementSystem());
+	this.entityWorld.addSystem(new ECS.Systems.InterpolationSystem());
 	this.entityWorld.addSystem(new ECS.Systems.TerrainPhysicsSystem(this.chunkManager));
 	this.entityWorld.addSystem(new ECS.Systems.ControlSystem());
-	this.entityWorld.addSystem(new ECS.Systems.MovementSystem());
 	this.entityWorld.addSystem(new ECS.Systems.AnimationSystem());
-	this.entityWorld.addSystem(new ECS.Systems.InterpolationSystem());
+	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
 	//this.entityWorld.addSystem(new ECS.Systems.AISystem());
 	
 	// Initialize BattleManagger
@@ -77,10 +77,7 @@ Game.prototype.load = function() {
 	this.physicsWorld = new PhysicsWorld(); // Args: gravity, sleep
 	
 	this.lastUpdate = window.performance.now();
-	this.lastTest = window.performance.now();
-	
 	this.intervalId = setInterval(function(){game.run()}, constants.clientInterval);
-	this.test();
 	
 	this.connection = new Connection(vars.ip, constants.serverPort);
 	
@@ -134,20 +131,15 @@ Game.prototype.preload = function() {
 	this.textureManager.load();
 }
 
+start = new Date();
 Game.prototype.run = function() {
     var now = window.performance.now();
     var dt = (now - this.lastUpdate);
 	this.lastUpdate = window.performance.now();
 	
-    this.entityWorld.update(dt);
+	this.physicsWorld.update(dt/1000.0);
 	
-	this.physicsWorld.update(dt/1000.0);	
-};
-
-Game.prototype.test = function() {
-    var now = window.performance.now();
-    var dt = (now - this.lastTest);
-	this.lastTest = window.performance.now();
+	this.entityWorld.update(dt);
 	
 	this.camera.update(dt);
 	
@@ -160,14 +152,12 @@ Game.prototype.test = function() {
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
 	var viewMatrix = new PIXI.Matrix();
-	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
+	viewMatrix = viewMatrix.translate((new Date() - start)/10.0, 0);
 	this.chunkRenderer.render(gl, this.chunkManager, projectionMatrix.clone().append(viewMatrix), this.camera);
 
 	
 	this.renderer.render(this.camera);
-	
-	window.requestAnimationFrame(this.test.bind(this));
-}
+};
 
 Game.prototype.sendUpdatePacket = function() {
 	//TODO: Split playerupdate and entityupdate

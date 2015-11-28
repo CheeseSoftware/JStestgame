@@ -7,10 +7,10 @@ constants = {
 	maxSpeed: 300.0,
 	friction: 0.999,
 	
-	rotateSpeed: 0.008,
+	rotateSpeed: 0.001,
 	cameraHoverSpeed: 0.5,
 	
-	serverInterval: 5.0,
-	clientInterval: 5.0,
+	serverInterval: 20.0,
+	clientInterval: 20.0,
 	serverPort: 8080
 }
