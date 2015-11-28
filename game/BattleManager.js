@@ -23,16 +23,20 @@ BattleManager.prototype.hit = function(attacker, distance, radius, damage, onHit
 
 	for (var i = 0; i < entities.length; ++i) {
 		var entity = entities[i];
-		if(entity.uuid != attacker.uuid) {
-			var physics = entity.getComponent("physics");
-	
-			var vPos = v2.create(physics.x, physics.y);
-			var deltaPos = [0.0, 0.0];
-			v2.subtract(vPos, attackerPos, deltaPos);
-	
-			if (v2.lengthSquared(deltaPos)/32.0 > radius*radius)
-				continue;
 
+		if(entity.uuid == attacker.uuid) 
+			continue;
+
+		var physics = entity.getComponent("physics");
+
+		var vPos = v2.create(physics.x, physics.y);
+		var deltaPos = [0.0, 0.0];
+		v2.subtract(vPos, attackerPos, deltaPos);
+
+		if (v2.lengthSquared(deltaPos)/32.0 > radius*radius)
+			continue;
+
+		if (attacker.hasComponent('player')) {
 			var dir = [0.0, 0.0];
 			v2.normalize(deltaPos, dir);
 			var dir2 = [Math.cos(attackerPhysics.rotation), Math.sin(attackerPhysics.rotation)];
@@ -41,12 +45,12 @@ BattleManager.prototype.hit = function(attacker, distance, radius, damage, onHit
 
 			if (dot < 0.5)
 				continue;
-			
-			this.hitEntity(attacker, entity, damage);
-	
-			if (onHitCallback)
-				onHitCallback(attacker, entity);
 		}
+		
+		this.hitEntity(attacker, entity, damage);
+
+		if (onHitCallback)
+			onHitCallback(attacker, entity);
 	}
 }
 

@@ -19,6 +19,19 @@ ECS.Systems.AISystem = CES.System.extend({
 					if(new Date() - AI.lastPacket > 500) {
 						var dx = targetPhysics.x - physics.x;
 						var dy = targetPhysics.y - physics.y;
+
+						var delta = [dx, dy];
+						var distance = v2.length(delta);
+
+						var battleInfo = {
+							distance : 0.05*32.0,
+							radius : 0.3*32.0,
+							damage : 4.0,
+						}
+
+						if (distance/32.0 < battleInfo.radius) {
+							server.battleManager.hit(entity, battleInfo.distance, battleInfo.radius, battleInfo.damage);
+						}
 						
 						if(dx == 0 && dy == 0)
 							return;
