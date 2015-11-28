@@ -152,7 +152,7 @@ Game.prototype.run = function() {
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
 	var viewMatrix = new PIXI.Matrix();
-	viewMatrix = viewMatrix.translate((new Date() - start)/10.0, 0);
+	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
 	this.chunkRenderer.render(gl, this.chunkManager, projectionMatrix.clone().append(viewMatrix), this.camera);
 
 	
