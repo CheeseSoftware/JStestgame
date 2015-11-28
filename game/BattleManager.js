@@ -5,7 +5,7 @@ BattleManager = function(entityWorld) {
 	return this;
 }
 // Subscribable events:
-BattleManager.prototype = new Observable(["onHitCall", "onMeeleHit"]);
+BattleManager.prototype = new Observable("onMeeleHit");
 BattleManager.prototype.constructor = BattleManager;   
 
 
@@ -55,6 +55,8 @@ BattleManager.prototype.hit = function(attacker, distance, radius, damage, onHit
 }
 
 BattleManager.prototype.hitEntity = function(attacker, victim, damage) {
+	if(!victim || !attacker)
+		return;
 
 	var physics = victim.getComponent("physics");
 	var attackerPhysics = attacker.getComponent("physics");
@@ -75,8 +77,9 @@ BattleManager.prototype.hitEntity = function(attacker, victim, damage) {
 		server.entityServer.sendUpdatePacket(victim);
 	}
 
-	if (health)
+	if (health) {
 		health.doDamage(damage);
+	}
 
-	this.on("onMeeleHit", [attacker, victim, damage]);
+	this.on("onMeeleHit", attacker, victim, damage);
 }

@@ -28,6 +28,13 @@ ECS.Components.Physics.prototype.rotateTo = function(physics, newRotation, speed
 	oldDiry += (newDiry - oldDiry) * speed * dt;
 	physics.rotation = Math.atan2(oldDiry, oldDirx);
 }
+
+ECS.Components.Physics.prototype.setAbsolutePosition = function(x, y) {
+	this.x = x;
+	this.y = y;
+	this.ix = x;
+	this.iy = y;
+}
  
 Object.defineProperties(ECS.Components.Physics.prototype, {
 	x: {

@@ -201,6 +201,13 @@ ServerInstance.prototype.load = function() {
 			physics.x = 128;
 			physics.y = 128;
 			
+			var health = entity.getComponent("health");
+			health.subscribeFunc("onDeath", function(health) {
+				health.value = health.max;
+				socket.emit("playerdeath", { uuid: entity.uuid, x: 0, y: 0 });
+				physics.setAbsolutePosition(0, 0);
+			}.bind(this));
+			
 			// Dig spawn
 			for(var i = 0; i < 10; i++) {
 				this.chunkManager.fillCircle(physics.x/32.0, physics.y/32.0, 10);
@@ -211,7 +218,7 @@ ServerInstance.prototype.load = function() {
 			this.playerServer.sendPlayerJoinPacket(entity, socket.id);
 			
 			for(var i = 0; i < 1; ++i) {
-				var monster = entityTemplates.worker();
+				var monster = this.entityServer.spawnCreature("worker");
 				var x = Math.random() * 128;
 				var y = Math.random() * 128;
 				

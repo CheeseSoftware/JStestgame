@@ -117,4 +117,21 @@ EntityServer.prototype.sendEntitySpawnPacket = function(entity, socket) {
 		this._io.sockets.emit('entityspawn', data);
 }
 
+EntityServer.prototype.spawnCreature = function(type) {
+	var creature = entityTemplates[type]();
+	var health = creature.getComponent("health");
+	health.subscribeFunc("onDeath", function(health) {
+		//To-do: fix respawn position
+		//var physics = creature.getComponent("physics");
+		//physics.setAbsolutePosition(0, 0);
+		this.removeEntity(creature.uuid);
+		this.killCreature(creature.uuid);
+	}.bind(this));
+	return creature;
+}
+
+EntityServer.prototype.killCreature = function(uuid) {
+	this._io.sockets.emit("entitydeath", { uuid: uuid });
+}
+
 

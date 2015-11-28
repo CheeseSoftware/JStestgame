@@ -295,6 +295,14 @@ Game.prototype.initializeListeners = function() {
 		this.despawnEntity(data.uuid);
 	}.bind(this));
 	
+	this.connection.on('playerdeath', function(data) {
+		var entity = this.entityClient.getEntity(data.uuid);
+		var health = entity.getComponent("health");
+		var physics = entity.getComponent('physics');
+		health.value = health.max;
+		physics.setAbsolutePosition(data.x, data.y);
+	}.bind(this));
+	
 	this.connection.on('entityspawn', function(data) {
 		var entity = entityTemplates[data.type](data.uuid);
 		var physics = entity.getComponent("physics");
@@ -310,6 +318,10 @@ Game.prototype.initializeListeners = function() {
 		control.moveDir = [data.dx, data.dy];
 		physics.rotation = data.rotation;
 		//console.log("Spawned entity of type " + data.type + ". UUID " + data.uuid);
+	}.bind(this));
+	
+	this.connection.on('entitydeath', function(data) {
+		this.despawnEntity(data.uuid);
 	}.bind(this));
 	
 	this.connection.on('entityupdate', function(data) {
