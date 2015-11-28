@@ -1,8 +1,7 @@
 ECS.Components.Health = CES.Component.extend({});
 
-ECS.Components.Health.prototype = new Observable(["onHealthChange", "onDeath"]);
-
 ECS.Components.Health.prototype.init = function (maxHealth) {
+	inherit(this, new Observable(["onHealthChange", "onDeath"]));
 	
 	this.name = 'health';
 	this.max = maxHealth;
