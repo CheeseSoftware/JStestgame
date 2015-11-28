@@ -210,8 +210,6 @@ ServerInstance.prototype.load = function() {
 			this.playerServer.sendPlayerInitPacket(entity, socket.id, socket);
 			this.playerServer.sendPlayerJoinPacket(entity, socket.id);
 			
-			return;
-			
 			for(var i = 0; i < 1; ++i) {
 				var monster = entityTemplates.worker();
 				var x = Math.random() * 128;
