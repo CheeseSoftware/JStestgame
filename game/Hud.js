@@ -69,6 +69,6 @@ Hud.prototype.onHealthChange = function(health) {
 
 
 Hud.prototype.updateHealth = function(healthValue, maxHealth) {
-	var width = Math.floor(512 * healthValue / maxHealth);
-	$("#health").replaceWith("<div id='health' class='healthbar' style='width:" + width + "px'><p> Health: " + healthValue + " hp </p></div>");
+	var width = Math.floor(100 * healthValue / maxHealth);
+	$("#health").replaceWith("<div id='health' class='healthbar'><div style='width:" + width + "%'></div></div>");
 }
