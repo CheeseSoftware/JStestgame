@@ -77,8 +77,10 @@ Game.prototype.load = function() {
 	this.physicsWorld = new PhysicsWorld(); // Args: gravity, sleep
 	
 	this.lastUpdate = window.performance.now();
+	this.lastTest = window.performance.now();
 	
 	this.intervalId = setInterval(function(){game.run()}, constants.clientInterval);
+	this.test();
 	
 	this.connection = new Connection(vars.ip, constants.serverPort);
 	
@@ -132,7 +134,6 @@ Game.prototype.preload = function() {
 	this.textureManager.load();
 }
 
-accumulator = 0;
 Game.prototype.run = function() {
     var now = window.performance.now();
     var dt = (now - this.lastUpdate);
@@ -140,12 +141,13 @@ Game.prototype.run = function() {
 	
     this.entityWorld.update(dt);
 	
-	this.physicsWorld.update(dt/1000.0);
-	/*accumulator += dt/1000.0;
-	while(accumulator >= constants.physicsStep) {
-		this.physicsWorld.Step(constants.physicsStep, 10, 10);
-		accumulator -= constants.physicsStep;
-	}*/
+	this.physicsWorld.update(dt/1000.0);	
+};
+
+Game.prototype.test = function() {
+    var now = window.performance.now();
+    var dt = (now - this.lastTest);
+	this.lastTest = window.performance.now();
 	
 	this.camera.update(dt);
 	
@@ -164,7 +166,8 @@ Game.prototype.run = function() {
 	
 	this.renderer.render(this.camera);
 	
-};
+	window.requestAnimationFrame(this.test.bind(this));
+}
 
 Game.prototype.sendUpdatePacket = function() {
 	//TODO: Split playerupdate and entityupdate

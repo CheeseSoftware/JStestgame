@@ -258,21 +258,14 @@ ServerInstance.prototype.load = function() {
 	
 	// Start the server loop
 	this.lastUpdate = performancenow().toFixed(3);
-	var accumulator = 0;
 	this.run = function() {
 		var now = performancenow();
 		var dt = (now.toFixed(3) - this.lastUpdate);
 		this.lastUpdate = performancenow().toFixed(3);
-		//console.log(dt);
-	
+
 		this.entityWorld.update(dt);
 		
 		this.physicsWorld.update(dt/1000.0);
-		/*accumulator += dt/1000.0;
-		while(accumulator >= constants.physicsStep) {
-			this.physicsWorld.Step(constants.physicsStep, 10, 10);
-			accumulator -= constants.physicsStep;
-		}*/
 		
 		this.regeneratorServer.update(dt/1000.0);
 	}.bind(this);
