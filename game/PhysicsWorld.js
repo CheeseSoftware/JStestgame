@@ -32,6 +32,8 @@ PhysicsWorld.prototype.simulateBody = function(body, dt) {
 }
 
 PhysicsWorld.prototype.simulateData = function(data, body, dt) {
+	data.oldX = data.x;
+	data.oldY = data.y;
 	data.x += data.vx * dt;
 	data.y += data.vy * dt;
 	data.vx *= Math.pow(1.0-body.friction, dt);

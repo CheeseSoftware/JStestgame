@@ -9,8 +9,12 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 			var physics = entity.getComponent('physics');
 			var isControlled = entity.getComponent('controlled');
 			
+			this.simulateAntiTunneling(dt, physics.body, entity);
+
 			this.simulate(dt, physics.body.data);
 			this.simulate(dt, physics.body.idata);
+
+			
 
         }.bind(this));
     }
@@ -28,21 +32,22 @@ ECS.Systems.TerrainPhysicsSystem.prototype.simulate = function(dt, values) {
 
 	for (angle = 0; angle < 360; angle+=18) {
 		var dir = v2.create(Math.cos(angle*3.14/180), Math.sin(angle*3.14/180));
-		var rayDis = Math.max(this.raymarch(pos, dir, 8), -1.0);
+		var rayDis = Math.max(this.raymarch(pos, dir, 32)/32.0, -2.0);
 		
 		if (rayDis >= distance)
 			continue;
 
 		distance = rayDis;
+		normal = dir;
 
-		var pushStrengthTemp = Math.max(1.0 - rayDis, 0.0);
+		var pushStrengthTemp = Math.max(1.0 - rayDis, -1.0);
 		v2.multiply(pushStrengthTemp, dir, normal);
 	}
 
 	if (v2.length(normal) <= 0.0)
 		return values;
 
-	if (distance <= -1.0)
+	if (distance <= -2.0)
 		return values;
 
 	v2.normalize(normal, normal);
@@ -76,6 +81,41 @@ ECS.Systems.TerrainPhysicsSystem.prototype.simulate = function(dt, values) {
 	}
 }
 
+ECS.Systems.TerrainPhysicsSystem.prototype.simulateAntiTunneling = function(dt, body, entity) {
+	var pos = [body.data.oldX, body.data.oldY];
+	var newPos = [body.data.x, body.data.y];
+
+	var delta = [0.0, 0.0];
+	v2.subtract(newPos, pos, delta);
+	var dir = v2.clone(delta);
+	v2.normalize(dir, dir);
+	var deltaDis = v2.length(delta);
+
+	var pos2 = [pos[0]/32.0, pos[1]/32.0];
+	var dis = this.raymarch(pos, dir, 8);
+	
+	dis -= body.radius;
+	dis += 32.0;
+	if (dis <= 0.0)
+		return;
+
+	if (dis < deltaDis) {
+		var betterPos = v2.clone(pos);
+		var betterDelta = v2.clone(dir);
+
+		v2.multiply(dis, betterDelta, betterDelta);
+		v2.add(betterPos, betterDelta, betterPos);
+
+		// TODO: make it user betterPos, it fails?
+		body.data.x = pos[0];//betterPos[0];
+		body.data.y = pos[1];//betterPos[1];
+
+		if (entity.hasComponent('player')) {
+			console.log("TUNNELING DETECTED!");
+			console.log(dis + " / " + deltaDis);
+		}
+	}
+}
 
 /* return: float rayDis;
  *
@@ -91,7 +131,7 @@ ECS.Systems.TerrainPhysicsSystem.prototype.raymarch = function(pos, dir, numIter
 
 	for(i = 0; i < numIterations; ++i) {
 		var dis = this.map(rayPos);
-		rayDis += 0.5*dis
+		rayDis += 0.5*dis;
 
 		v2.multiply(rayDis, dir, rayDeltaPos);
 		v2.add(pos, rayDeltaPos, rayPos)
@@ -108,5 +148,5 @@ ECS.Systems.TerrainPhysicsSystem.prototype.map = function(pos) {
 	var floatDensity = ECS.Systems.TerrainPhysicsSystem.chunkManager.calcDensity(pos[0]/32.0-0.5, pos[1]/32.0-0.5)/255.0;
 
 	var distance = 0.5-floatDensity;
-	return distance;
+	return 32.0*distance;
 }

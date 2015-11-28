@@ -7,16 +7,20 @@ PhysicsBody = function() {
 		type: "normal",
 		x: 0,
 		y: 0,
+		oldX: 0,
+		oldY: 0,
 		vx: 0,
-		vy: 0
+		vy: 0,
 	}
 	
 	this.idata = {
 		type: "interpolated",
 		x: 0,
 		y: 0,
+		oldX: 0,
+		oldY: 0,
 		vx: 0,
-		vy: 0
+		vy: 0,
 	}
 
 	this.friction = constants.friction;
