@@ -39,11 +39,13 @@ Hud.prototype.create = function() {
 
 
 		var health = 0;
-		if (this._player)
+		var max = 100.0;
+		if (this._player) {
 			health = this._player.getComponent('health').value;
+			max = this._player.getComponent('health').max;
+		}
 
-		$("#health").replaceWith("<h1 id='health'> Health: " + health + " hp </h1>");
-		console.log("ok!");
+		this.updateHealth(health, max)
 
 	}).bind(this);
 	client.send();
@@ -62,5 +64,11 @@ Hud.prototype.destroy = function() {
 }
 
 Hud.prototype.onHealthChange = function(health) {
-	$("#health").replaceWith("<h1 id='health'> Health: " + health.value + " hp </h1>");
+	this.updateHealth(health.value, health.max);
+}
+
+
+Hud.prototype.updateHealth = function(healthValue, maxHealth) {
+	var width = Math.floor(512 * healthValue / maxHealth);
+	$("#health").replaceWith("<div id='health' class='healthbar' style='width:" + width + "px'><p> Health: " + healthValue + " hp </p></div>");
 }
