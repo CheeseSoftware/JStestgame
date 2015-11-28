@@ -12,7 +12,7 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 			if(drawable != undefined) {
 				drawable.positionAll(physics.ix, physics.iy, physics.rotation);
 				
-				var konstant = 100;
+				var konstant = 30;
 				var disWalked = konstant * Math.sqrt(Math.pow(physics.ix - physics.oldX, 2) + Math.pow(physics.iy - physics.oldY, 2));
 				if(disWalked > 0)
 					drawable.animate("feet", "feet", disWalked, false);

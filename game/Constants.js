@@ -2,9 +2,10 @@
 // Load dem constants
 constants = {
 	playerWidth: 24,
-	digAcceleration: 4000.0,
-	acceleration: 5000.0,
-	friction: 4.5,
+	digAcceleration: 1400.0,
+	acceleration: 2000.0,
+	maxSpeed: 300.0,
+	friction: 0.999,
 	
 	rotateSpeed: 0.008,
 	cameraHoverSpeed: 0.5,

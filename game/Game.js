@@ -347,7 +347,7 @@ Game.prototype.initializeListeners = function() {
 			var player = entity.getComponent("player");
 			var physics = entity.getComponent("physics");
 			var drawable = entity.getComponent("drawable");
-			var anim = 60 * player.digSpeed;
+			var anim = 40 * player.digSpeed;
 			if(player) {
 				player.isDigging = data.isDigging;
 				if(data.isDigging) {
