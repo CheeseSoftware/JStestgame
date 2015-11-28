@@ -96,6 +96,7 @@ ServerInstance.prototype.load = function() {
 			var entity = this.entityServer.getEntity(player.uuid);
 			if(entity) {
 				var physics = entity.getComponent('physics');
+				var control = entity.getComponent('control');
 				socket.emit('playerjoin', {
 					uuid: player.uuid,
 					username: player.username,
@@ -103,8 +104,8 @@ ServerInstance.prototype.load = function() {
 					y: physics.y,
 					vx: physics.vx,
 					vy: physics.vy,
-					dx: physics.dx,
-					dy: physics.dy,
+					dx: control.moveDir[0],
+					dy: control.moveDir[1],
 					rotation: physics.rotation
 				});
 			}
@@ -128,13 +129,20 @@ ServerInstance.prototype.load = function() {
 			tileSize: mapData.tileSize 
 		};
 		
+		var init2 = {
+		};
+		
 		if(playerToFollow)
-			init.follow = playerToFollow.uuid;
+			init2.follow = playerToFollow.uuid;
 		else
-			init.target = { x:128, y:128 };
+			init2.target = { x:128, y:128 };
 		
 		socket.emit('init', init);
 		this.io.sockets.emit('message', "A client has joined with IP " + socket.request.connection.remoteAddress);
+		
+		socket.on('init2', function() {
+			socket.emit('init2', init2);
+		}.bind(this));
 		
 		socket.on('error', console.error.bind(console));
 		
@@ -176,7 +184,7 @@ ServerInstance.prototype.load = function() {
 		
 		socket.on('playerinit', function(data) {
 			if(this.playerServer.getPlayer(socket.id)) {
-				// This player is already playing...
+				// Already playing
 				return;
 			}
 			

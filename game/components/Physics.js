@@ -61,6 +61,10 @@ Object.defineProperties(ECS.Components.Physics.prototype, {
 	ivy: {
         get: function () { return this.body.idata.vx },
 		set: function (value) { this.body.idata.vx = value;}
+    },
+	isChanged: {
+        get: function () { return this.body.isChanged },
+		set: function (value) { this.body.isChanged = value;}
     }
 });
 

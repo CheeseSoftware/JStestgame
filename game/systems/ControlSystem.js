@@ -17,8 +17,6 @@ ECS.Systems.ControlSystem = CES.System.extend({
 			
 			if(keyboard.isDifferent(player.oldKeyboardState)) {
 				var direction = keyboard.calculateDirection();
-				physics.dx = direction.x;
-				physics.dy = direction.y;
 				control.moveDir = [direction.x, direction.y];
 				control.isChanged = true;
 				physics.playState = keyboard.getPlayState();

@@ -219,6 +219,10 @@ Game.prototype.initializeListeners = function() {
 		
 		this.tileSize = data.tileSize;
 		
+		this.connection.send("init2");
+	}.bind(this), this);
+	
+	this.connection.on('init2', function(data) {
 		var uuid = data.follow;
 		if(uuid) {
 			var entity = this.entityClient.getEntity(uuid);
@@ -233,8 +237,6 @@ Game.prototype.initializeListeners = function() {
 			v2.multiply(constants.cameraHoverSpeed, cameraVelocity, cameraVelocity);
 			this.camera.velocity = cameraVelocity;
 		}
-		
-		
 	}.bind(this), this);
 	
 	this.connection.on('error', console.error.bind(console));
@@ -251,19 +253,23 @@ Game.prototype.initializeListeners = function() {
 			
 			var physics = player.getComponent("physics");
 			var control = player.getComponent('control');
+			
 			physics.x = data.x;
 			physics.y = data.y;
 			physics.vx = data.vx;
 			physics.vy = data.vy;
+			
 			physics.ix = data.x;
 			physics.iy = data.y;
 			physics.ivx = data.vx;
 			physics.ivy = data.vy;
+			
 			control.moveDir = [data.dx, data.dy];
 			physics.rotation = data.rotation;
 			
 			physics.oldX = data.x;
 			physics.oldY = data.x;
+			console.log(JSON.stringify(data));
 		}
 	}.bind(this), this);
 	

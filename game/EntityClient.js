@@ -17,8 +17,8 @@ EntityClient.prototype.getEntity = function(uuid) {
 	if(entityId != undefined) {
 		return this._entityWorld.getEntity(entityId);
 	}
-	else
-		console.log("EntityServer getEntity: entityId undefined.");
+	//else
+		//console.log("EntityServer getEntity: entityId undefined.");
 	return undefined;
 }
 
@@ -29,7 +29,7 @@ EntityClient.prototype.removeEntity = function(uuid) {
 		this._entityWorld.removeEntity(entity);
 		this._entityMap.remove(uuid);
 	}
-	else
-		console.log("EntityServer removeEntity: entityId undefined.");
+	//else
+		//console.log("EntityServer removeEntity: entityId undefined.");
 }
 

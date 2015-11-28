@@ -7,6 +7,7 @@ ChunkServer = function(chunkManager, io) {
 	io.on('connection', (function(socket) {
 		var chunk = chunkManager.getChunk(0, 0);
 		socket.on('getChunk', (function(data) {
+			//console.log("getchunk " + data.x + " " + data.y);
 			context.onMessageGetChunk(socket, data.x, data.y);
 		}));
 	}));

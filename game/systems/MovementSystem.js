@@ -43,20 +43,12 @@ ECS.Systems.MovementSystem = CES.System.extend({
 					var damage = 4.0;
 					server.battleManager.hit(entity, distance, radius, damage);
 				}
+				
+				if(physics.isChanged) {
+					server.entityServer.sendUpdatePacket(entity.uuid);
+					physics.isChanged = false;
+				}
 			}
-			
-			/*if(entity.uuid != 1) {
-				console.log("-----physics-----");
-				console.log("x " + physics.x);
-				console.log("y " + physics.y);
-				console.log("vx " + physics.vx);
-				console.log("vy " + physics.vy);
-				console.log("ix " + physics.ix);
-				console.log("iy " + physics.iy);
-				console.log("ivx " + physics.ivx);
-				console.log("ivy " + physics.ivy);
-				console.log("-----end-----");
-			}*/
 			
 		});
 	}

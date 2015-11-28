@@ -5,11 +5,8 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
  
         entities.forEach(function (entity) {
 			var physics = entity.getComponent('physics');
-            var player = entity.getComponent('player');
 			var drawable = entity.getComponent('drawable');
-			var isControlled = entity.hasComponent('controlled');
 			var health = entity.getComponent('health');
-			var state = physics.playState;
 
 			// Position text and textures at this position. Animate feet
 			if(drawable != undefined) {

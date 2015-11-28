@@ -70,10 +70,12 @@ PhysicsWorld.prototype.simulateData = function(data, body, dt) {
 
 			// Apply impulse to first body
 			body.addImpulse(impulse);
+			body.isChanged = true;
 
 			// Apply negative impulse to second body. 
 			v2.multiply(-1.0, impulse, impulse);
 			body2.addImpulse(impulse);
+			body2.isChanged = true;
 		}
 	}
 }

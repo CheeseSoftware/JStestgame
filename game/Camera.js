@@ -36,7 +36,6 @@ if (!isServer)
  * @param dt delta time
  */
 Camera.prototype.update = function (dt) {
-
 	if(this.velocity) {
 		this.targetPos.x += this.velocity.x;
 		this.targetPos.y += this.velocity.y;
@@ -54,6 +53,7 @@ Camera.prototype.update = function (dt) {
         -this.frustrum.x * this.zoom,
         -this.frustrum.y * this.zoom
     );
+	
 };
 
 /**

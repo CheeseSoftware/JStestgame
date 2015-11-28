@@ -75,15 +75,7 @@ EntityServer.prototype.sendUpdatePacket = function(uuid, socket) {
 	if(entity) {
 		var physics = entity.getComponent('physics');
 		var control = entity.getComponent('control');
-		//console.log("entityserver " + physics.dx + " " + physics.dy);
-		
-		/*if(entity.uuid >= 1 && entity.uuid <= 10) {
-			console.log("and current " + physics.gx);
-			console.log("and current " + physics.gvx);
-			console.log(" and current " + physics.dx);
-			console.log(".-------");
-		}*/
-		
+
 		var data = {
 			uuid: uuid,
 			x: physics.x,

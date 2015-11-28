@@ -23,6 +23,7 @@ PhysicsBody = function() {
 	this.maxSpeed = 300.0;
 	
 	this.interpolationDate = new Date();
+	this.isChanged = false;
 }
 
 PhysicsBody.prototype.addImpulse = function(impulse) {
