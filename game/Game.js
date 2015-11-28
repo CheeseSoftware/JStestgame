@@ -198,11 +198,8 @@ Game.prototype.despawnEntity = function(uuid) {
 
 	if(entity) {
 		var drawable = entity.getComponent('drawable');
-		if(drawable) {
-			drawable.remove(this.stage);
-			if(drawable.text)
-				this.stage.removeChild(drawable.text);
-		}
+		if(drawable)
+			drawable.remove();
 			
 		this.entityClient.removeEntity(uuid);
 	}

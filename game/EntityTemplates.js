@@ -4,6 +4,7 @@ entityTemplates.player = function(username, uuid) {
 	var entity = entityTemplates.createEntity(uuid);
 	
 	var physicsWorld = (isServer ? server.physicsWorld : game.physicsWorld);
+	var entityWorld = (isServer ? server.entityWorld : game.entityWorld);
 	
 	// Control
 	var control = new ECS.Components.Control();
@@ -12,20 +13,13 @@ entityTemplates.player = function(username, uuid) {
 	// Health
 	var health = new ECS.Components.Health(100.0);
 	entity.addComponent(health);
-	if (!isServer) {
-		var sprite = new PIXI.Sprite(game.textureManager.textures.healthbar);
-		sprite.anchor.x = 0.5;
-		sprite.anchor.y = 0.5;
-
-		health.sprite = sprite;
-		game.stage.addChild(sprite);
-	}
 
 	// Physics
 	var physicsBody = new PhysicsBody();
 
 	physicsWorld.addBody(physicsBody);
 	entity.addComponent(new ECS.Components.Physics(physicsBody));
+	entity.addComponent(new ECS.Components.Player(username));
 	
 	if(!isServer) {
 		var sprite = new PIXI.Sprite(game.textureManager.textures.feet);
@@ -45,23 +39,21 @@ entityTemplates.player = function(username, uuid) {
 			}
 		};
 		
+		var drawable = new ECS.Components.Drawable(game.stage, bodyparts, game.animationManager);
+		var text = new PIXI.Text(username, { fill: '#ffffff' });
+		drawable.addSprite("username", text, v2.create(- text.width / 2, -80), false);
 		
-		entity.addComponent(new ECS.Components.Player(username));
-		var drawable = new ECS.Components.Drawable(bodyparts, game.animationManager, 0, 0);
-		drawable.text = new PIXI.Text(username, { fill: '#ffffff' });
+		var healthbarSprite = new PIXI.Sprite(game.textureManager.textures.healthbar);
+		healthbarSprite.anchor.x = 0.5;
+		healthbarSprite.anchor.y = 0.5;
+		health.sprite = healthbarSprite;
+		drawable.addSprite("healthbar", healthbarSprite, v2.create(0, -50), false);
+			
 		entity.addComponent(drawable);
 		entity.addComponent(new ECS.Components.Interpolation());
-		
-		game.stage.addChild(sprite);
-		game.stage.addChild(bodySprite);
-		game.stage.addChild(drawable.text);
-		game.entityWorld.addEntity(entity);
 	}
-	else {
-		server.entityWorld.addEntity(entity);
-		entity.addComponent(new ECS.Components.Player());
-	}
-	
+
+	entityWorld.addEntity(entity);
 	return entity;
 }
 
@@ -79,15 +71,6 @@ entityTemplates.worker = function(uuid) {
 	// Health
 	var health = new ECS.Components.Health(10.0);
 	entity.addComponent(health);
-	if (!isServer) {
-		var sprite = new PIXI.Sprite(game.textureManager.textures.healthbar);
-		sprite.cropEnabled = true;
-		sprite.anchor.x = 0.5;
-		sprite.anchor.y = 0.5;
-
-		health.sprite = sprite;
-		game.stage.addChild(sprite);
-	}
 
 	// Physics
 	var physicsBody = new PhysicsBody();
@@ -108,9 +91,16 @@ entityTemplates.worker = function(uuid) {
 			}
 		};
 		
-		entity.addComponent(new ECS.Components.Drawable(bodyparts, game.animationManager, 0, 0));
+		var drawable = new ECS.Components.Drawable(game.stage, bodyparts, game.animationManager);
+		
+		var healthbarSprite = new PIXI.Sprite(game.textureManager.textures.healthbar);
+		healthbarSprite.anchor.x = 0.5;
+		healthbarSprite.anchor.y = 0.5;
+		health.sprite = healthbarSprite;
+		drawable.addSprite("healthbar", healthbarSprite, v2.create(0, -50), false);
+		
+		entity.addComponent(drawable);
 		entity.addComponent(new ECS.Components.Interpolation());
-		game.stage.addChild(sprite);
 	}
 	else
 		entity.addComponent(new ECS.Components.AI());

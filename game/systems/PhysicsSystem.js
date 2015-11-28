@@ -16,17 +16,9 @@ ECS.Systems.PhysicsSystem = CES.System.extend({
 				var disWalked = konstant * Math.sqrt(Math.pow(physics.ix - physics.oldX, 2) + Math.pow(physics.iy - physics.oldY, 2));
 				if(disWalked > 0)
 					drawable.animate("feet", "feet", disWalked, false);
-					
-				if(drawable.text) {
-					drawable.text.x = physics.ix - drawable.text.width / 2;
-					drawable.text.y = physics.iy - 80;
-				}
 
-				if (health) {
-					health.sprite.x = physics.ix;
-					health.sprite.y = physics.iy - 50;
+				if (health)
 					health.sprite.width = 96.0*(health.value / health.max);
-				}
 			}
 
 			physics.oldX = physics.ix;

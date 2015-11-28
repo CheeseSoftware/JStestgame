@@ -1,9 +1,8 @@
 
 ECS.Components.Player = CES.Component.extend({
     name: 'player',
-    init: function (username, text) {
+    init: function (username) {
         this.username = username;
-		this.text = text;
 		this.digSpeed = 5;
     }
 });
