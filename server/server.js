@@ -73,7 +73,8 @@ ServerInstance.prototype.load = function() {
 	this.authenticationServer = new AuthenticationServer(this.db, this.playerServer, this.io);
 	this.chunkServer = new ChunkServer(this.chunkManager, this.io);
 	this.regeneratorServer = new RegeneratorServer(this.chunkManager, this.io);
-	this.BattleServer = new BattleServer(this.battleManager, this.entityWorld, this.entityServer, this.playerServer, this.io)
+	this.BattleServer = new BattleServer(this.battleManager, this.entityWorld, this.entityServer, this.playerServer, this.io);
+	this.monsterSpawner = new MonsterSpawner(this.chunkManager, this.entityServer, this.io);
 	
 	this.entityWorld.addSystem(new ECS.Systems.PhysicsSystem());
 	var terrainPhysicsSystem = new ECS.Systems.TerrainPhysicsSystem(this.chunkManager);
