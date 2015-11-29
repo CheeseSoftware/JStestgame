@@ -91,6 +91,7 @@ body {
 	position: fixed;
 	text-align: center;
 	z-index: 1;
+	user-select: none;
 }
 
 .button {
