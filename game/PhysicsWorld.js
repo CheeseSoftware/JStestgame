@@ -59,8 +59,8 @@ PhysicsWorld.prototype.simulateData = function(data, body, dt) {
 		data.vy *= body.maxSpeed/speed;
 	}
 
-	var gridX = Math.floor(body.data.x/32.0/8.0-0.5);
-	var gridY = Math.floor(body.data.y/32.0/8.0-0.5);
+	var gridX = Math.floor(body.data.x/32.0/8.0);
+	var gridY = Math.floor(body.data.y/32.0/8.0);
 	var gridNodes = [];
 	gridNodes.push((gridX).toString() + ":" + (gridY).toString());
 	gridNodes.push((gridX+1).toString() + ":" + (gridY).toString());
@@ -116,8 +116,8 @@ PhysicsWorld.prototype.simulateData = function(data, body, dt) {
 }
 
 PhysicsWorld.prototype.updategrid = function(body) {
-	var gridX = Math.floor(body.data.x/32.0/8.0);
-	var gridY = Math.floor(body.data.y/32.0/8.0);
+	var gridX = Math.round(body.data.x/32.0/8.0);
+	var gridY = Math.round(body.data.y/32.0/8.0);
 
 	var gridKey = gridX.toString() + ":" + gridY.toString();
 

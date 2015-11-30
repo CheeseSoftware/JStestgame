@@ -12,7 +12,6 @@ BattleServer = function(battleManager, entityWorld, entityServer, playerServer, 
 }
 
 BattleServer.prototype.onMeeleHit = function(attacker, victim, damage) {
-	return;
 	this._io.sockets.emit("hit", {attackerUUID : attacker.uuid, victimUUID : victim.uuid, damage : damage});
 	this._entityServer.sendUpdatePacket(victim.uuid);
 	var physics = victim.getComponent("physics");
