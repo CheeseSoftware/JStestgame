@@ -47,7 +47,6 @@
 ?>
 
 <script>
-	var game = new Game();
 	
 	function tryRegister(username, email, password) {
 		$('#registrationResult').html('<img src="game/textures/loading.gif" loop=infinite>');	

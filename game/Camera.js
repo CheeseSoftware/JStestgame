@@ -35,26 +35,29 @@ if (!isServer)
  * update the camera position based on it's target
  * @param dt delta time
  */
-Camera.prototype.update = function (dt) {
-	if(this.velocity) {
-		this.targetPos.x += this.velocity.x;
-		this.targetPos.y += this.velocity.y;
-	}
+ {
+    var update = function (dt) {
+    	if(this.velocity) {
+    		this.targetPos.x += this.velocity.x;
+    		this.targetPos.y += this.velocity.y;
+    	}
 
-	var x = ((this.target != null ? this.target.ix : this.targetPos.x) * this.zoom) - (this.width / 2);
-	var y = ((this.target != null ? this.target.iy : this.targetPos.y) * this.zoom) - (this.height / 2);
+    	var x = ((this.target != null ? this.target.ix : this.targetPos.x) * this.zoom) - (this.width / 2);
+    	var y = ((this.target != null ? this.target.iy : this.targetPos.y) * this.zoom) - (this.height / 2);
 
-    this.frustrum.x = x / this.zoom;
-    this.frustrum.y = y / this.zoom;
+        this.frustrum.x = x / this.zoom;
+        this.frustrum.y = y / this.zoom;
 
-    this._constrainFrustrum();
+        this._constrainFrustrum();
 
-    this.root.position.set(
-        -this.frustrum.x * this.zoom,
-        -this.frustrum.y * this.zoom
-    );
-	
-};
+        this.root.position.set(
+            -this.frustrum.x * this.zoom,
+            -this.frustrum.y * this.zoom
+        );
+    	
+    };
+    Camera.prototype.update = update;
+}
 
 /**
  * keep the frustrum in scale relative to the viewport

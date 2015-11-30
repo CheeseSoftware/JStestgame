@@ -15,6 +15,7 @@ updateGame = function() {
 		stream.write("/***************************************************************\n");
 		stream.write(" * Copyrighted (c) 2015 Virtual Spade UF. All rights reserved. * \n");
 		stream.write(" ***************************************************************/\n\n");
+		//stream.write("var _s_ = function() {");
 
 		console.log("Source files:")
 		for (var i = 0; i < srcFiles.length; ++i) {
@@ -26,7 +27,7 @@ updateGame = function() {
 			stream.write("\n");
 
 		}
-		stream.end(" ");
+		stream.end("var game = new Game();");
 		process.stdout.write("\n");
 	}
 
@@ -154,14 +155,275 @@ updateGame = function() {
 				if (error !== null) {
 				  console.log('exec error: ' + error);
 			}
+			var UglifyJS = require("uglify-js");
 			
-			var content = fs.readFileSync("../temp/DigMinerMinified.js");
+			var content = fs.readFileSync("../temp/DigMinerMinified.js") + ";";
+			content2 = "var f = 3;"
+				+ "k = 3;"
+				+ "var i = function() { this.k = 8; var i = 4; i = 5; f = 4; return this;};"
+				+ "k += 3;"
+				+ "k.apa = '3';"
+				+ "k['t'] = f;"
+				+ "k.moo = k.apa;"
+				+ "for (var i = 0; i < 8; ++i) console.log(i);"
+				+ "var e = {a: new i(), b: 4, c: 5}";
+
+
+			var options =  undefined;
+			{
+				beautify: true
+			};
+
+			//var result = UglifyJS.minify(content + ";", {fromString: true, mangle: true});
+			var toplevel = UglifyJS.parse(content, options);
+			toplevel.figure_out_scope();
+
+			var names = [];
+			var nameTable = {};
+			var newNameTable = {};
+			var nameIndex = 0;
+
+			var excludedNames = {
+				"isServer": true,
+				"keyboard": true,
+				"t": true,
+				"send": true,
+				"on": true,
+				"Hud": true,
+				"e": true,
+				"this": true,
+				"Object": true,
+				"PIXI": true,
+				"Date": true,
+				"Keyboard": true,
+				"keyboard": true,
+				"keyboard": true,
+				"keyboard": true,
+				"keyboard": true,
+			};
+
+			var confuseNameList = [
+				"class",
+				"function",
+				"prototype",
+				"header",
+				"source",
+				"lambda",
+				"observer",
+				"dig",
+				"var",
+				"char",
+				"string",
+				"float",
+				"number",
+				"__int__",
+				"__uint__",
+				"list",
+				"array",
+				"world",
+				"table",
+				"module",
+				"abstract",
+				"case",
+				"continue",
+				"double",
+				"extends",
+				"for",
+				"import",
+				"let",
+				"package",
+				"short",
+				"this",
+				"this",
+				"this",
+				"this",
+				"that",
+				"with",
+				"try",
+				"while",
+				"arguments",
+				"catch",
+				"debugger",
+				"else",
+				"false",
+				"function",
+				"in",
+				"long",
+				"private",
+				"static",
+				"throw",
+				"typeof",
+				"with",
+				"boolean",
+				"break",
+				"byte",
+				"char",
+				"class",
+				"const",
+				"default",
+				"delete",
+				"do",
+				"enum",
+				"eval",
+				"export",
+				"final",
+				"finally",
+				"goto",
+				"if",
+				"implements",
+				"char",
+				"instanceof",
+				"int",
+				"interface",
+				"native",
+				"new",
+				"null",
+				"char",
+				"ChunkManager",
+				"KDTree",
+				"Quadtree",
+				"Iphone",
+				"Illuminati",
+				"HALF_LIFE_3",
+				"Copyrighted",
+				"manager",
+				"FAN_VAD_TREVLIGT",
+				"ABC",
+				"POD",
+				"OOP",
+				"DATA",
+				"NULL",
+				"NAN"
+			]
+
+			var genName = function() {
+				var name = "";
+				var random = Math.floor(Math.random()*10);
+				name = "q_" + nameIndex.toString();
+				nameIndex++;
+
+				
+				if (random > 2) {
+					name = confuseNameList[Math.floor(Math.random()*confuseNameList.length)];
+		    		if (!newNameTable.hasOwnProperty("_"+name+"_"))
+		    			name = "_" + name;
+		    		while(newNameTable.hasOwnProperty(name)) {
+		    			name = name + "_" + confuseNameList[Math.floor(Math.random()*confuseNameList.length)];
+		    		}
+		    	}
+		    	if (random == 3) {
+					name = name + nameIndex.toString();
+				}
+
+		    	return name;
+			}
+
+			//Obfuscate names
+			var transformer = new UglifyJS.TreeTransformer(function(node, descend){
+			    if (node instanceof UglifyJS.AST_SymbolDeclaration) {
+			    	if (!excludedNames.hasOwnProperty(node.name) && node.name.length > 1) {
+				    	if (!nameTable.hasOwnProperty(node.name)) {
+				    		var confusingName = node.name + "___";//genName();
+				    		newNameTable[confusingName] = node.name;
+				    		nameTable[node.name] = confusingName;
+				    		names.push(node.name);
+
+				    		if (node.Name == "keyboard___")
+				    			console.log(node);
+						}
+					}
+			    }
+				var deep_clone = 
+			    	node = node.clone();
+			    descend(node, this);
+			    return node;
+			});
+			var ast2 = toplevel.transform(transformer);
+
+			function findPositions(str, text) {
+				var regex = new RegExp(text, "gi"); //"/" + text + "/gi";
+				var result;
+				var indices = [];
+				while ( (result = regex.exec(str)) ) {
+				    indices.push(result.index);
+				}
+				return indices;
+			}
+
+			//Compressor
+			var compressor = UglifyJS.Compressor(options);
+			var compressed_ast = toplevel.transform(compressor);
+
+			//Mangle
+			compressed_ast.figure_out_scope();
+			compressed_ast.compute_char_frequency();
+			compressed_ast.mangle_names();
+
+			//Code:
+			var stream2 = UglifyJS.OutputStream(options);
+			compressed_ast.print(stream2);
+			var code = stream2.toString(); // this is your minified code
+			//var code = fs.readFileSync("../temp/DigMiner.js");
+
+			var tempTable = {};
+
+			var isCharOrNumber = function(index) {
+				if (index < 0 || index >= code.length)
+					return false;
+
+				var c = code[index] + "";
+				var has = tempTable.hasOwnProperty(c);
+				if (!has)
+					console.log("?: " + c);
+				tempTable[c] = true;
+				
+				if (c == "_" || c == "/")
+					return true;
+				if (c.toLowerCase() != c.toUpperCase())
+					return true;
+				var c2 = c.charCodeAt(0);
+				if (c2 >= 48 && c2 <= 57)
+					return true;
+
+				if (!has)
+					console.log("false");
+				return false;
+			}
+
+			var code2 = "";
+
+
+			// Obfuscate names:
+			for (var i = 0; i < names.length; ++i) {
+				var name = names[i];
+				console.log(name + ": " + name.length + " i:" + i);
+				var positions = findPositions(code, name);
+				var move = 0;
+				for (var j = 0; j < positions.length; ++j) {
+					var pos = positions[j];
+					var index = pos + move;
+
+					if (isCharOrNumber(index-1))
+						continue;
+					if (isCharOrNumber(index+name.length))
+						continue;
+
+					var newStr = code.substr(0, index) + nameTable[name] + code.substr(index+name.length);
+					move += newStr.length - code.length;
+					code = newStr;
+				}
+				if (i > 2000)
+					break;
+			}
+			//code.replace("  ", "\n");
 			
 			var stream = fs.createWriteStream("www/temp/DigMiner.js");
 			stream.write("/***************************************************************\n");
 			stream.write(" * Copyrighted (c) 2015 Virtual Spade UF. All rights reserved. * \n");
 			stream.write(" ***************************************************************/\n\n");
-			stream.end(content)
+			stream.end(code)
+
+			console.log("Obfuscation done!");
 		});
 	}
 
