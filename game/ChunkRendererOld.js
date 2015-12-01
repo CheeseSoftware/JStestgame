@@ -1,4 +1,4 @@
-ChunkRenderer = function(gl, chunkManager, chunkSizeX, chunkSizeY, tileSizeX, tileSizeY) {
+ChunkRendererOld = function(gl, chunkManager, chunkSizeX, chunkSizeY, tileSizeX, tileSizeY) {
 
 	chunkManager.subscribe(this);
 
@@ -34,7 +34,7 @@ ChunkRenderer = function(gl, chunkManager, chunkSizeX, chunkSizeY, tileSizeX, ti
 	this.loadTexture(gl);
 }
 
-ChunkRenderer.prototype.lazyInit = function(gl) {
+ChunkRendererOld.prototype.lazyInit = function(gl) {
 	if (!this._shaderProgram.isReady())
 		this._shaderProgram.tryLink(gl);
 		
@@ -86,7 +86,7 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 	}
 }
 
-ChunkRenderer.prototype.render = function(gl, chunkManager, vpMatrix, camera) {
+ChunkRendererOld.prototype.render = function(gl, chunkManager, vpMatrix, camera) {
 	var chunksToRender = [];
 
 	var x1 = Math.floor(camera.pos.x/32.0/30.0);
@@ -113,7 +113,7 @@ ChunkRenderer.prototype.render = function(gl, chunkManager, vpMatrix, camera) {
  * chunks: array of chunks to render.
  * texture: texture of terrain.
  */
-ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
+ChunkRendererOld.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 	// Lazy init
 	if (!this._isReady)
 		this.lazyInit(gl);
@@ -206,7 +206,7 @@ ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 	this._shaderProgram.unbind(gl);
 }
 
-ChunkRenderer.prototype.loadChunkTextures = function(gl, chunk) {
+ChunkRendererOld.prototype.loadChunkTextures = function(gl, chunk) {
 	chunk.texture = gl.createTexture();
 	chunk.tileTexture = gl.createTexture();
 	
@@ -233,12 +233,12 @@ ChunkRenderer.prototype.loadChunkTextures = function(gl, chunk) {
 	chunk.isChanged = false;
 }
 
-ChunkRenderer.prototype.onChunkChange2 = function(gl, x1, y1, x2, y2, chunk1, chunk2) {
+ChunkRendererOld.prototype.onChunkChange2 = function(gl, x1, y1, x2, y2, chunk1, chunk2) {
 	if (!chunk1 || !chunk2)
 		return;
 
 	//console.log("onChunkCreate event! x:" + x1 + " x2:" + x2 + " y:" + y1 + " y2:" + y2);
-	// TODO: ChunkRenderer.prototype.onChunkCreate
+	// TODO: ChunkRendererOld.prototype.onChunkCreate
 	
 	// Calculate intersecting rectangle.
 	var rx1 = Math.max(x1*30-1, x2*30);
@@ -290,7 +290,7 @@ ChunkRenderer.prototype.onChunkChange2 = function(gl, x1, y1, x2, y2, chunk1, ch
 	//chunk1.isChanged = false; 
 }
 
-ChunkRenderer.prototype.loadTexture = function(gl) {
+ChunkRendererOld.prototype.loadTexture = function(gl) {
 	/***********************************************************
 	 * Load texture : 
 	 ***********************************************************/
@@ -323,7 +323,7 @@ ChunkRenderer.prototype.loadTexture = function(gl) {
 /* Is called whenever a chunk is changed or created.
  *
  */
-ChunkRenderer.prototype.onChunkChange = function(x, y, chunk) {
+ChunkRendererOld.prototype.onChunkChange = function(x, y, chunk) {
 	//console.log("onChunkChange event! x:" + x + " y:" + y);
 	var gl = this._gl;
 	

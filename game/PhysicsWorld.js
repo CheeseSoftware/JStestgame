@@ -18,7 +18,7 @@ PhysicsWorld.prototype.removeBody = function(body) {
 PhysicsWorld.prototype.update = function(dt) {
 	for(var i = 0; i < this.bodies.length; ++i) {
 		var body = this.bodies[i];
-		this.updategrid(body);
+		//this.updategrid(body);
 	}
 
 	for(var i = 0; i < this.bodies.length; ++i) {
@@ -68,7 +68,7 @@ PhysicsWorld.prototype.simulateData = function(data, body, dt) {
 	gridNodes.push((gridX+1).toString() + ":" + (gridY+1).toString());
 	
 	// Collision
-	for (var index = 0; index < gridNodes.length; ++index) {
+	for (var index = 0; index < gridNodes.length && false; ++index) {
 		var gridNode = this.grid[gridNodes[index]];
 		if (gridNode == undefined)
 			continue;

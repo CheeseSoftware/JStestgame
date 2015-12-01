@@ -21,6 +21,7 @@ RegeneratorServer = function(chunkManager, io) {
 }
 
 RegeneratorServer.prototype.update = function(deltaTime) {
+	return;
 
 	keys = Object.keys(this._collapsingTiles);
 

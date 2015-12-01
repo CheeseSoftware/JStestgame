@@ -6,9 +6,9 @@ attribute vec2 aPosition;
 uniform mat3 vpMatrix;
 uniform mat3 modelMatrix;
 
-//varying highp vec2 fragUV;
+varying highp vec2 fragUV;
 
 void main() {
 	gl_Position = vec4(vec3(aPosition, 1.0)*modelMatrix*vpMatrix, 1.0);
-	//fragUV = aUV;
+	fragUV = aPosition/30.0/32.0;
 }
