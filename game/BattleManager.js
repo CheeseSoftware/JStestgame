@@ -15,6 +15,7 @@ BattleManager.prototype.constructor = BattleManager;
  * onHitCallback - function(attacker, victim)
  */
 BattleManager.prototype.hit = function(attacker, distance, radius, damage, onHitCallback) {
+	return;
 	var entities = this._entityWorld.getEntities("physics");
 
 	var attackerPhysics = attacker.getComponent("physics");
@@ -55,6 +56,7 @@ BattleManager.prototype.hit = function(attacker, distance, radius, damage, onHit
 }
 
 BattleManager.prototype.hitEntity = function(attacker, victim, damage) {
+	return;
 	if(!victim || !attacker)
 		return;
 

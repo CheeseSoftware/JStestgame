@@ -232,7 +232,7 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 			var c = [x2, y2];
 			var d = [x1, y2];
 			// Middle vector
-			var m = [(x+0.5)*this._tileSize, (x+0.5)*this._tileSize];
+			var m = [0.5*x1+0.5*x2, 0.5*y1+0.5*y2];
 
 			// TileID's of borders
 			var abTile = getTileID(x+1, y);
@@ -247,8 +247,8 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 			var daFactor = (daTile == tileID)? 0 : 1;
 
 			// We need 4 triangles per tile if both sides at any direction are different.
-			if (false) {//((abTile != tileID && cdTile != tileID) ||
-			   // (bcTile != tileID && daTile != tileID)) {
+			if ((abTile != tileID && cdTile != tileID) ||
+			    (bcTile != tileID && daTile != tileID)) {
 				
 				// Create 4 triangles: 
 				baseTriangles.push(new Triangle(a, b, m, abFactor));
@@ -291,15 +291,15 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 	}
 
 	// Move vertices
-	/*for (var i = 0; i < vertices.length/2; ++i) {
-		var x = vertices[i*2];
-		var y = vertices[i*2+1];
+	for (var i = 0; i < vertices.length/2; ++i) {
+		var x = vertices[i*2]/32.0;
+		var y = vertices[i*2+1]/32.0;
 
 		var normal = this._chunkManager.calcNormal(x-0.5, y-0.5);
 		var dir = v2.clone(normal);
 		v2.multiply(-1.0, dir, dir);
 
-		var density = this._chunkManager.calcDensity(x-0.5, y-0.5);
+		var density = 0.5 - this._chunkManager.calcDensity(x-0.5, y-0.5)/255.0;
 
 		var pos = [x, y];
 
@@ -308,10 +308,13 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 		//v2.multiply(8.0/this._chunkSize, delta, delta);
 		v2.add(delta, pos, pos);
 
-		vertices[i*2] = pos[0];
-		vertices[i*2+1] = pos[1];
+	
 
-	}*/
+
+		vertices[i*2] = pos[0]*32.0;
+		vertices[i*2+1] = pos[1]*32.0;
+
+	}
 
 	// Generate Index buffer:
 	//if (!chunk.indexBuffer)
@@ -333,8 +336,8 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 
 	chunk.bufferSize = indices.length/3;
 	chunk.isRenderChanged = false;
-	console.log("Num triangles: " + chunk.bufferSize);
-	console.log("Num vertices: " + numVertices);
+	//console.log("Num triangles: " + chunk.bufferSize);
+	//console.log("Num vertices: " + numVertices);
 
 }
 
@@ -349,7 +352,7 @@ ChunkRenderer.prototype.onChunkChange = function(x, y, chunk) {
 			chunk.isRenderChanged = true;
 	}
 
-	// Regerate meshes:
+	// Rebuild meshes:
 	l(x, y);	
 	l(x+1, y);
 	l(x-1, y);
