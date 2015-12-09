@@ -295,11 +295,12 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 		var x = vertices[i*2]/32.0;
 		var y = vertices[i*2+1]/32.0;
 
+		var density = 0.5 - this._chunkManager.calcDensity(x-0.5, y-0.5)/255.0;
+		if (density == -0.5)
+			continue;
 		var normal = this._chunkManager.calcNormal(x-0.5, y-0.5);
 		var dir = v2.clone(normal);
 		v2.multiply(-1.0, dir, dir);
-
-		var density = 0.5 - this._chunkManager.calcDensity(x-0.5, y-0.5)/255.0;
 
 		var pos = [x, y];
 
