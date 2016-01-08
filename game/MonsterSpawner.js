@@ -17,6 +17,8 @@ MonsterSpawner.prototype.onChunkCreate = function(chunkX, chunkY, chunk) {
 	if (!this._socket)
 		return;
 
+	return; //DEBUGCODE
+
 
 	// Reduce probability...
 	if (Math.random() > 0.1)
