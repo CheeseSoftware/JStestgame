@@ -75,8 +75,8 @@ Tile calcTile(highp vec2 tilePos, highp vec2 delta) {
 
 void main() {
 	
-	highp vec4 tilePos = vec4(floor(fragUv*30.0+vec2(0.5)), vec2(0.0));
-	tilePos = vec4(tilePos.xy+0.5, tilePos.xy+0.5);
+	highp vec4 tilePos = vec4(floor(fragUv*30.0+vec2(0.0)), vec2(0.0));
+	tilePos = vec4(tilePos.xy+1.0, tilePos.xy+1.0);
 	
 	highp vec4 delta = abs(vec4(tilePos.xy - (fragUv*30.0+0.5), tilePos.zw - (fragUv*30.0+0.5)));
 	

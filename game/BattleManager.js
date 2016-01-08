@@ -63,7 +63,7 @@ BattleManager.prototype.hitEntity = function(attacker, victim, damage) {
 	var health = victim.getComponent("health");
 
 
-	if (isServer) {
+	if (isServer && !victim.hasComponent("player")) {
 		// Push the victim ghost
 		var dir = [attackerPhysics.x - physics.x, attackerPhysics.y - physics.y];
 		if (v2.lengthSquared(dir) > 0.0) {
