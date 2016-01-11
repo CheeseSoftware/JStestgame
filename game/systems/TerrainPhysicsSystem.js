@@ -24,6 +24,7 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 
 
 ECS.Systems.TerrainPhysicsSystem.prototype.simulate = function(dt, values) {
+	return;
 	var pos = v2.create(values.x, values.y);
 	var normal = v2.create(0.0, 0.0);
 	var distance = 4.0;
@@ -32,7 +33,7 @@ ECS.Systems.TerrainPhysicsSystem.prototype.simulate = function(dt, values) {
 
 	for (angle = 0; angle < 360; angle+=18) {
 		var dir = v2.create(Math.cos(angle*3.14/180), Math.sin(angle*3.14/180));
-		var rayDis = Math.max(this.raymarch(pos, dir, 32)/32.0, -2.0);
+		var rayDis = Math.max(this.raymarch(pos, dir, 2)/32.0, -2.0);
 		
 		if (rayDis >= distance)
 			continue;
@@ -82,6 +83,7 @@ ECS.Systems.TerrainPhysicsSystem.prototype.simulate = function(dt, values) {
 }
 
 ECS.Systems.TerrainPhysicsSystem.prototype.simulateAntiTunneling = function(dt, body, entity) {
+	return;
 	var pos = [body.data.oldX, body.data.oldY];
 	var newPos = [body.data.x, body.data.y];
 
@@ -92,7 +94,7 @@ ECS.Systems.TerrainPhysicsSystem.prototype.simulateAntiTunneling = function(dt, 
 	var deltaDis = v2.length(delta);
 
 	var pos2 = [pos[0]/32.0, pos[1]/32.0];
-	var dis = this.raymarch(pos, dir, 8);
+	var dis = this.raymarch(pos, dir, 1);
 	
 	dis -= body.radius;
 	dis += 32.0;

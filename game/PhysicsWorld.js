@@ -69,7 +69,7 @@ PhysicsWorld.prototype.simulateData = function(data, body, dt) {
 	
 	// Collision
 	for (var index = 0; index < gridNodes.length; ++index) {
-		break; // DEBUGCODE
+		break;
 		var gridNode = this.grid[gridNodes[index]];
 		if (gridNode == undefined)
 			continue;
@@ -81,6 +81,9 @@ PhysicsWorld.prototype.simulateData = function(data, body, dt) {
 			if (body2 == undefined)
 				continue;
 
+			if (body2.id == body.id)
+				continue;
+
 			//console.log("Body found!" + body2);
 			
 			var data2 = (data.type == "normal" ? body2.data : body2.idata);
@@ -90,10 +93,7 @@ PhysicsWorld.prototype.simulateData = function(data, body, dt) {
 			v2.subtract(bodypos, body2pos, delta);
 			var distanceSquared = v2.lengthSquared(delta);
 
-			console.log(distanceSquared);
-
 			if (distanceSquared > 0.0 && distanceSquared <= (body.radius+body2.radius)*(body.radius+body2.radius)) {
-				console.log("COLLISION!!!");
 
 				var distance = Math.sqrt(distanceSquared);
 				var wantedDistance = body.radius+body2.radius;
