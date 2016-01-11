@@ -69,7 +69,6 @@ PhysicsWorld.prototype.simulateData = function(data, body, dt) {
 	
 	// Collision
 	for (var index = 0; index < gridNodes.length; ++index) {
-		break;
 		var gridNode = this.grid[gridNodes[index]];
 		if (gridNode == undefined)
 			continue;
