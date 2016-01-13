@@ -32,7 +32,7 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 	if (this._shaderProgram.isReady()) {
 
 		this._positionAttribute = this._shaderProgram.getAttributeLocation(gl, "aPosition");
-		//this._uvAttribute = this._shaderProgram.getAttributeLocation(gl, "aUV");
+		this._uvAttribute = this._shaderProgram.getAttributeLocation(gl, "aUV");
 		
 		// Get uniform locations
 		//this._densityTextureUniform = this._shaderProgram.getUniformLocation(gl, "densityTexture");
@@ -118,8 +118,8 @@ ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 		gl.bindBuffer(gl.ARRAY_BUFFER, chunk.indexBuffer);
 
 		// Attributes
-		gl.vertexAttribPointer(this._positionAttribute, 2, gl.FLOAT, false,4*2,0);
-		//gl.vertexAttribPointer(this._uvAttribute, 2, gl.FLOAT, false,4*4,8);
+		gl.vertexAttribPointer(this._positionAttribute, 2, gl.FLOAT, false,4*4,0);
+		gl.vertexAttribPointer(this._uvAttribute, 2, gl.FLOAT, false,4*4,8);
 
 		// Render chunk
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, chunk.vertexBuffer);
@@ -191,9 +191,9 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 	var vertexTable = {};
 	var indices = [];
 
-	var Triangle = function(a, b, c, /*aUV, bUV, cUV,*/ borderSide) {
+	var Triangle = function(a, b, c, aUV, bUV, cUV, borderSide) {
 		this.vertices = [a, b, c];
-		//this.uv = [aUV, bUV, cUV];
+		this.uv = [aUV, bUV, cUV];
 		this.borderSide = borderSide;
 		return this;
 	};
@@ -226,11 +226,20 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 			var y1 = (y)*this._tileSize;
 			var y2 = (y+1.0)*this._tileSize;
 
+			var uv = [0, 0];
+
 			// Corner vectors
 			var a = [x1, y1];
 			var b = [x2, y1];
 			var c = [x2, y2];
 			var d = [x1, y2];
+			var uvA = [0/4.0, 0/4.0]; v2.add(uvA, uv, uvA);
+			var uvB = [0/4.0, 0/4.0]; v2.add(uvB, uv, uvB);
+			var uvC = [1/4.0, 1/4.0]; v2.add(uvC, uv, uvC);
+			var uvD = [0/4.0, 1/4.0]; v2.add(uvD, uv, uvD);
+			var uvM = [0.5/4.0, 0.5/4.0]; v2.add(uvM, uv, uvM);
+
+
 			// Middle vector
 			var m = [0.5*x1+0.5*x2, 0.5*y1+0.5*y2];
 
@@ -251,15 +260,15 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 			    (bcTile != tileID && daTile != tileID)) {
 				
 				// Create 4 triangles: 
-				baseTriangles.push(new Triangle(a, b, m, abFactor));
-				baseTriangles.push(new Triangle(b, c, m, bcFactor));
-				baseTriangles.push(new Triangle(c, d, m, cdFactor));
-				baseTriangles.push(new Triangle(d, a, m, daFactor));
+				baseTriangles.push(new Triangle(a, b, m, uvA, uvB, uvM, abFactor));
+				baseTriangles.push(new Triangle(b, c, m, uvB, uvC, uvM, bcFactor));
+				baseTriangles.push(new Triangle(c, d, m, uvC, uvD, uvM, cdFactor));
+				baseTriangles.push(new Triangle(d, a, m, uvD, uvA, uvM, daFactor));
 			}
 			else {
 				// Create 2 triangles: 
-				baseTriangles.push(new Triangle(a, b, c, abFactor+2.0*bcFactor));
-				baseTriangles.push(new Triangle(c, d, a, cdFactor+2.0*daFactor));
+				baseTriangles.push(new Triangle(a, b, c, uvA, uvB, uvC, abFactor+2.0*bcFactor));
+				baseTriangles.push(new Triangle(c, d, a, uvC, uvD, uvA, cdFactor+2.0*daFactor));
 			}
 		}
 	}
@@ -270,6 +279,7 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 
 		for (var j = 0; j < 3; ++j) {
 			var vertex = triangle.vertices[j];
+			var uv = triangle.uv[j];
 			var vertexKey = vertex[0].toString() + ":" + vertex[1].toString();
 			var index;
 
@@ -284,6 +294,8 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 				// Add vertex to vertices
 				vertices.push(vertex[0]);
 				vertices.push(vertex[1]);
+				vertices.push(uv[0]);
+				vertices.push(uv[1]);
 			}
 
 			indices.push(index);
@@ -291,7 +303,7 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 	}
 
 	// Move vertices
-	for (var i = 0; i < vertices.length/2; ++i) {
+	/*for (var i = 0; i < vertices.length/2; ++i) {
 		var x = vertices[i*2]/32.0;
 		var y = vertices[i*2+1]/32.0;
 
@@ -315,7 +327,7 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 		vertices[i*2] = pos[0]*32.0;
 		vertices[i*2+1] = pos[1]*32.0;
 
-	}
+	}*/
 
 	// Generate Index buffer:
 	//if (!chunk.indexBuffer)
