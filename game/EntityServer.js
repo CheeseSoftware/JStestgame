@@ -32,6 +32,8 @@ EntityServer = function(entityWorld, playerServer, io) {
 					dy: data.dy,
 					rotation: data.rotation
 				});
+				
+				console.log("update  x:" + physics.x + "  y:" + physics.y);
 			}
 			else
 				console.log("on 'update': entity undefined");
