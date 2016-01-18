@@ -226,18 +226,26 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 			var y1 = (y)*this._tileSize;
 			var y2 = (y+1.0)*this._tileSize;
 
-			var uv = [0, 0];
+			var uv = [x, y];
+			var textureBlockSize = 32.0;
+			v2.divide(uv, textureBlockSize, uv);
+			v2.divide(uv, 4.0, uv);
+			v2.mod(uv, 1.0/4.0, uv);
+			uv[0] += (tileID % 4)/4.0;
+			uv[1] += Math.floor(tileID / 4.0)/4.0;
+
+			
 
 			// Corner vectors
 			var a = [x1, y1];
 			var b = [x2, y1];
 			var c = [x2, y2];
 			var d = [x1, y2];
-			var uvA = [0/4.0, 0/4.0]; v2.add(uvA, uv, uvA);
-			var uvB = [0/4.0, 0/4.0]; v2.add(uvB, uv, uvB);
-			var uvC = [1/4.0, 1/4.0]; v2.add(uvC, uv, uvC);
-			var uvD = [0/4.0, 1/4.0]; v2.add(uvD, uv, uvD);
-			var uvM = [0.5/4.0, 0.5/4.0]; v2.add(uvM, uv, uvM);
+			var uvA = [0/4.0/textureBlockSize, 0/4.0/textureBlockSize];     v2.add(uvA, uv, uvA);// v2.mod(uvA, 1.0/4.0, uvA);
+			var uvB = [1/4.0/textureBlockSize, 0/4.0/textureBlockSize];     v2.add(uvB, uv, uvB);// v2.mod(uvB, 1.0/4.0, uvB);
+			var uvC = [1/4.0/textureBlockSize, 1/4.0/textureBlockSize];     v2.add(uvC, uv, uvC);// v2.mod(uvC, 1.0/4.0, uvC);
+			var uvD = [0/4.0/textureBlockSize, 1/4.0/textureBlockSize];     v2.add(uvD, uv, uvD);// v2.mod(uvD, 1.0/4.0, uvD);
+			var uvM = [0.5/4.0/textureBlockSize, 0.5/4.0/textureBlockSize]; v2.add(uvM, uv, uvM);// v2.mod(uvM, 1.0/4.0, uvM);
 
 
 			// Middle vector
@@ -273,6 +281,31 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 		}
 	}
 
+	/*var moveVertex = function(that, vertex) {
+		var x = vertex[0]/32.0;
+		var y = vertex[1]/32.0;
+
+		var density = 0.5;// - that._chunkManager.calcDensity(x-0.0, y-0.0)/255.0;
+		if (density == -0.5)
+			return;
+		var normal = that._chunkManager.calcNormal(x-0.5, y-0.5);
+		var dir = v2.clone(normal);
+		v2.multiply(-1.0, dir, dir);
+
+		var pos = [x, y];
+
+		var delta = v2.clone(dir);
+		v2.multiply(density, delta, delta);
+		//v2.multiply(8.0/that._chunkSize, delta, delta);
+		v2.add(delta, pos, pos);
+
+	
+
+
+		vertex[0] = pos[0]*32.0;
+		vertex[1] = pos[1]*32.0;
+	}*/
+
 	// Generate vertices and indices buffer
 	for (var i = 0; i < baseTriangles.length; ++i) {
 		var triangle = baseTriangles[i];
@@ -283,10 +316,14 @@ ChunkRenderer.prototype.genMesh = function(chunkX, chunkY) {
 			var vertexKey = vertex[0].toString() + ":" + vertex[1].toString();
 			var index;
 
-			if (vertexTable.hasOwnProperty(vertexKey)) {
+			/*{//if (triangle.borderSide != 0.0) {
+				moveVertex(this, vertex);
+			}*/
+
+			/*if (vertexTable.hasOwnProperty(vertexKey)) {
 				index = vertexTable[vertexKey];
 			}
-			else {
+			else*/ {
 				index = numVertices;
 				numVertices++;
 				vertexTable[vertexKey] = index;

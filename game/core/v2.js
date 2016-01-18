@@ -48,6 +48,15 @@ v2.divide = function(a, c, out) {
 	out[1] = a[1]/c;
 }
 
+/* c: constant - float
+ * a: v2     - float[2]
+ */
+v2.mod = function (a, c, out) {
+	out[0] = a[0]%c;
+	out[1] = a[1]%c;
+}
+
+
 v2.normalize = function(a, out) {
 	var length = v2.length(a);
 	out[0] = a[0]/length;
