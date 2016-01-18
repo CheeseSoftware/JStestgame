@@ -15,7 +15,6 @@ BattleManager.prototype.constructor = BattleManager;
  * onHitCallback - function(attacker, victim)
  */
 BattleManager.prototype.hit = function(attacker, distance, radius, damage, onHitCallback) {
-	return;
 	var entities = this._entityWorld.getEntities("physics");
 
 	var attackerPhysics = attacker.getComponent("physics");
@@ -56,7 +55,6 @@ BattleManager.prototype.hit = function(attacker, distance, radius, damage, onHit
 }
 
 BattleManager.prototype.hitEntity = function(attacker, victim, damage) {
-	return;
 	if(!victim || !attacker)
 		return;
 
@@ -65,7 +63,7 @@ BattleManager.prototype.hitEntity = function(attacker, victim, damage) {
 	var health = victim.getComponent("health");
 
 
-	if (isServer) {
+	if (isServer && !victim.hasComponent("player")) {
 		// Push the victim ghost
 		var dir = [attackerPhysics.x - physics.x, attackerPhysics.y - physics.y];
 		if (v2.lengthSquared(dir) > 0.0) {

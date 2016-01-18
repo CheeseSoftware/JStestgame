@@ -14,7 +14,6 @@ MonsterSpawner = function(chunkManager, entityServer, io) {
 };
 
 MonsterSpawner.prototype.onChunkCreate = function(chunkX, chunkY, chunk) {
-	return;
 	if (!this._socket)
 		return;
 
