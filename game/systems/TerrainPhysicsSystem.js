@@ -24,6 +24,7 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 
 
 ECS.Systems.TerrainPhysicsSystem.prototype.simulate = function(dt, values) {
+	return;
 	var pos = v2.create(values.x, values.y);
 	var normal = v2.create(0.0, 0.0);
 	var distance = 4.0;
@@ -82,6 +83,7 @@ ECS.Systems.TerrainPhysicsSystem.prototype.simulate = function(dt, values) {
 }
 
 ECS.Systems.TerrainPhysicsSystem.prototype.simulateAntiTunneling = function(dt, body, entity) {
+	return;
 	var pos = [body.data.oldX, body.data.oldY];
 	var newPos = [body.data.x, body.data.y];
 

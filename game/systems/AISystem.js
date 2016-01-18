@@ -4,6 +4,7 @@ ECS.Systems.AISystem = CES.System.extend({
 		this._entityServer = entityServer;
 	},
     update: function (dt) {
+    	return;
         var entities = this.world.getEntities('physics', 'AI', 'control');
  
         entities.forEach(function (entity) {

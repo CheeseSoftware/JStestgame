@@ -80,6 +80,9 @@ PhysicsWorld.prototype.simulateData = function(data, body, dt) {
 			if (body2 == undefined)
 				continue;
 
+			if (body2.id == body.id)
+				continue;
+
 			//console.log("Body found!" + body2);
 			
 			var data2 = (data.type == "normal" ? body2.data : body2.idata);
