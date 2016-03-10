@@ -38,8 +38,8 @@ PhysicsWorld.prototype.simulateBody = function(body, dt) {
 	}
 	else
 		this.simulateData(body.idata, body, dt);
-	console.log("simulateBody  x:" + body.data.x + "  y:" + body.data.y);
-	console.log("simulateBody ix:" + body.idata.x + " iy:" + body.idata.y);
+	//console.log("simulateBody  x:" + body.data.x + "  y:" + body.data.y);
+	//console.log("simulateBody ix:" + body.idata.x + " iy:" + body.idata.y);
 }
 
 PhysicsWorld.prototype.simulateData = function(data, body, dt) {
