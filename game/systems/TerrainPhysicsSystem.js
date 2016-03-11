@@ -3,13 +3,14 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 		ECS.Systems.TerrainPhysicsSystem.chunkManager = chunkManager;
 	},
     update: function (dt) {
+		return;
         var entities = this.world.getEntities('physics');
 
 		entities.forEach(function (entity) {
 			var physics = entity.getComponent('physics');
 			var isControlled = entity.getComponent('controlled');
 			
-			this.simulateAntiTunneling(dt, physics.body, entity);
+			//this.simulateAntiTunneling(dt, physics.body, entity);
 
 			this.simulate(dt, physics.body.data);
 			this.simulate(dt, physics.body.idata);
