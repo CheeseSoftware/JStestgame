@@ -153,16 +153,13 @@ ChunkRenderer.prototype.renderChunk = function(gl, viewMatrix, chunks, texture) 
 		
 		// M matrix
 		var modelMatrix = mat3.create();
+		mat3.identity(modelMatrix);
 		var translation = vec3.create();
 		vec3.set(translation, chunk.x * this._chunkSizeX * this._tileSizeX, chunk.y * this._chunkSizeY * this._tileSizeX, 1.0);
-		mat3.translate (modelMatrix, modelMatrix, translation);	
+		mat3.translate (modelMatrix, modelMatrix, translation);		
 		
-		var test = vec3.create();
-		vec3.set(test, 1.0, 1.0, 1.0);
-		mat3.multiply (modelMatrix, modelMatrix, test);	
-		
-		console.log("view matrix: " + mat3.str(viewMatrix));
-		console.log("model matrix: " + mat3.str(modelMatrix));
+		//console.log("view matrix: " + mat3.str(viewMatrix));
+		//console.log("model matrix: " + mat3.str(modelMatrix));
 			
 		// Bind matrix
 		gl.uniformMatrix3fv(this._viewMatrixUniform, false, viewMatrix);

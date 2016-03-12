@@ -39,7 +39,9 @@ Game.prototype.load = function() {
 	// Initialize window
 	this.canvas = document.getElementById("canvas");
 	try {
-		this.gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+		this.gl = canvas.getContext("experimental-webgl");
+		this.gl.viewportWidth = canvas.width;
+      	this.gl.viewportHeight = canvas.height;
 	}
 	catch(e) {}
 	
@@ -175,12 +177,16 @@ Game.prototype.run = function() {
 	this.gl.clearColor(0.0, 0.1, 0.1, 1.0);
 	
 	var viewMatrix = mat3.create();
-	//mat3.identity(viewMatrix);
-	//mat3.scale(vMatrix, vMatrix, 0.05);
+	mat3.identity(viewMatrix);
+	
+	var scaleasdf = 0.1;
+	var scale = vec2.create();
+	vec2.set(scale, scaleasdf, scaleasdf);
+	mat3.scale(viewMatrix, viewMatrix, scale);
 	
 	var translation = vec3.create();
 	vec3.set(translation, this.camera.pos.x, this.camera.pos.y, 1.0);
-	mat3.translate (viewMatrix, viewMatrix, translation);	
+	mat3.translate(viewMatrix, viewMatrix, translation);	
 
 	this.chunkRenderer.render(this.gl, this.chunkManager, viewMatrix, this.camera);
 };
