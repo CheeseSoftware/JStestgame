@@ -37,9 +37,23 @@ Game.prototype.load = function() {
 	window.addEventListener('resize', this.resize.bind(this), false);
 	
 	// Initialize window
-	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000}, true, false);
+	this.canvas = document.getElementById("canvas");
+	
+	try {
+		this.gl = canvas.getContext("experimental-webgl");
+		this.gl.viewportWidth = canvas.width;
+      	this.gl.viewportHeight = canvas.height;
+	}
+	catch(e) {}
+	
+	if (!this.gl) {
+		alert("Unable to initialize WebGL. Your browser may not support it.");
+		this.gl = null;
+	}
+	
+	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000, view: this.canvas}, true, false);
 	this.renderer.clearBeforeRender = false;
-	document.body.appendChild(this.renderer.view);
+	//document.body.appendChild(this.renderer.view);
 	
 	// Initialize stage, camera, entityWorld
 	this.stage = new PIXI.Container();
@@ -48,10 +62,9 @@ Game.prototype.load = function() {
 	this.camera.zoom = 1.0;
 	
 	// Initialize chunkManager and chunkRenderer
-	var gl = this.renderer.gl;
 	this.chunkManager = new ChunkManager();
-	this.chunkRenderer = new ChunkRenderer(gl, this.chunkManager, 32, 32, 32, 32);	
-	var floatTextures = gl.getExtension('OES_texture_float');
+	this.chunkRenderer = new ChunkRenderer(this.gl, this.chunkManager, 32, 32, 32, 32);	
+	var floatTextures = this.gl.getExtension('OES_texture_float');
 	if (!floatTextures) {
 		alert('no floating point texture support');
 	}
@@ -146,14 +159,16 @@ Game.prototype.run = function() {
 	if(this.chunkClient)
 		this.chunkClient.update(this.camera);
 	
-	var gl = this.renderer.gl;
 	this.renderer.setRenderTarget(this.renderer.renderTarget);
-	gl.clear(gl.COLOR_BUFFER_BIT);
-	gl.clearColor(0.0, 0.0, 0.0, 1.0);
-	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
+	this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+	this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+	//var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
 	var viewMatrix = new PIXI.Matrix();
+	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
+	console.log(projectionMatrix);
+	
 	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
-	this.chunkRenderer.render(gl, this.chunkManager, projectionMatrix.clone().append(viewMatrix), this.camera);
+	this.chunkRenderer.render(this.gl, this.chunkManager, projectionMatrix.clone().append(viewMatrix), this.camera);
 
 	
 	this.renderer.render(this.camera);

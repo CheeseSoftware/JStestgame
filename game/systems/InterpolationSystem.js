@@ -1,6 +1,7 @@
 
 ECS.Systems.InterpolationSystem = CES.System.extend({
     update: function (dt) {
+		
         var entities = this.world.getEntities('interpolation');
  
         entities.forEach(function (entity) {

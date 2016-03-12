@@ -89,7 +89,7 @@ PhysicsWorld.prototype.simulateData = function(data, body, dt) {
 			v2.subtract(bodypos, body2pos, delta);
 			var distanceSquared = v2.lengthSquared(delta);
 
-			console.log(distanceSquared);
+			//console.log(distanceSquared);
 
 			if (distanceSquared > 0.0 && distanceSquared <= (body.radius+body2.radius)*(body.radius+body2.radius)) {
 				console.log("COLLISION!!!");

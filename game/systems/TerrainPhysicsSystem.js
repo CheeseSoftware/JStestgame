@@ -3,6 +3,7 @@ ECS.Systems.TerrainPhysicsSystem = CES.System.extend({
 		ECS.Systems.TerrainPhysicsSystem.chunkManager = chunkManager;
 	},
     update: function (dt) {
+		return;
         var entities = this.world.getEntities('physics');
 
 		entities.forEach(function (entity) {

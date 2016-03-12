@@ -218,7 +218,7 @@ ServerInstance.prototype.load = function() {
 			this.playerServer.sendPlayerInitPacket(entity, socket.id, socket);
 			this.playerServer.sendPlayerJoinPacket(entity, socket.id);
 			
-			for(var i = 0; i < 1; ++i) {
+			/*for(var i = 0; i < 1; ++i) {
 				var monster = this.entityServer.spawnCreature("worker");
 				var x = Math.random() * 128;
 				var y = Math.random() * 128;
@@ -233,7 +233,7 @@ ServerInstance.prototype.load = function() {
 				AI.target = uuid;
 				
 				this.entityServer.sendEntitySpawnPacket(monster);
-			}
+			}*/
 			
 			console.log(username + " has connected.");
 		}.bind(this));
