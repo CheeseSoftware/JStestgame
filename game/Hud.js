@@ -33,7 +33,6 @@ Hud.prototype.create = function() {
 		this._content = client.responseText;
 
 		$("body").prepend(this._content);
-		console.log(this._content);
 
 		$("#hud").hide();
 

@@ -37,7 +37,6 @@
     <script src="lib/jquery-2.1.x.js"></script>
     <script src="lib/bootstrap.min.js"></script> <!-- For progressbar -->
     <!--<script src="lib/three.js"></script>-->
-    <script src="lib/gl-matrix.js"></script>
     <script src="lib/webgl-debug.js"></script>
     
     <?php 

@@ -147,9 +147,9 @@ void main() {
 	highp vec3 colorA = textureColor*clamp(0.125+density+0.5*(deltaStrength-1.0), 0.5, 1.0);
 	highp vec3 colorB = textureColor*clamp(0.5-0.25*density, 0.0, 1.0);
 	
-	gl_FragColor = vec4(mix(colorB, colorA, clamp(32.0*(density-0.5), 0.0, 1.0)), 1.0);
+	//gl_FragColor = vec4(mix(colorB, colorA, clamp(32.0*(density-0.5), 0.0, 1.0)), 1.0);
 	//gl_FragColor = vec4(vec3(a.strength), 1.0);
 	
 	//if (density == 0.0)
-		//gl_FragColor = vec4(vec3(1.0), 1.0);
+		gl_FragColor = vec4(vec3(1.0), 1.0);
 }

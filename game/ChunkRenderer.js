@@ -24,7 +24,7 @@ ChunkRenderer = function(gl, chunkManager, chunkSizeX, chunkSizeY, tileSizeX, ti
 	this._densityTextureUniform = 0;
 	this._tileTextureUniform = 0;
 	this._textureUniform = 0;
-	this._vpMatrixUniform = 0;
+	this._viewMatrixUniform = 0;
 	this._modelMatrixUniform = 0;
 	this._isReady = false;
 	
@@ -40,7 +40,7 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 		
 	if (this._shaderProgram.isReady()) {
 		if (this._buffer == null) {
-			/*========================= THE TRIANglE ========================= */
+			/*========================= THE 2 TRIANGLES ========================= */
 			//POINTS :
 			var sizeX = 30*this._tileSizeX;
 			var sizeY = 30*this._tileSizeY;
@@ -78,7 +78,7 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 			this._densityTextureUniform = this._shaderProgram.getUniformLocation(gl, "densityTexture");
 			this._tileTextureUniform = this._shaderProgram.getUniformLocation(gl, "tileTexture");
 			this._textureUniform = this._shaderProgram.getUniformLocation(gl, "texture");
-			this._vpMatrixUniform = this._shaderProgram.getUniformLocation(gl, "vpMatrix");
+			this._viewMatrixUniform = this._shaderProgram.getUniformLocation(gl, "viewMatrix");
 			this._modelMatrixUniform = this._shaderProgram.getUniformLocation(gl, "modelMatrix");
 			
 			 this._isReady = true;
@@ -86,7 +86,7 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 	}
 }
 
-ChunkRenderer.prototype.render = function(gl, chunkManager, vMatrix, camera) {
+ChunkRenderer.prototype.render = function(gl, chunkManager, viewMatrix, camera) {
 	var chunksToRender = [];
 
 	var x1 = Math.floor(camera.pos.x/32.0/30.0);
@@ -104,7 +104,7 @@ ChunkRenderer.prototype.render = function(gl, chunkManager, vMatrix, camera) {
 		}
 	}
 	
-	this.renderChunk(gl, vMatrix, chunksToRender, this._texture.webglTexture);
+	this.renderChunk(gl, viewMatrix, chunksToRender, this._texture.webglTexture);
 }
 
 /* Render terrain.
@@ -113,7 +113,7 @@ ChunkRenderer.prototype.render = function(gl, chunkManager, vMatrix, camera) {
  * chunks: array of chunks to render.
  * texture: texture of terrain.
  */
-ChunkRenderer.prototype.renderChunk = function(gl, vMatrix, chunks, texture) {
+ChunkRenderer.prototype.renderChunk = function(gl, viewMatrix, chunks, texture) {
 	// Lazy init
 	if (!this._isReady)
 		this.lazyInit(gl);
@@ -153,15 +153,19 @@ ChunkRenderer.prototype.renderChunk = function(gl, vMatrix, chunks, texture) {
 		
 		// M matrix
 		var modelMatrix = mat3.create();
-		mat3.identity(modelMatrix);
-		mat3.translate(modelMatrix, modelMatrix, [chunk.x * this._chunkSizeX * this._tileSizeX, chunk.y * this._chunkSizeY * this._tileSizeX]);
+		var translation = vec3.create();
+		vec3.set(translation, chunk.x * this._chunkSizeX * this._tileSizeX, chunk.y * this._chunkSizeY * this._tileSizeX, 1.0);
+		mat3.translate (modelMatrix, modelMatrix, translation);	
 		
-		// MV matrix
-		var mvMatrix = mat3.create();
-		mat3.multiply(mvMatrix, vMatrix, modelMatrix);
+		var test = vec3.create();
+		vec3.set(test, 1.0, 1.0, 1.0);
+		mat3.multiply (modelMatrix, modelMatrix, test);	
 		
+		console.log("view matrix: " + mat3.str(viewMatrix));
+		console.log("model matrix: " + mat3.str(modelMatrix));
+			
 		// Bind matrix
-		gl.uniformMatrix3fv(this._vpMatrixUniform, false, vMatrix);
+		gl.uniformMatrix3fv(this._viewMatrixUniform, false, viewMatrix);
 		gl.uniformMatrix3fv(this._modelMatrixUniform, false, modelMatrix);
 		
 		// Bind textures

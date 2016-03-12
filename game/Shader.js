@@ -40,6 +40,7 @@ Shader.prototype.tryCompile = function(gl) {
 		  return false;
 		}
 		this._glShader = shader;
+		console.log(gl.getShaderInfoLog(shader));
 		return true;
 	}
 	return false;
