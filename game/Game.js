@@ -37,18 +37,44 @@ Game.prototype.load = function() {
 	window.addEventListener('resize', this.resize.bind(this), false);
 	
 	// Initialize window
-	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000}, true, false);
-	this.renderer.clearBeforeRender = false;
-	document.body.appendChild(this.renderer.view);
+	this.canvas = document.getElementById("canvas");
+	try {
+		this.gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+	}
+	catch(e) {}
+	
+	if (!this.gl) {
+		alert("Unable to initialize WebGL. Your browser may not support it.");
+	this.gl = null;
+	}
+	
+	
+	function throwOnGLError(err, funcName, args) {
+	  throw WebGLDebugUtils.glEnumToString(err) + " was caused by call to: " + funcName;
+	};
+	
+	this.gl = WebGLDebugUtils.makeDebugContext(this.gl, throwOnGLError);
+	
+	/*function logGLCall(functionName, args) {   
+	   console.log("gl." + functionName + "(" + WebGLDebugUtils.glFunctionArgsToString(functionName, args) + ")");   
+	} 
+	
+	this.gl = WebGLDebugUtils.makeDebugContext(this.gl, undefined, logGLCall);*/
+	
+	var gl = this.gl;
+	
+	//this.new_camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+	//this.new_renderer = new THREE.WebGLRenderer( { canvas: this.canvas } );
+	//this.renderer.clearBeforeRender = false;
+	//document.body.appendChild(this.renderer.view);
 	
 	// Initialize stage, camera, entityWorld
 	this.stage = new PIXI.Container();
 	
-	this.camera = new Camera(this.stage);	
+	this.camera = new Camera();	
 	this.camera.zoom = 1.0;
 	
 	// Initialize chunkManager and chunkRenderer
-	var gl = this.renderer.gl;
 	this.chunkManager = new ChunkManager();
 	this.chunkRenderer = new ChunkRenderer(gl, this.chunkManager, 32, 32, 32, 32);	
 	var floatTextures = gl.getExtension('OES_texture_float');
@@ -104,7 +130,7 @@ Game.prototype.onMouseUpdate = function (e) {
 }
 
 Game.prototype.resize = function() {
-	this.renderer.resize(window.innerWidth, window.innerHeight);
+	//this.renderer.resize(window.innerWidth, window.innerHeight);
 	this.camera.width = window.innerWidth;
 	this.camera.height = window.innerHeight;
 
@@ -137,26 +163,28 @@ Game.prototype.run = function() {
     var dt = (now - this.lastUpdate);
 	this.lastUpdate = window.performance.now();
 	
-	this.physicsWorld.update(dt/1000.0);
+	//this.physicsWorld.update(dt/1000.0);
 	
-	this.entityWorld.update(dt);
+	//this.entityWorld.update(dt);
 	
 	this.camera.update(dt);
 	
 	if(this.chunkClient)
 		this.chunkClient.update(this.camera);
 	
-	var gl = this.renderer.gl;
-	this.renderer.setRenderTarget(this.renderer.renderTarget);
+	var gl = this.gl;
+	var canvas = this.canvas;
+	
+	//gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
-	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
-	var viewMatrix = new PIXI.Matrix();
-	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
-	this.chunkRenderer.render(gl, this.chunkManager, projectionMatrix.clone().append(viewMatrix), this.camera);
-
 	
-	this.renderer.render(this.camera);
+	var vMatrix = mat3.create();
+   	mat3.translate(vMatrix, vMatrix, [this.camera.pos.x, this.camera.pos.y]);
+	
+	//console.log("camera x " + this.camera.pos.x + " camera y " + this.camera.pos.y);
+	//viewMatrix = viewMatrix.translate((new Date()).getTime(), (new Date()).getTime());
+	this.chunkRenderer.render(gl, this.chunkManager, vMatrix, this.camera);
 };
 
 Game.prototype.sendUpdatePacket = function() {

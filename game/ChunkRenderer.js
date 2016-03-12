@@ -86,7 +86,7 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 	}
 }
 
-ChunkRenderer.prototype.render = function(gl, chunkManager, vpMatrix, camera) {
+ChunkRenderer.prototype.render = function(gl, chunkManager, vMatrix, camera) {
 	var chunksToRender = [];
 
 	var x1 = Math.floor(camera.pos.x/32.0/30.0);
@@ -104,7 +104,7 @@ ChunkRenderer.prototype.render = function(gl, chunkManager, vpMatrix, camera) {
 		}
 	}
 	
-	this.renderChunk(gl, vpMatrix, chunksToRender, this._texture.webglTexture);
+	this.renderChunk(gl, vMatrix, chunksToRender, this._texture.webglTexture);
 }
 
 /* Render terrain.
@@ -113,7 +113,7 @@ ChunkRenderer.prototype.render = function(gl, chunkManager, vpMatrix, camera) {
  * chunks: array of chunks to render.
  * texture: texture of terrain.
  */
-ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
+ChunkRenderer.prototype.renderChunk = function(gl, vMatrix, chunks, texture) {
 	// Lazy init
 	if (!this._isReady)
 		this.lazyInit(gl);
@@ -151,14 +151,18 @@ ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 		 * Render the chunk:
 		 ********************************************************/
 		
-		// MVP matrix
-		var modelMatrix = PIXI.Matrix.IDENTITY.clone().translate(chunk.x*this._chunkSizeX*this._tileSizeX,chunk.y*this._chunkSizeY*this._tileSizeX);
-		var mvpMatrix = vpMatrix.clone().append(modelMatrix);
+		// M matrix
+		var modelMatrix = mat3.create();
+		mat3.identity(modelMatrix);
+		mat3.translate(modelMatrix, modelMatrix, [chunk.x * this._chunkSizeX * this._tileSizeX, chunk.y * this._chunkSizeY * this._tileSizeX]);
+		
+		// MV matrix
+		var mvMatrix = mat3.create();
+		mat3.multiply(mvMatrix, vMatrix, modelMatrix);
+		
 		// Bind matrix
-		gl.uniformMatrix3fv(this._vpMatrixUniform, false, vpMatrix.toArray());
-		gl.uniformMatrix3fv(this._modelMatrixUniform, false, modelMatrix.toArray());
-		
-		
+		gl.uniformMatrix3fv(this._vpMatrixUniform, false, vMatrix);
+		gl.uniformMatrix3fv(this._modelMatrixUniform, false, modelMatrix);
 		
 		// Bind textures
 		gl.activeTexture(gl.TEXTURE0);
