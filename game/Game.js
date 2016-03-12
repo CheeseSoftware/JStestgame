@@ -179,16 +179,25 @@ Game.prototype.run = function() {
 	var viewMatrix = mat3.create();
 	mat3.identity(viewMatrix);
 	
-	var scaleasdf = 0.1;
+	var projection4 = mat4.create();
+	mat4.ortho(projection4, 0, this.gl.viewportWidth, this.gl.viewportHeight, 0);
+	var projection = mat3.create();
+	mat3.fromMat4(projection, projection4);
+	
+
+	/*var scaleasdf = 0.1;
 	var scale = vec2.create();
 	vec2.set(scale, scaleasdf, scaleasdf);
-	mat3.scale(viewMatrix, viewMatrix, scale);
+	mat3.scale(viewMatrix, viewMatrix, scale);*/
 	
 	var translation = vec3.create();
 	vec3.set(translation, this.camera.pos.x, this.camera.pos.y, 1.0);
 	mat3.translate(viewMatrix, viewMatrix, translation);	
+	
+		var viewProjectionMatrix = mat3.create();
+	mat3.multiply(viewProjectionMatrix, projection, viewMatrix);
 
-	this.chunkRenderer.render(this.gl, this.chunkManager, viewMatrix, this.camera);
+	this.chunkRenderer.render(this.gl, this.chunkManager, viewProjectionMatrix, this.camera);
 };
 
 Game.prototype.sendUpdatePacket = function() {
