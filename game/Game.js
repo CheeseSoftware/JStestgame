@@ -50,15 +50,22 @@ Game.prototype.load = function() {
 		alert("Unable to initialize WebGL. Your browser may not support it.");
 		this.gl = null;
 	}
+	var gl = this.gl;
 	
-	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000, view: this.canvas}, true, false);
-	this.renderer.clearBeforeRender = false;
+	/*BEGIN FRAMEBUFFER*/
+	
+
+	
+	/*END FRAMEBUFFER*/
+	
+	//this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000, view: this.canvas}, true, false);
+	//this.renderer.clearBeforeRender = false;
 	//document.body.appendChild(this.renderer.view);
 	
 	// Initialize stage, camera, entityWorld
 	this.stage = new PIXI.Container();
 	
-	this.camera = new Camera(this.stage);	
+	this.camera = new Camera();	
 	this.camera.zoom = 1.0;
 	
 	// Initialize chunkManager and chunkRenderer
@@ -159,19 +166,20 @@ Game.prototype.run = function() {
 	if(this.chunkClient)
 		this.chunkClient.update(this.camera);
 	
-	this.renderer.setRenderTarget(this.renderer.renderTarget);
-	this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+	//this.renderer.setRenderTarget(this.renderer.renderTarget);
+	this.gl.viewport(0, 0, window.innerWidth, window.innerHeight);
+	this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 	this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	//var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
 	var viewMatrix = new PIXI.Matrix();
-	var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
-	console.log(projectionMatrix);
+	//var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
+	//console.log(projectionMatrix);
 	
 	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
-	this.chunkRenderer.render(this.gl, this.chunkManager, projectionMatrix.clone().append(viewMatrix), this.camera);
+	this.chunkRenderer.render(this.gl, this.chunkManager, viewMatrix, this.camera);
 
 	
-	this.renderer.render(this.camera);
+	//this.renderer.render(this.stage);
 };
 
 Game.prototype.sendUpdatePacket = function() {
