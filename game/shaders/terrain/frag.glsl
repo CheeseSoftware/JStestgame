@@ -1,3 +1,5 @@
+#version 100
+
 void main() {
-  gl_FragColor = vec4(0, 1, 0, 1);  // green
+  gl_FragColor = vec4(gl_FragCoord.xyz, 1);  // green
 }

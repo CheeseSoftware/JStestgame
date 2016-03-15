@@ -1,3 +1,5 @@
+#version 100
+
 attribute vec2 a_position;
 
 uniform mat3 vpMatrix;
@@ -7,10 +9,12 @@ uniform vec2 u_resolution;
  
 void main() {
 
+    vec2 position = (vec3(a_position, 1) * modelMatrix * vpMatrix).xy;
+
     // convert from pixels to clipspace
-   vec2 zeroToOne = a_position / u_resolution;
+   vec2 zeroToOne = position / u_resolution;
    vec2 zeroToTwo = zeroToOne * 2.0;
    vec2 clipSpace = zeroToTwo - 1.0;
     
-    gl_Position = vec4(vec3(clipSpace * vec2(1, -1), 0) * modelMatrix * vpMatrix, 1);
+    gl_Position = vec4(vec3(clipSpace * vec2(1, -1), 0), 1);
 }

@@ -176,7 +176,8 @@ Game.prototype.run = function() {
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
     
 	var viewMatrix = new PIXI.Matrix();
-	viewMatrix = viewMatrix.translate(this.camera.pos.x, this.camera.pos.y);
+	viewMatrix = viewMatrix.translate(-this.camera.pos.x, -this.camera.pos.y);
+    console.log("X: " + this.camera.pos.x + " Y: " + this.camera.pos.y);
 	this.chunkRenderer.render(this.gl, this.chunkManager, viewMatrix, this.camera);
     
 

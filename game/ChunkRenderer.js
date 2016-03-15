@@ -42,8 +42,8 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 		if (this._vertexBuffer == null) {
 			/*========================= THE TRIANglE ========================= */
 			//VERTICES :
-			var sizeX = 30*this._tileSizeX;
-			var sizeY = 30*this._tileSizeY;
+			var sizeX = this._tileSizeX*this._chunkSizeX;
+			var sizeY = this._tileSizeY*this._chunkSizeY;
 			
 			/*var triangle_vertex=[
 				0, 0,
@@ -142,13 +142,13 @@ ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 	for (var i = 0; i < chunks.length; ++i) {
 		var chunk = chunks[i];
 		
-		/*if (!chunk)
+		if (!chunk)
 			continue;
 		
 		// Lazy init of chunk texture.
 		if (chunk.texture == undefined) {
 			this.loadChunkTextures(gl, chunk);
-		}*/
+		}
 	
 		// Update density texture
 		/*if (chunk.isChanged) {
@@ -161,7 +161,7 @@ ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 		 // Render the chunk
          
 		// MVP matrix
-		var modelMatrix = PIXI.Matrix.IDENTITY.clone().translate(chunk.x * this._chunkSizeX * this._tileSizeX, chunk.y * this._chunkSizeY * this._tileSizeX);
+		var modelMatrix = new PIXI.Matrix().translate(chunk.x * this._chunkSizeX * this._tileSizeX, chunk.y * this._chunkSizeY * this._tileSizeX);
 		var mvpMatrix = vpMatrix.clone().append(modelMatrix);
 		// Bind matrix
 		gl.uniformMatrix3fv(this._vpMatrixUniform, false, vpMatrix.toArray());
