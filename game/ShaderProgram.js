@@ -24,8 +24,12 @@ ShaderProgram.prototype.tryLink = function(gl) {
 			ready &= this._shaders[i].tryCompile(gl);
 		}
 	}
-	if (!ready)
+	if (!ready) {
+        console.log("[BAD] Could not compile shaders!");
 		return false;
+    }
+    else
+        console.log("Shaders compiled successfully!");
 	
 	var shaderProgram = gl.createProgram();
 	// Attach shaders:
@@ -46,6 +50,7 @@ ShaderProgram.prototype.getUniformLocation = function(gl, uniformName) {
 /* get attribute location. This is slow, so do it only once for every attribute.
  */
 ShaderProgram.prototype.getAttributeLocation = function(gl, attributeName) {
+    console.log("getting attribute " + attributeName);
 	return gl.getAttribLocation(this._glProgram, attributeName);
 }
 

@@ -58,7 +58,7 @@ Game.prototype.load = function() {
 	
 	/*END FRAMEBUFFER*/
 	
-	//this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000, view: this.canvas}, true, false);
+	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000, view: this.canvas}, true, false);
 	//this.renderer.clearBeforeRender = false;
 	//document.body.appendChild(this.renderer.view);
 	
@@ -167,16 +167,18 @@ Game.prototype.run = function() {
 		this.chunkClient.update(this.camera);
 	
 	//this.renderer.setRenderTarget(this.renderer.renderTarget);
-	this.gl.viewport(0, 0, window.innerWidth, window.innerHeight);
+	/*this.gl.viewport(0, 0, window.innerWidth, window.innerHeight);
 	this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-	this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+	this.gl.clearColor(0.0, 0.0, 0.0, 1.0);*/
 	//var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
+    //this.gl.viewport(0, 0, window.innerWidth, window.innerHeight);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    
 	var viewMatrix = new PIXI.Matrix();
-	//var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
-	//console.log(projectionMatrix);
-	
-	viewMatrix = viewMatrix.translate(-this.camera.frustrum.x, -this.camera.frustrum.y);
+	viewMatrix = viewMatrix.translate(this.camera.pos.x, this.camera.pos.y);
 	this.chunkRenderer.render(this.gl, this.chunkManager, viewMatrix, this.camera);
+    
 
 	
 	//this.renderer.render(this.stage);

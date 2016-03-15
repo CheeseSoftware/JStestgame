@@ -1,16 +1,16 @@
-#version 100
-
-attribute vec2 aPosition;
-attribute vec2 aUV;
+attribute vec2 a_position;
 
 uniform mat3 vpMatrix;
 uniform mat3 modelMatrix;
 
-varying highp vec2 fragUv;
-varying highp vec2 fragPos;
-
+uniform vec2 u_resolution;
+ 
 void main() {
-	gl_Position = vec4(vec3(aPosition, 1.0)*modelMatrix*vpMatrix, 1.0);
-	fragUv = aUV;
-	fragPos = (vec3(aPosition, 1.0)*modelMatrix).xy/32.0/30.0;
+
+    // convert from pixels to clipspace
+   vec2 zeroToOne = a_position / u_resolution;
+   vec2 zeroToTwo = zeroToOne * 2.0;
+   vec2 clipSpace = zeroToTwo - 1.0;
+    
+    gl_Position = vec4(vec3(clipSpace * vec2(1, -1), 0) * modelMatrix * vpMatrix, 1);
 }

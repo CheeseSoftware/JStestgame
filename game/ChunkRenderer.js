@@ -7,7 +7,7 @@ ChunkRenderer = function(gl, chunkManager, chunkSizeX, chunkSizeY, tileSizeX, ti
 	this._tileSizeX = tileSizeX;
 	this._tileSizeY = tileSizeY;
 	this._densityTexture = null;
-	this._buffer = null;
+	this._vertexBuffer = null;
 	this._indexBuffer = null;
 	this._gl = gl;
 	this._chunkManager = chunkManager;
@@ -39,54 +39,62 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 		this._shaderProgram.tryLink(gl);
 		
 	if (this._shaderProgram.isReady()) {
-		if (this._buffer == null) {
+		if (this._vertexBuffer == null) {
 			/*========================= THE TRIANglE ========================= */
-			//POINTS :
+			//VERTICES :
 			var sizeX = 30*this._tileSizeX;
 			var sizeY = 30*this._tileSizeY;
 			
-			var triangle_vertex=[
-				0,0,
-				0,0,
-				sizeX,0,
-				1,0,
-				0,sizeY,
-				0,1,
-				sizeX,sizeY,
-				1,1,
+			/*var triangle_vertex=[
+				0, 0,
+				0, 0,
+				sizeX, 0,
+				1, 0,
+				0, sizeY,
+				0, 1,
+				sizeX, sizeY,
+				1, 1,
+			];*/
+            
+            var vertices =[
+				0, 0,
+				sizeX, 0,
+				sizeX, sizeY,
+				0, sizeY,
 			];
-			
-			/*this.frameBuffer = gl.createFramebuffer();
-			gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
-			this.frameBuffer.width = 512;
-			this.frameBuffer.height = 512;*/
+            
+            /*var vertices =[
+				-1, -1,
+				1, -1,
+                -1, 1,
+				1, -1,
+				-1, 1,
+                1, 1,
+			];*/
 				
-			this._indexBuffer = gl.createBuffer ();
-			gl.bindBuffer(gl.ARRAY_BUFFER, this._indexBuffer);
-			gl.bufferData(gl.ARRAY_BUFFER,
-			new Float32Array(triangle_vertex),
-			gl.STATIC_DRAW);
+			this._vertexBuffer = gl.createBuffer();
+			gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer);
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 			
-			//FACES :
-			var triangle_faces = [0,1,3,0,3,2];
-			this._buffer = gl.createBuffer();
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffer);
-			gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
-				new Uint16Array(triangle_faces),
-			gl.STATIC_DRAW);
+			//INDICES :
+			var indices = [0,1,3,1,3,2];
+			this._indexBuffer = gl.createBuffer();
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
+			gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 			
 			// Get attribute locations
-			this._positionAttribute = this._shaderProgram.getAttributeLocation(gl, "aPosition");
-			this._uvAttribute = this._shaderProgram.getAttributeLocation(gl, "aUV");
+			this._positionAttribute = this._shaderProgram.getAttributeLocation(gl, "a_position");
+			//this._uvAttribute = this._shaderProgram.getAttributeLocation(gl, "aUV");
 			
 			// Get uniform locations
-			this._densityTextureUniform = this._shaderProgram.getUniformLocation(gl, "densityTexture");
+			/*this._densityTextureUniform = this._shaderProgram.getUniformLocation(gl, "densityTexture");
 			this._tileTextureUniform = this._shaderProgram.getUniformLocation(gl, "tileTexture");
-			this._textureUniform = this._shaderProgram.getUniformLocation(gl, "texture");
+			this._textureUniform = this._shaderProgram.getUniformLocation(gl, "texture");*/
 			this._vpMatrixUniform = this._shaderProgram.getUniformLocation(gl, "vpMatrix");
 			this._modelMatrixUniform = this._shaderProgram.getUniformLocation(gl, "modelMatrix");
+            this._resolutionUniform = this._shaderProgram.getUniformLocation(gl, "u_resolution");
 			
-			 this._isReady = true;
+			this._isReady = true;
 		}
 	}
 }
@@ -134,66 +142,68 @@ ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 	for (var i = 0; i < chunks.length; ++i) {
 		var chunk = chunks[i];
 		
-		if (!chunk)
+		/*if (!chunk)
 			continue;
 		
 		// Lazy init of chunk texture.
 		if (chunk.texture == undefined) {
 			this.loadChunkTextures(gl, chunk);
-		}
+		}*/
 	
 		// Update density texture
-		if (chunk.isChanged) {
+		/*if (chunk.isChanged) {
 			gl.bindTexture(gl.TEXTURE_2D, chunk.texture);
-			//gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, this._chunkSizeX, this.chunkSizeY, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.data);
 			gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, 30, 30, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.densityData);
-			gl.bindTexture(gl.TEXTURE_2D, null);
-			
+			gl.bindTexture(gl.TEXTURE_2D, null);		
 			chunk.isChanged = false; 
-		}
+		}*/
 		
-		/********************************************************
-		 * Render the chunk:
-		 ********************************************************/
-		
+		 // Render the chunk
+         
 		// MVP matrix
-		var modelMatrix = PIXI.Matrix.IDENTITY.clone().translate(chunk.x*this._chunkSizeX*this._tileSizeX,chunk.y*this._chunkSizeY*this._tileSizeX);
+		var modelMatrix = PIXI.Matrix.IDENTITY.clone().translate(chunk.x * this._chunkSizeX * this._tileSizeX, chunk.y * this._chunkSizeY * this._tileSizeX);
 		var mvpMatrix = vpMatrix.clone().append(modelMatrix);
 		// Bind matrix
 		gl.uniformMatrix3fv(this._vpMatrixUniform, false, vpMatrix.toArray());
 		gl.uniformMatrix3fv(this._modelMatrixUniform, false, modelMatrix.toArray());
+        var canvas = document.getElementById("canvas");
+        gl.uniform2f(this._resolutionUniform, canvas.width, canvas.height);
+        
+        //console.log("vp " + vpMatrix.toArray());
+        //console.log("model " + modelMatrix.toArray());
 		
 		
 		
 		// Bind textures
-		gl.activeTexture(gl.TEXTURE0);
+		/*gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, chunk.texture);
 		gl.activeTexture(gl.TEXTURE1);
 		gl.bindTexture(gl.TEXTURE_2D, chunk.tileTexture);
 		if (texture) {
 			gl.activeTexture(gl.TEXTURE2);
 			gl.bindTexture(gl.TEXTURE_2D, texture);
-		}
+		}*/
 		
 		// Set texture uniforms:
-		gl.uniform1i(this._densityTextureUniform, 0);
-		gl.uniform1i(this._tileTextureUniform, 1);
-		gl.uniform1i(this._textureUniform, 2);
+		//gl.uniform1i(this._densityTextureUniform, 0);
+		//gl.uniform1i(this._tileTextureUniform, 1);
+		//gl.uniform1i(this._textureUniform, 2);
 		
 		// Bind array buffer
-		gl.bindBuffer(gl.ARRAY_BUFFER, this._indexBuffer);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer);
 
 		// Attributes
-		gl.vertexAttribPointer(this._positionAttribute, 2, gl.FLOAT, false,4*4,0);
-		gl.vertexAttribPointer(this._uvAttribute, 2, gl.FLOAT, false,4*4,8);
+        gl.enableVertexAttribArray(this._positionAttribute);
+		gl.vertexAttribPointer(this._positionAttribute, 2, gl.FLOAT, false, /*4*4*/0,0);
+		//gl.vertexAttribPointer(this._uvAttribute, 2, gl.FLOAT, false,4*4,8);
 
 		// Render chunk
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffer);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
 		gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
 		
 		// Unbind buffers
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-		gl.bindBuffer(gl.ARRAY_BUFFER, null);
 		
 	}
 	
