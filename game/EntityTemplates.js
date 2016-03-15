@@ -97,9 +97,9 @@ entityTemplates.worker = function(uuid) {
 		healthbarSprite.anchor.x = 0.5;
 		healthbarSprite.anchor.y = 0.5;
 		health.sprite = healthbarSprite;
-		//drawable.addSprite("healthbar", healthbarSprite, v2.create(0, -50), false);
+		drawable.addSprite("healthbar", healthbarSprite, v2.create(0, -50), false);
 		
-		//entity.addComponent(drawable);
+		entity.addComponent(drawable);
 		entity.addComponent(new ECS.Components.Interpolation());
 	}
 	else

@@ -40,7 +40,7 @@ Game.prototype.load = function() {
 	this.canvas = document.getElementById("canvas");
 	
 	try {
-		this.gl = canvas.getContext("experimental-webgl");
+		this.gl = this.canvas.getContext("experimental-webgl");
 		this.gl.viewportWidth = canvas.width;
       	this.gl.viewportHeight = canvas.height;
 	}
@@ -51,18 +51,10 @@ Game.prototype.load = function() {
 		this.gl = null;
 	}
 	var gl = this.gl;
-	
-	/*BEGIN FRAMEBUFFER*/
-	
 
-	
-	/*END FRAMEBUFFER*/
-	
 	this.renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight,{backgroundColor : 0xF00000, view: this.canvas}, true, false);
-	//this.renderer.clearBeforeRender = false;
-	//document.body.appendChild(this.renderer.view);
+	this.renderer.clearBeforeRender = false;
 	
-	// Initialize stage, camera, entityWorld
 	this.stage = new PIXI.Container();
 	
 	this.camera = new Camera();	
@@ -167,11 +159,6 @@ Game.prototype.run = function() {
 		this.chunkClient.update(this.camera);
 	
 	//this.renderer.setRenderTarget(this.renderer.renderTarget);
-	/*this.gl.viewport(0, 0, window.innerWidth, window.innerHeight);
-	this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-	this.gl.clearColor(0.0, 0.0, 0.0, 1.0);*/
-	//var projectionMatrix = this.renderer.renderTarget.projectionMatrix.clone();
-    //this.gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
     
@@ -180,9 +167,7 @@ Game.prototype.run = function() {
     //console.log("X: " + this.camera.pos.x + " Y: " + this.camera.pos.y);
 	this.chunkRenderer.render(this.gl, this.chunkManager, viewMatrix, this.camera);
     
-
-	
-	//this.renderer.render(this.stage);
+	this.renderer.render(this.stage);
 };
 
 Game.prototype.sendUpdatePacket = function() {

@@ -54,7 +54,7 @@ ECS.Components.Drawable.prototype.addSprite = function(name, sprite, offset, rot
 	this.sprites[name].sprite = sprite;
 	this.sprites[name].offset = offset;
 	this.sprites[name].rotateWithBody = rotateWithBody;
-	//this.stage.addChild(sprite);
+	this.stage.addChild(sprite);
 }
 
 ECS.Components.Drawable.prototype.removeSprite = function(name) {
