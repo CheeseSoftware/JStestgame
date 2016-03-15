@@ -44,34 +44,18 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 			//VERTICES :
 			var sizeX = this._tileSizeX*this._chunkSizeX;
 			var sizeY = this._tileSizeY*this._chunkSizeY;
-			
-			/*var triangle_vertex=[
-				0, 0,
-				0, 0,
-				sizeX, 0,
-				1, 0,
-				0, sizeY,
-				0, 1,
-				sizeX, sizeY,
-				1, 1,
-			];*/
-            
+
             var vertices =[
 				0, 0,
+                0, 0,
 				sizeX, 0,
+                1, 0,
 				sizeX, sizeY,
-				0, sizeY,
-			];
-            
-            /*var vertices =[
-				-1, -1,
-				1, -1,
-                -1, 1,
-				1, -1,
-				-1, 1,
                 1, 1,
-			];*/
-				
+				0, sizeY,
+                0, 1
+			];
+
 			this._vertexBuffer = gl.createBuffer();
 			gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer);
 			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -84,12 +68,12 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 			
 			// Get attribute locations
 			this._positionAttribute = this._shaderProgram.getAttributeLocation(gl, "a_position");
-			//this._uvAttribute = this._shaderProgram.getAttributeLocation(gl, "aUV");
+			this._uvAttribute = this._shaderProgram.getAttributeLocation(gl, "a_uv");
 			
 			// Get uniform locations
-			/*this._densityTextureUniform = this._shaderProgram.getUniformLocation(gl, "densityTexture");
+			this._densityTextureUniform = this._shaderProgram.getUniformLocation(gl, "densityTexture");
 			this._tileTextureUniform = this._shaderProgram.getUniformLocation(gl, "tileTexture");
-			this._textureUniform = this._shaderProgram.getUniformLocation(gl, "texture");*/
+			this._textureUniform = this._shaderProgram.getUniformLocation(gl, "texture");
 			this._vpMatrixUniform = this._shaderProgram.getUniformLocation(gl, "vpMatrix");
 			this._modelMatrixUniform = this._shaderProgram.getUniformLocation(gl, "modelMatrix");
             this._resolutionUniform = this._shaderProgram.getUniformLocation(gl, "u_resolution");
@@ -151,12 +135,12 @@ ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 		}
 	
 		// Update density texture
-		/*if (chunk.isChanged) {
+		if (chunk.isChanged) {
 			gl.bindTexture(gl.TEXTURE_2D, chunk.texture);
 			gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, 30, 30, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.densityData);
 			gl.bindTexture(gl.TEXTURE_2D, null);		
 			chunk.isChanged = false; 
-		}*/
+		}
 		
 		 // Render the chunk
          
@@ -175,27 +159,27 @@ ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 		
 		
 		// Bind textures
-		/*gl.activeTexture(gl.TEXTURE0);
+		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, chunk.texture);
 		gl.activeTexture(gl.TEXTURE1);
 		gl.bindTexture(gl.TEXTURE_2D, chunk.tileTexture);
 		if (texture) {
 			gl.activeTexture(gl.TEXTURE2);
 			gl.bindTexture(gl.TEXTURE_2D, texture);
-		}*/
+		}
 		
 		// Set texture uniforms:
-		//gl.uniform1i(this._densityTextureUniform, 0);
-		//gl.uniform1i(this._tileTextureUniform, 1);
-		//gl.uniform1i(this._textureUniform, 2);
+		gl.uniform1i(this._densityTextureUniform, 0);
+		gl.uniform1i(this._tileTextureUniform, 1);
+		gl.uniform1i(this._textureUniform, 2);
 		
 		// Bind array buffer
 		gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer);
 
 		// Attributes
         gl.enableVertexAttribArray(this._positionAttribute);
-		gl.vertexAttribPointer(this._positionAttribute, 2, gl.FLOAT, false, /*4*4*/0,0);
-		//gl.vertexAttribPointer(this._uvAttribute, 2, gl.FLOAT, false,4*4,8);
+		gl.vertexAttribPointer(this._positionAttribute, 2, gl.FLOAT, false, 4*4, 0);
+		gl.vertexAttribPointer(this._uvAttribute, 2, gl.FLOAT, false, 4*4, 8);
 
 		// Render chunk
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
