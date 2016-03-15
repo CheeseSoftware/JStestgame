@@ -55,12 +55,7 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 				sizeX,sizeY,
 				1,1,
 			];
-			
-			/*this.frameBuffer = gl.createFramebuffer();
-			gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
-			this.frameBuffer.width = 512;
-			this.frameBuffer.height = 512;*/
-				
+
 			this._indexBuffer = gl.createBuffer ();
 			gl.bindBuffer(gl.ARRAY_BUFFER, this._indexBuffer);
 			gl.bufferData(gl.ARRAY_BUFFER,
