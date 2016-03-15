@@ -86,10 +86,10 @@ ChunkRenderer.prototype.lazyInit = function(gl) {
 ChunkRenderer.prototype.render = function(gl, chunkManager, vpMatrix, camera) {
 	var chunksToRender = [];
 
-	var x1 = Math.floor(camera.pos.x/32.0/30.0);
-	var y1 = Math.floor(camera.pos.y/32.0/30.0);
-	var x2 = Math.ceil((camera.pos.x+camera.width)/32.0/30.0);
-	var y2 = Math.ceil((camera.pos.y+camera.width)/32.0/30.0);
+	var x1 = Math.floor(camera.pos.x/this._tileSizeX/this._chunkSizeX);
+	var y1 = Math.floor(camera.pos.y/this._tileSizeY/this._chunkSizeY);
+	var x2 = Math.ceil((camera.pos.x+camera.width)/this._tileSizeX/this._chunkSizeX);
+	var y2 = Math.ceil((camera.pos.y+camera.width)/this._tileSizeY/this._chunkSizeY);
 	
 	for (var y = y1; y <= y2; ++y) {
 		for (var x = x1; x <= x2; ++x) {
@@ -178,8 +178,9 @@ ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 
 		// Attributes
         gl.enableVertexAttribArray(this._positionAttribute);
-		gl.vertexAttribPointer(this._positionAttribute, 2, gl.FLOAT, false, 4*4, 0);
-		gl.vertexAttribPointer(this._uvAttribute, 2, gl.FLOAT, false, 4*4, 8);
+        gl.enableVertexAttribArray(this._uvAttribute);
+		gl.vertexAttribPointer(this._positionAttribute, 2, gl.FLOAT, false, 16, 0);
+		gl.vertexAttribPointer(this._uvAttribute, 2, gl.FLOAT, false, 16, 8);
 
 		// Render chunk
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);

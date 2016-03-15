@@ -13,15 +13,12 @@ varying highp vec2 fragPos;
  
 void main() {
 
-    vec2 position = (vec3(a_position, 1) * modelMatrix * vpMatrix).xy;
+    vec2 position = (vec3(a_position, 1) * vpMatrix * modelMatrix).xy;
 
     // convert from pixels to clipspace
-    vec2 zeroToOne = position / u_resolution;
-    vec2 zeroToTwo = zeroToOne * 2.0;
-    vec2 clipSpace = zeroToTwo - 1.0;
+    vec2 clipSpace = (position / u_resolution * 2.0) - 1.0;
     
     gl_Position = vec4(vec3(clipSpace * vec2(1, -1), 0), 1);
-    //gl_Position = vec4(vec3(a_position, 1.0)*modelMatrix*vpMatrix, 1.0);
     fragUv = a_uv;
     fragPos = (vec3(a_position, 1) * modelMatrix).xy/32.0/30.0;
 }

@@ -17,7 +17,7 @@ struct Tile {
 
 
 /* Noise functions */
-	highp float rand(highp vec2 co)
+highp float rand(highp vec2 co)
 {
 	return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }  
@@ -156,5 +156,6 @@ void main() {
     //gl_FragColor.a = 1.0;
     //gl_FragColor = vec4(texture2D(densityTexture, fragUv).xyz, 1.0);
     
-    //gl_FragColor = vec4(fragUv * 256.0, 0.0, 1.0);
+    //gl_FragColor = vec4(mod(fragPos.x, 16.0), mod(fragPos.y, 16.0), 0.0, 1.0);
+    //gl_FragColor = vec4(fragUv.x, fragUv.y, 0.1, 1.0);
 }
