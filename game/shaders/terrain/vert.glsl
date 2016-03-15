@@ -6,6 +6,8 @@ uniform mat3 vpMatrix;
 uniform mat3 modelMatrix;
 
 uniform vec2 u_resolution;
+
+varying highp vec2 fragPos;
  
 void main() {
 
@@ -17,4 +19,5 @@ void main() {
    vec2 clipSpace = zeroToTwo - 1.0;
     
     gl_Position = vec4(vec3(clipSpace * vec2(1, -1), 0), 1);
+    fragPos = vec2(mod(a_position.x,2569.0), mod(a_position.y,2569.0));
 }

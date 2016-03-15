@@ -1,5 +1,7 @@
 #version 100
 
+varying highp vec2 fragPos;
+
 void main() {
-  gl_FragColor = vec4(gl_FragCoord.xyz, 1);  // green
+  gl_FragColor = vec4(fragPos, 0, 1);  // green
 }
