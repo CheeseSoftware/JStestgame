@@ -5,31 +5,18 @@
  */
 var Camera = function (world) {
 
-    PIXI.Container.call(this);
 
-    this.world = world;
 
-    this.root = new PIXI.Container();
 
 	this.targetPos = v2.create(0, 0);
 	this.target = null;
 	this.velocity = null;
 
-    this.mask = new PIXI.Graphics();
+    
     this.viewport = new PIXI.Rectangle(0, 0, window.innerWidth, window.innerHeight);
     this.frustrum = this.viewport.clone();
 
-    this.bounded = false;
-
-    this._redrawMask();
-
-    this.addChild(this.root);
-    this.addChild(this.mask);
-
-    this.root.addChild(this.world);
 };
-if (!isServer)
-    Camera.prototype = Object.create(PIXI.Container.prototype);
 
 /**
  * update the camera position based on it's target
@@ -49,10 +36,10 @@ Camera.prototype.update = function (dt) {
 
     this._constrainFrustrum();
 
-    this.root.position.set(
+    /*this.position.set(
         -this.frustrum.x * this.zoom,
         -this.frustrum.y * this.zoom
-    );
+    );*/
 	
 };
 
@@ -154,7 +141,6 @@ Object.defineProperties(Camera.prototype, {
         set: function (level) {
 
             this._zoom = level;
-            this.root.scale.set(level);
             this._scaleFrustrum();
             this._constrainFrustrum();
 
