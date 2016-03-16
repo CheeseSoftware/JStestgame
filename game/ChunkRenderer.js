@@ -211,25 +211,24 @@ ChunkRenderer.prototype.loadChunkTextures = function(gl, chunk) {
 	chunk.tileTexture = gl.createTexture();
 	
 	// Create density texture
-	/*gl.bindTexture(gl.TEXTURE_2D, chunk.texture);
+	gl.bindTexture(gl.TEXTURE_2D, chunk.texture);
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, this._chunkSizeX + 2, this._chunkSizeY + 2, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, null);// chunk.data);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR   );
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR   );
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
 	gl.pixelStorei(gl.PACK_ALIGNMENT, 1)
 	gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, 30, 30, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.densityData);
-	gl.bindTexture(gl.TEXTURE_2D, null);*/
+	gl.bindTexture(gl.TEXTURE_2D, null);
 	
 	// Create tile texture
-	/*gl.bindTexture(gl.TEXTURE_2D, chunk.tileTexture);
+	gl.bindTexture(gl.TEXTURE_2D, chunk.tileTexture);
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, this._chunkSizeX + 2, this._chunkSizeY + 2, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, null);// chunk.data);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    
 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
 	gl.pixelStorei(gl.PACK_ALIGNMENT, 1)
 	gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, 30, 30, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.tileData);
-	gl.bindTexture(gl.TEXTURE_2D, null);*/
+	gl.bindTexture(gl.TEXTURE_2D, null);
 	
 	chunk.isChanged = false;
 }
@@ -292,6 +291,10 @@ ChunkRenderer.prototype.onChunkChange2 = function(gl, x1, y1, x2, y2, chunk1, ch
 }
 
 ChunkRenderer.prototype.loadTexture = function(gl) {
+	/***********************************************************
+	 * Load texture : 
+	 ***********************************************************/
+	/*========================= TEXTURES ========================= */
 	var get_texture=function(image_URL){
 		var image = new Image();
 

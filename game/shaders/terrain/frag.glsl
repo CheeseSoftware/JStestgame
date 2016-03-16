@@ -15,9 +15,11 @@ struct Tile {
 	highp float tileID;
 };
 
+
+/* Noise functions */
 highp float rand(highp vec2 co)
 {
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+	return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }  
 	
 highp float noise(in highp vec2 pos)
@@ -132,9 +134,15 @@ void main() {
 	
 	highp float deltaStrength = 1.0;//clamp(tile.strength - strongest2nd, 0.0, 1.0);
 	
+	//highp float dis = 0.5+0.25*raymarch(vec3(fragUv*16.0, 0.0));
 	highp float density = getDensity(fragUv);
 	highp float alpha = 0.5+0.5*clamp(32.0*(density-0.5), 0.0, 1.0);
 	
+	
+	
+	
+	//highp float tileID = 0.0;//tile.tileID;//texture2D(tileTexture, floor(fragUv*30.0+1.0)/32.0).x*255.0;
+	//highp vec2 texturePos = mod(fragUv*2.0/TILE_DIM_F, 1.0/TILE_DIM_F) + vec2(mod(tileID/TILE_DIM_F, 1.0), mod(floor(tileID/TILE_DIM_F)/TILE_DIM_F, 1.0));
 	highp vec3 textureColor = tileColor;//texture2D(texture, texturePos).xyz;
 	highp vec3 colorA = textureColor*clamp(0.125+density+0.5*(deltaStrength-1.0), 0.5, 1.0);
 	highp vec3 colorB = textureColor*clamp(0.5-0.25*density, 0.0, 1.0);

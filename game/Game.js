@@ -167,7 +167,7 @@ Game.prototype.run = function() {
     //console.log("X: " + this.camera.pos.x + " Y: " + this.camera.pos.y);
 	this.chunkRenderer.render(this.gl, this.chunkManager, viewMatrix, this.camera);
     
-	//this.renderer.render(this.stage);
+	this.renderer.render(this.stage);
 };
 
 Game.prototype.sendUpdatePacket = function() {
