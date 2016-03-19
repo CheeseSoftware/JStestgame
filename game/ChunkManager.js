@@ -1,6 +1,6 @@
 ChunkManager = function(gl) {
 
-	this._chunkSize = 30;
+	this._chunkSize = 32;
 	this._tileRegister = new TileRegister();
 	this._gl = gl;
 	

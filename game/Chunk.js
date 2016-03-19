@@ -1,6 +1,6 @@
 Chunk = function(chunkManager, x, y, sizeX, sizeY) {
-	this._tileIds = new Uint8Array(sizeX * sizeY);
-	this._density = new Uint8Array(sizeX * sizeY);
+	this._tileIds = new Uint8Array(sizeX * sizeY * 4);
+	this._density = new Uint8Array(sizeX * sizeY * 4);
 	this._x = x;
 	this._y = y;
 	this._sizeX = sizeX;
@@ -70,7 +70,11 @@ Object.defineProperties(Chunk.prototype, {
 			return this._tileIds;
 		},
 		set: function(data)  {
-			this._tileIds = data;
+            for(var y = 0; y < this._sizeY; ++y) {
+                for (var x = 0; x < this._sizeX; ++x) {
+                    this._tileIds[y*this._sizeX + x] = data[y*this._sizeX + x];
+                }
+            }
 		}
 	},
 	
@@ -79,7 +83,11 @@ Object.defineProperties(Chunk.prototype, {
 			return this._density;
 		},
 		set: function(data)  {
-			this._density = data;
+            for(var y = 0; y < this._sizeY; ++y) {
+                for (var x = 0; x < this._sizeX; ++x) {
+                    this._density[y*this._sizeX + x] = data[y*this._sizeX + x];
+                }
+            }
 		}
 	},
 	

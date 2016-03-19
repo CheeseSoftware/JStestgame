@@ -12,5 +12,5 @@ constants = {
 	
 	serverInterval: 1/60.0,
 	clientInterval: 1/60.0,
-	serverPort: 8080
+	serverPort: 25565
 }

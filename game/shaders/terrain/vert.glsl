@@ -20,5 +20,5 @@ void main() {
     
     gl_Position = vec4(vec3(clipSpace * vec2(1, -1), 0), 1);
     fragUv = a_uv;
-    fragPos = (vec3(a_position, 1) * modelMatrix).xy/32.0/30.0;
+    fragPos = (vec3(a_position, 1) * modelMatrix).xy;
 }

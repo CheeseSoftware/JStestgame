@@ -2,8 +2,8 @@ ChunkRenderer = function(gl, chunkManager, chunkSizeX, chunkSizeY, tileSizeX, ti
 
 	chunkManager.subscribe(this);
 
-	this._chunkSizeX = 30;
-	this._chunkSizeY = 30;
+	this._chunkSizeX = chunkSizeX;
+	this._chunkSizeY = chunkSizeY;
 	this._tileSizeX = tileSizeX;
 	this._tileSizeY = tileSizeY;
 	this._densityTexture = null;
@@ -137,7 +137,7 @@ ChunkRenderer.prototype.renderChunk = function(gl, vpMatrix, chunks, texture) {
 		// Update density texture
 		if (chunk.isChanged) {
 			gl.bindTexture(gl.TEXTURE_2D, chunk.texture);
-			gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, 30, 30, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.densityData);
+			gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, this._chunkSizeX, this._chunkSizeY, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.densityData);
 			gl.bindTexture(gl.TEXTURE_2D, null);		
 			chunk.isChanged = false; 
 		}
@@ -212,22 +212,22 @@ ChunkRenderer.prototype.loadChunkTextures = function(gl, chunk) {
 	
 	// Create density texture
 	gl.bindTexture(gl.TEXTURE_2D, chunk.texture);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, this._chunkSizeX + 2, this._chunkSizeY + 2, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, null);// chunk.data);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, this._chunkSizeX * 2, this._chunkSizeY * 2, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, null);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
 	gl.pixelStorei(gl.PACK_ALIGNMENT, 1)
-	gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, 30, 30, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.densityData);
+	gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, this._chunkSizeX, this._chunkSizeY, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.densityData);
 	gl.bindTexture(gl.TEXTURE_2D, null);
 	
 	// Create tile texture
 	gl.bindTexture(gl.TEXTURE_2D, chunk.tileTexture);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, this._chunkSizeX + 2, this._chunkSizeY + 2, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, null);// chunk.data);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, this._chunkSizeX * 2, this._chunkSizeY * 2, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, null);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
 	gl.pixelStorei(gl.PACK_ALIGNMENT, 1)
-	gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, 30, 30, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.tileData);
+	gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 1, this._chunkSizeX, this._chunkSizeY, gl.LUMINANCE, gl.UNSIGNED_BYTE, chunk.tileData);
 	gl.bindTexture(gl.TEXTURE_2D, null);
 	
 	chunk.isChanged = false;
@@ -241,19 +241,19 @@ ChunkRenderer.prototype.onChunkChange2 = function(gl, x1, y1, x2, y2, chunk1, ch
 	// TODO: ChunkRenderer.prototype.onChunkCreate
 	
 	// Calculate intersecting rectangle.
-	var rx1 = Math.max(x1*30-1, x2*30);
-	var ry1 = Math.max(y1*30-1, y2*30);
-	var rx2 = Math.min(x1*30+30, x2*30+29);
-	var ry2 = Math.min(y1*30+30, y2*30+29);
+	var rx1 = Math.max(x1*this._chunkSizeX-1, x2*this._chunkSizeX);
+	var ry1 = Math.max(y1*this._chunkSizeY-1, y2*this._chunkSizeY);
+	var rx2 = Math.min(x1*this._chunkSizeX+this._chunkSizeX, x2*this._chunkSizeX+this._chunkSizeX-1);
+	var ry2 = Math.min(y1*this._chunkSizeY+this._chunkSizeY, y2*this._chunkSizeY+this._chunkSizeY-1);
 	
 	// Calculate texture position:
-	var textureX1 = rx1 - x1*30+1;
-	var textureY1 = ry1 - y1*30+1;
-	var textureX2 = rx2 - x1*30+1;
-	var textureY2 = ry2 - y1*30+1;
+	var textureX1 = rx1 - x1*this._chunkSizeX+1;
+	var textureY1 = ry1 - y1*this._chunkSizeY+1;
+	var textureX2 = rx2 - x1*this._chunkSizeX+1;
+	var textureY2 = ry2 - y1*this._chunkSizeY+1;
 	
-	var dataX = rx1 - x2*30;
-	var dataY = ry1 - y2*30;
+	var dataX = rx1 - x2*this._chunkSizeX;
+	var dataY = ry1 - y2*this._chunkSizeY;
 	
 	var width = textureX2-textureX1+1;
 	var height = textureY2-textureY1+1;
@@ -261,14 +261,14 @@ ChunkRenderer.prototype.onChunkChange2 = function(gl, x1, y1, x2, y2, chunk1, ch
 	var densityData = new Uint8Array(width * height);
 	for (var xx = 0; xx < width; ++xx) {
 		for (var yy = 0; yy < height; ++yy) {
-			densityData[xx+yy*width] = chunk2.densityData[dataX+xx + (dataY+yy)*30];
+			densityData[xx+yy*width] = chunk2.densityData[dataX+xx + (dataY+yy)*this._chunkSizeY];
 		}
 	}
 	
 	var tileData = new Uint8Array(width * height);
 	for (var xx = 0; xx < width; ++xx) {
 		for (var yy = 0; yy < height; ++yy) {
-			tileData[xx+yy*width] = chunk2.tileData[dataX+xx + (dataY+yy)*30];
+			tileData[xx+yy*width] = chunk2.tileData[dataX+xx + (dataY+yy)*this._chunkSizeY];
 		}
 	}
 	

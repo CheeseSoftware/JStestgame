@@ -43,13 +43,20 @@ highp float noise(in highp vec2 pos)
 }
 
 highp vec3 getTileColor(Tile tile) {
-	highp vec2 texturePos = mod(fragUv*2.0/TILE_DIM_F, 1.0/TILE_DIM_F) + vec2(mod(tile.tileID/TILE_DIM_F, 1.0), mod(floor(tile.tileID/TILE_DIM_F)/TILE_DIM_F, 1.0));
+    highp vec2 pixel = mod((fragPos)/1024.0, 1.0) * 1024.0;
+    highp float x = mod(1.0, 4.0) - 1.0;
+    highp float y = floor(1.0 / 4.0);
+    
+	highp vec2 texturePos = vec2((x * 1024.0 + pixel.x)/4096.0, (y * 1024.0 + pixel.y)/4096.0);
+    
+    
+    //highp vec2 texturePos = mod(fragUv*2.0/TILE_DIM_F, 1.0/TILE_DIM_F) + vec2(mod(tile.tileID/TILE_DIM_F, 1.0), mod(floor(tile.tileID/TILE_DIM_F)/TILE_DIM_F, 1.0));
 	return texture2D(texture, texturePos).xyz;
 }
 
 highp float getDensity(highp vec2 pos) {
 	
-	highp float density = texture2D(densityTexture, (pos*30.0+1.0)/32.0).x;
+	highp float density = texture2D(densityTexture, (pos*32.0+1.0)/64.0).x;
 	highp float scale = 32.0;
 	for (int i = 0; i < 3; ++i) {
 		
@@ -61,7 +68,7 @@ highp float getDensity(highp vec2 pos) {
 }
 
 Tile calcTile(highp vec2 tilePos, highp vec2 delta) {
-	highp float density = texture2D(densityTexture, tilePos/32.0).x;
+	highp float density = texture2D(densityTexture, tilePos/64.0).x;
 	highp float strength = 1.0*density+clamp((1.0-delta.x)*(1.0-delta.y), 0.0, 1.0);
 	highp float tileID = texture2D(tileTexture, tilePos/32.0).x*255.0;
 	
@@ -75,10 +82,10 @@ Tile calcTile(highp vec2 tilePos, highp vec2 delta) {
 
 void main() {
 	
-	highp vec4 tilePos = vec4(floor(fragUv*30.0+vec2(0.5)), vec2(0.0));
+	highp vec4 tilePos = vec4(floor(fragUv*32.0+vec2(0.5)), vec2(0.0));
 	tilePos = vec4(tilePos.xy, tilePos.xy+1.0);
 	
-	highp vec4 delta = abs(vec4(tilePos.xy - (fragUv*30.0+0.5), tilePos.zw - (fragUv*30.0+0.5)));
+	highp vec4 delta = abs(vec4(tilePos.xy - (fragUv*32.0+0.5), tilePos.zw - (fragUv*32.0+0.5)));
 	
 	Tile a = calcTile(tilePos.xy, delta.xy);
 	Tile b = calcTile(tilePos.zy, delta.zy);
@@ -141,14 +148,14 @@ void main() {
 	
 	
 	
-	//highp float tileID = 0.0;//tile.tileID;//texture2D(tileTexture, floor(fragUv*30.0+1.0)/32.0).x*255.0;
+	//highp float tileID = 0.0;//tile.tileID;//texture2D(tileTexture, floor(fragUv*32.0+1.0)/32.0).x*255.0;
 	//highp vec2 texturePos = mod(fragUv*2.0/TILE_DIM_F, 1.0/TILE_DIM_F) + vec2(mod(tileID/TILE_DIM_F, 1.0), mod(floor(tileID/TILE_DIM_F)/TILE_DIM_F, 1.0));
 	highp vec3 textureColor = tileColor;//texture2D(texture, texturePos).xyz;
 	highp vec3 colorA = textureColor*clamp(0.125+density+0.5*(deltaStrength-1.0), 0.5, 1.0);
 	highp vec3 colorB = textureColor*clamp(0.5-0.25*density, 0.0, 1.0);
 	
 	gl_FragColor = vec4(mix(colorB, colorA, clamp(32.0*(density-0.5), 0.0, 1.0)), 1.0);
-	//gl_FragColor = vec4(vec3(a.strength), 1.0);
+	//gl_FragColor = vec4(vec3(a.strength, 0.0, 0.0), 1.0);
 	
 	//if (density == 0.0)
 	//	gl_FragColor = vec4(vec3(1.0), 1.0);
